@@ -14,7 +14,7 @@ namespace WebApp.Models
         #endregion
 
         [Key]
-        public string LocationID { get; private set; }
+        public string LocationId { get; private set; }
 
         #region Propertie
         public string XCoordinate
@@ -27,7 +27,7 @@ namespace WebApp.Models
             private set
             {
                 _xCoordinate = value;
-                LocationID = $"{XCoordinate}|{YCoordinate}";
+                LocationId = $"{XCoordinate}|{YCoordinate}";
             }
         }
 
@@ -41,7 +41,7 @@ namespace WebApp.Models
             private set
             {
                 _yCoordinate = value;
-                LocationID = $"{XCoordinate}|{YCoordinate}";
+                LocationId = $"{XCoordinate}|{YCoordinate}";
             }
         }
 

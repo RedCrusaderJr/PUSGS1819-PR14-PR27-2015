@@ -7,15 +7,12 @@ using System.Web;
 
 namespace WebApp.Models
 {
-    public class Ticket
+    public class Catalogue
     {
-        public int TicketId { get; set; }
+        public int CatalogueId { get; set; }
+        public DateTime Begin { get; set; }
+        public DateTime End { get; set; }
 
-        [ForeignKey("Price")]
-        public string PriceId { get; set; }
-        public CataloguePrice Price {get; set;}
-
-
-        public Ticket() { }
+        public Catalogue() { }
     }
 }

@@ -6,12 +6,12 @@ using System.Web;
 
 namespace WebApp.Models
 {
-    public class CatalogueOfDiscounts
+    public class TicketType
     {
         [Key]
-        public PassengerType ID { get; set; }
-        public double Discount { get; set; }
+        //HOUR, DAY, MONTH, YEAR
+        public string TicketTypeName { get; set; }
 
-        public CatalogueOfDiscounts() { }
+        public TicketType() { }
     }
 }

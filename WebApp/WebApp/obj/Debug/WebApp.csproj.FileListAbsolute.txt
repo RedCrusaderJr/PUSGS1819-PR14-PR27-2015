@@ -146,3 +146,4 @@ D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebA
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csproj.CopyComplete
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.dll
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.pdb
+D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csprojAssemblyReference.cache

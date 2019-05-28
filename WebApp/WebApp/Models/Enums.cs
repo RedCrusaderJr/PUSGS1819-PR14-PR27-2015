@@ -5,13 +5,6 @@ using System.Web;
 
 namespace WebApp.Models
 {
-    public enum RoleType
-    {
-        PASSENGER  = 0,
-        CONTROLLER = 1,
-        ADMIN      = 2,
-    }
-
     public enum PassengerType
     {
         REGULAR = 0,
@@ -19,11 +12,10 @@ namespace WebApp.Models
         SENIOR  = 2,
     }
 
-    public enum TicketType
+    public enum DayType
     {
-        HOUR  = 0,
-        DAY   = 1,
-        MONTH = 2,
-        YEAR  = 3,
+        WORK_DAY = 0,
+        SATURDAY = 1,
+        SUNDAY   = 2,
     }
 }

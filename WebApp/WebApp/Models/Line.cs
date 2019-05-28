@@ -9,9 +9,8 @@ namespace WebApp.Models
     public class Line
     {
         [Key]
-        //public object LineID { get; private set; }
         public int OrderNumber { get; set; }
-        public List<Station> Stations { get; set; }
 
+        public List<Station> Stations { get; set; }
     }
 }

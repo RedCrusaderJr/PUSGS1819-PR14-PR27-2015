@@ -10,10 +10,15 @@ namespace WebApp.Models
     public class Station
     {
         [Key]
-        public object StationID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int StationId { get; set; }
         [Index(IsUnique =true)]
         public string Name { get; set; }
+
+        [ForeignKey("StationLocation")]
+        public string LocationId { get; set; }
         public Location StationLocation { get; set; }
+
         public List<Line> Lines { get; set; }
 
         public Station()
