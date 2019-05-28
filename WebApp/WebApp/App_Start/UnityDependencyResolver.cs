@@ -11,6 +11,7 @@ using Unity.Lifetime;
 using WebApp.Models;
 using WebApp.Persistence;
 using WebApp.Persistence.Repository;
+using WebApp.Persistence.Repository.ModelRepositories;
 using WebApp.Persistence.UnitOfWork;
 using WebApp.Providers;
 
@@ -69,7 +70,20 @@ namespace WebApp.App_Start
             // container.RegisterType<IProductRepository, ProductRepository>();
            
             container.RegisterType<DbContext, ApplicationDbContext>(new PerResolveLifetimeManager());
+			container.RegisterType<IAutobusRepository, AutobusRepository>();
+			container.RegisterType<ICataloguePriceRepository, CataloguePriceRepository>();
+			container.RegisterType<ICatalogueRepository, CatalogueRepository>();
+			container.RegisterType<IDiscountRepository, DiscountRepository>();
+			container.RegisterType<ILineRepository, LineRepository>();
+			container.RegisterType<ILocationRepository, LocationRepository>();
+			container.RegisterType<IPassengerRepository, PassengerRepository>();
+			container.RegisterType<IStationRepository, StationRepository>();
+			container.RegisterType<ITicketRepository, TicketRepository>();
+			container.RegisterType<ITicketTypeRepository, TicketTypeRepository>();
+			container.RegisterType<ITimetableRepository, TimetableRepository>();
+			container.RegisterType<ITimetableEntryRepository, TimetableEntryRepository>();
             container.RegisterType<IUnitOfWork, DemoUnitOfWork>();
+            
         }
 
         public void Dispose()

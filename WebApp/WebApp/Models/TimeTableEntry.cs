@@ -9,9 +9,12 @@ namespace WebApp.Models
 {
     public class TimetableEntry
     {
+        #region Fields
         private DayType _day = DayType.WORK_DAY;
         private int _lineId;
+        #endregion
 
+        [Key]
         public string TimetableEntryId { get; private set; }
 
         public DayType Day

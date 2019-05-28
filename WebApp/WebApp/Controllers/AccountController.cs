@@ -14,6 +14,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using WebApp.Models;
+using WebApp.Persistence.UnitOfWork;
 using WebApp.Providers;
 using WebApp.Results;
 
@@ -25,9 +26,16 @@ namespace WebApp.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        public IUnitOfWork UnitOfWork { get; set; }
 
-        public AccountController()
+        public AccountController(IUnitOfWork unitOfWork)
         {
+            this.UnitOfWork = unitOfWork;
+            if (UnitOfWork.LocationRepository.Find(l => l.LocationId == "12.22|13.22") != null)
+            {
+                UnitOfWork.LocationRepository.Add(new Location("12.22", "13.22"));
+                UnitOfWork.Complete();
+            }
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -57,6 +65,7 @@ namespace WebApp.Controllers
         public UserInfoViewModel GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+            
 
             return new UserInfoViewModel
             {
@@ -70,6 +79,7 @@ namespace WebApp.Controllers
         [Route("Logout")]
         public IHttpActionResult Logout()
         {
+            
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return Ok();
         }

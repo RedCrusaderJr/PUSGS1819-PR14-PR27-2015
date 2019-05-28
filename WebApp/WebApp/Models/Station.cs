@@ -13,6 +13,8 @@ namespace WebApp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int StationId { get; set; }
         [Index(IsUnique =true)]
+        [Column(TypeName = "VARCHAR")]
+        [StringLength(300)]
         public string Name { get; set; }
 
         [ForeignKey("StationLocation")]

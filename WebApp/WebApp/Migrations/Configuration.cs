@@ -5,8 +5,11 @@ namespace WebApp.Migrations
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
+    using System.Diagnostics;
     using System.Linq;
     using WebApp.Models;
+    using WebApp.Persistence.Repository.ModelRepositories;
+    using WebApp.Persistence.UnitOfWork;
 
     internal sealed class Configuration : DbMigrationsConfiguration<WebApp.Persistence.ApplicationDbContext>
     {
@@ -14,6 +17,7 @@ namespace WebApp.Migrations
         {
             AutomaticMigrationsEnabled = false;
         }
+        
 
         protected override void Seed(WebApp.Persistence.ApplicationDbContext context)
         {
@@ -64,6 +68,13 @@ namespace WebApp.Migrations
                 var user = new ApplicationUser() { Id = "appu", UserName = "appu@yahoo", Email = "appu@yahoo.com", PasswordHash = ApplicationUser.HashPassword("Appu123!") };
                 userManager.Create(user);
                 userManager.AddToRole(user.Id, "AppUser");
+            }
+
+            DemoUnitOfWork unitOfWork = new DemoUnitOfWork(context);    
+            if (!context.Locations.Any(l => l.LocationId == "12.11|13.11"))
+            { 
+                context.Locations.Add(new Location("12.11", "13.11"));
+                context.SaveChanges();
             }
         }
     }

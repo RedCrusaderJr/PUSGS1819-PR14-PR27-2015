@@ -259,6 +259,10 @@
     <Compile Include="Migrations\201905222056072_InitialMigration.Designer.cs">
       <DependentUpon>201905222056072_InitialMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905281456313_finished model.cs" />
+    <Compile Include="Migrations\201905281456313_finished model.Designer.cs">
+      <DependentUpon>201905281456313_finished model.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -278,6 +282,30 @@
     <Compile Include="Models\TimetableEntry.cs" />
     <Compile Include="Persistence\ApplicationDbContext.cs" />
     <Compile Include="Persistence\Repository\IRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\AutobusRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\CataloguePriceRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\CatalogueRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\DiscountRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\IAutobusRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ICataloguePriceRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ICatalogueRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\IDiscountRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ILineRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ILocationRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\IPassengerRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\IStationRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ITicketRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ITicketTypeRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ITimetableEntryRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\ITimetableRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\LineRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\LocationRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\PassengerRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\StationRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\TicketRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\TicketTypeRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\TimetableEntryRepository.cs" />
+    <Compile Include="Persistence\Repository\ModelRepositories\TimetableRepository.cs" />
     <Compile Include="Persistence\Repository\Repository.cs" />
     <Compile Include="Persistence\UnitOfWork\DemoUnitOfWork.cs" />
     <Compile Include="Persistence\UnitOfWork\IUnitOfWork.cs" />
@@ -381,6 +409,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905222056072_InitialMigration.resx">
       <DependentUpon>201905222056072_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905281456313_finished model.resx">
+      <DependentUpon>201905281456313_finished model.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

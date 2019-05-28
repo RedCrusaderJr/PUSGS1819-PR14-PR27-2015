@@ -7,5 +7,6 @@ namespace WebApp.Models
 {
     public class Autobus
     {
+        public int AutobusId { get; set; }
     }
 }
