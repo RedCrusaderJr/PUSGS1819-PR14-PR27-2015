@@ -9,6 +9,7 @@ namespace WebApp.Models
 {
     public class Station
     {
+        //CONTROLLER
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int StationId { get; set; }

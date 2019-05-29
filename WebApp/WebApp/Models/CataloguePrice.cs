@@ -8,7 +8,7 @@ namespace WebApp.Models
 {
     public class CataloguePrice
     {
-        
+        //CONTROLLER (+ catolgue)
 
         public string CataloguePriceId
         {

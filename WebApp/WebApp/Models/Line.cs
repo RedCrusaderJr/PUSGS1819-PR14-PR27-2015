@@ -8,6 +8,7 @@ namespace WebApp.Models
 {
     public class Line
     {
+        //CONTROLLER
         [Key]
         public int OrderNumber { get; set; }
 

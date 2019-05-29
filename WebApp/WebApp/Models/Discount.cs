@@ -7,7 +7,7 @@ using System.Web;
 namespace WebApp.Models
 {
     public class Discount
-    {
+    { //SEED
         [Key]
         //STUDENT, SENIOR, REGULAR
         public string DiscountTypeName { get; set; }
