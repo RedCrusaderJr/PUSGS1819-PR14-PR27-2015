@@ -75,6 +75,7 @@ namespace WebApp.Migrations
             { 
                 context.Locations.Add(new Location("12.11", "13.11"));
                 context.SaveChanges();
+                
             }
         }
     }
