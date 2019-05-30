@@ -15,36 +15,46 @@ using WebApp.Persistence.UnitOfWork;
 namespace WebApp.Controllers
 {
 
-    /*TODO: novi get: dozvole brisanja i modify
-    provere pri brisanju i modify
-    autorizacije admin: getAll(pravi), brise i modify i posebni get
-    passenger: getuje trenutne
+    /*TODO: novi get: dozvole brisanja i modify DONE
+    provere pri brisanju i modify DONE
+    autorizacije admin: getAll(pravi), brise i modify i posebni get DONE
+    passenger: getuje trenutne DONE
     */
 
     public class CataloguePricesController : ApiController
     {
         //TODO: Slozen objekat (za put, post)
-        IUnitOfWork UnitOfWork { get; set; }
+        IUnitOfWork Db { get; set; }
         public CataloguePricesController(IUnitOfWork unitOfWork)
         {
-            UnitOfWork = unitOfWork;
+            Db = unitOfWork;
         }
 
-        // GET: api/CataloguePrices/GetPassengerCataloguePrices
+        //[Authorize(Roles = "AppUser")]
+        [Route("api/CataloguePrices/GetPassengerCataloguePrices")]
         public IEnumerable<CataloguePrice> GetPassengerCataloguePrices()
         {
             //TODO: sadrzaj filtrirati sa DateTime.Now
             DateTime now = DateTime.Now;
 
-            return UnitOfWork.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) > 0 && 
+            return Db.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) > 0 && 
                                                                            DateTime.Compare(now, c.Catalogue.End) < 0);
+        }
+
+
+        //[Authorize(Roles ="Admin")]
+        [Route("api/CataloguePrice/GetAdminCataloguePrices")]
+        public IEnumerable<CataloguePrice> GetAdminCataloguePrices()
+        {
+            DateTime now = DateTime.Now;
+            return Db.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) < 0);
         }
 
         // GET: api/CataloguePrices/5
         [ResponseType(typeof(CataloguePrice))]
         public IHttpActionResult GetCataloguePrice(string id)
         {
-            CataloguePrice cataloguePrice = UnitOfWork.CataloguePriceRepository.Get(id);
+            CataloguePrice cataloguePrice = Db.CataloguePriceRepository.Get(id);
             if (cataloguePrice == null)
             {
                 return NotFound();
@@ -54,6 +64,7 @@ namespace WebApp.Controllers
         }
 
         // PUT: api/CataloguePrices/5
+        //[Authorize(Roles ="Admin")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutCataloguePrice(string id, CataloguePrice cataloguePrice)
         {
@@ -67,14 +78,15 @@ namespace WebApp.Controllers
                 return BadRequest();
             }
 
-            if (CataloguePriceExists(id))
+            DateTime now = DateTime.Now;
+            if (CataloguePriceExists(id) && DateTime.Compare(now, cataloguePrice.Catalogue.Begin) < 0)
             {
-                UnitOfWork.CataloguePriceRepository.Update(cataloguePrice);
+                Db.CataloguePriceRepository.Update(cataloguePrice);
             }
 
             try
             {
-                UnitOfWork.Complete();
+                Db.Complete();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -92,6 +104,7 @@ namespace WebApp.Controllers
         }
 
         // POST: api/CataloguePrices
+        //[Authorize(Roles = "Admin")]
         [ResponseType(typeof(CataloguePrice))]
         public IHttpActionResult PostCataloguePrice(CataloguePrice cataloguePrice)
         {
@@ -101,11 +114,11 @@ namespace WebApp.Controllers
             }
 
             
-            UnitOfWork.CataloguePriceRepository.Add(cataloguePrice);
+            Db.CataloguePriceRepository.Add(cataloguePrice);
 
             try
             {
-                UnitOfWork.Complete();
+                Db.Complete();
             }
             catch (DbUpdateException)
             {
@@ -123,19 +136,23 @@ namespace WebApp.Controllers
         }
 
         // DELETE: api/CataloguePrices/5
+        //[Authorize("Admin")]
         [ResponseType(typeof(CataloguePrice))]
         public IHttpActionResult DeleteCataloguePrice(string id)
         {
-            CataloguePrice cataloguePrice = UnitOfWork.CataloguePriceRepository.Get(id);
+            CataloguePrice cataloguePrice = Db.CataloguePriceRepository.Get(id);
             if (cataloguePrice == null)
             {
                 return NotFound();
             }
-
-            UnitOfWork.CataloguePriceRepository.Remove(cataloguePrice);
+            DateTime now = DateTime.Now;
+            if (DateTime.Compare(now, cataloguePrice.Catalogue.Begin) < 0)
+            {
+                Db.CataloguePriceRepository.Remove(cataloguePrice);
+            }
             try
             {
-                UnitOfWork.Complete();
+                Db.Complete();
             }
             catch (Exception)
             {
@@ -149,14 +166,14 @@ namespace WebApp.Controllers
         {
             if (disposing)
             {
-                UnitOfWork.Dispose();
+                Db.Dispose();
             }
             base.Dispose(disposing);
         }
 
         private bool CataloguePriceExists(string id)
         {
-            return UnitOfWork.CataloguePriceRepository.Get(id) != null;
+            return Db.CataloguePriceRepository.Get(id) != null;
         }
     }
 }
