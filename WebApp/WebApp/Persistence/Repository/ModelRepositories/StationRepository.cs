@@ -12,5 +12,17 @@ namespace WebApp.Persistence.Repository.ModelRepositories
         public StationRepository(DbContext context) : base(context)
         {
         }
+
+        public override IEnumerable<Station> GetAll()
+        {
+            return context.Set<Station>().Include(c => c.StationLocation)
+                                                .Include(c => c.Lines);
+        }
+
+        public override Station Get(int id)
+        {
+            return context.Set<Station>().Include(c => c.StationLocation)
+                                                .Include(c => c.Lines).SingleOrDefault(c => c.StationId.Equals(id));
+        }
     }
 }

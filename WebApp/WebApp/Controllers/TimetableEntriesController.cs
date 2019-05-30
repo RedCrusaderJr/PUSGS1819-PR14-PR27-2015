@@ -14,6 +14,12 @@ using WebApp.Persistence.UnitOfWork;
 
 namespace WebApp.Controllers
 {
+    /*nema get all, nema get
+     * put preko forme
+     * post ide preko time table-a
+     * put preko forme
+     * 
+     */
     public class TimetableEntriesController : ApiController
     {
         IUnitOfWork Db { get; set; }

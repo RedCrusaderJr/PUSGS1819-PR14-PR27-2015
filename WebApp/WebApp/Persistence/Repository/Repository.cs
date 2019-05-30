@@ -30,12 +30,12 @@ namespace WebApp.Persistence.Repository
             return context.Set<TEntity>().Where(predicate);
         }
 
-        public TEntity Get(TPKey id)
+        public virtual TEntity Get(TPKey id)
         {
             return context.Set<TEntity>().Find(id);
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public virtual IEnumerable<TEntity> GetAll()
         {
             return context.Set<TEntity>().ToList();
         }

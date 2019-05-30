@@ -11,7 +11,7 @@ namespace WebApp.Models
         //CONTROLLER
         [Key]
         public bool IsUrban { get; set; }
-        List<TimetableEntry> TimetableEntries { get; set; }
+        public List<TimetableEntry> TimetableEntries { get; set; }
 
         public Timetable()
         {

@@ -14,6 +14,13 @@ using WebApp.Persistence.UnitOfWork;
 
 namespace WebApp.Controllers
 {
+
+    /*sve osim getAll, get single za korisnike je autorizovano na admina vidi JGSP sajt
+     post - obsolite
+     delte - obsolite
+     sve se seeduje na startu
+     put - dodavanje entrija kroz odabir linije, i forma slicna putu entrija
+     */
     public class TimetablesController : ApiController
     {
         IUnitOfWork Db { get; set; }

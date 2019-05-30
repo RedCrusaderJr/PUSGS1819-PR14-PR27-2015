@@ -14,6 +14,14 @@ using WebApp.Persistence.UnitOfWork;
 
 namespace WebApp.Controllers
 {
+    /*
+     * validacija karte
+     * specifican put autorizovan za rolu kontrolera, proglasava kartu nevalidnom
+     * autorizovanje posta na rolu passenger-a, slati ID passengera, VM za post
+     * delete autorizovan na passengera
+     * 
+     
+         */
     public class TicketsController : ApiController
     {
 
@@ -128,5 +136,7 @@ namespace WebApp.Controllers
         {
             return UnitOfWork.TicketRepository.Get(id) != null;
         }
+
+
     }
 }

@@ -14,6 +14,12 @@ using WebApp.Persistence.UnitOfWork;
 
 namespace WebApp.Controllers
 {
+    /*get all ni je potreban
+     * single get sa svim kartama, vec radi preko repo...
+     * nema delete passengera
+     * prilagoditi put
+     * 
+         */
     public class PassengersController : ApiController
     { 
         public IUnitOfWork Db { get; set; }

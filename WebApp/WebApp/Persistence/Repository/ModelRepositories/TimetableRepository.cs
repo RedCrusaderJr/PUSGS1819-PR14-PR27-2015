@@ -12,5 +12,15 @@ namespace WebApp.Persistence.Repository.ModelRepositories
         public TimetableRepository(DbContext context) : base(context)
         {
         }
+
+        public override IEnumerable<Timetable> GetAll()
+        {
+            return context.Set<Timetable>().Include(c => c.TimetableEntries);
+        }
+
+        public override Timetable Get(bool id)
+        {
+            return context.Set<Timetable>().Include(c => c.TimetableEntries).SingleOrDefault(c => c.IsUrban.Equals(id));
+        }
     }
 }

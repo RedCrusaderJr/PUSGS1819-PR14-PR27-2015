@@ -18,4 +18,12 @@ namespace WebApp.Models
         SATURDAY = 1,
         SUNDAY   = 2,
     }
+
+    //public enum TicketType
+    //{
+    //    HOUR    = ,
+    //    DAY     = ,
+    //    MONTH   = ,
+    //    YEAR    = ,
+    //}
 }

@@ -12,5 +12,17 @@ namespace WebApp.Persistence.Repository.ModelRepositories
         public CataloguePriceRepository(DbContext context) : base(context)
         {
         }
+
+        public override IEnumerable<CataloguePrice> GetAll()
+        {
+            return context.Set<CataloguePrice>().Include(c => c.Catalogue)
+                                                .Include(c => c.TicketType);
+        }
+
+        public override CataloguePrice Get(string id)
+        {
+            return context.Set<CataloguePrice>().Include(c => c.Catalogue)
+                                                .Include(c => c.TicketType).SingleOrDefault(c => c.CatalogueId.Equals(id));
+        }
     }
 }

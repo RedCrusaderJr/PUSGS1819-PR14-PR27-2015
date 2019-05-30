@@ -12,5 +12,15 @@ namespace WebApp.Persistence.Repository.ModelRepositories
         public LineRepository(DbContext context) : base(context)
         {
         }
+
+        public override IEnumerable<Line> GetAll()
+        {
+            return context.Set<Line>().Include(l => l.Stations);
+        }
+
+        public override Line Get(string id)
+        {
+            return context.Set<Line>().Include(c => c.Stations).SingleOrDefault(c => c.OrderNumber.Equals(id));
+        }
     }
 }
