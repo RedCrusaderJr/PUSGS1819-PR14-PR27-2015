@@ -253,39 +253,22 @@
     <Compile Include="Controllers\CataloguePricesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LinesController.cs" />
+    <Compile Include="Controllers\PassengersController.cs" />
+    <Compile Include="Controllers\StationsController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
+    <Compile Include="Controllers\TimetablesController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905222056072_InitialMigration.cs" />
-    <Compile Include="Migrations\201905222056072_InitialMigration.Designer.cs">
-      <DependentUpon>201905222056072_InitialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905292030258_finishedMigration.cs" />
-    <Compile Include="Migrations\201905292030258_finishedMigration.Designer.cs">
-      <DependentUpon>201905292030258_finishedMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905292136412_LineChanges.cs" />
-    <Compile Include="Migrations\201905292136412_LineChanges.Designer.cs">
-      <DependentUpon>201905292136412_LineChanges.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905292141314_Delete Line Temp.cs" />
-    <Compile Include="Migrations\201905292141314_Delete Line Temp.Designer.cs">
-      <DependentUpon>201905292141314_Delete Line Temp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905300952227_AddDiscountInPassanger.cs" />
-    <Compile Include="Migrations\201905300952227_AddDiscountInPassanger.Designer.cs">
-      <DependentUpon>201905300952227_AddDiscountInPassanger.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Autobus.cs" />
+    <Compile Include="Models\Catalogue.cs" />
     <Compile Include="Models\CataloguePrice.cs" />
     <Compile Include="Models\Discount.cs" />
-    <Compile Include="Models\Catalogue.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Line.cs" />
     <Compile Include="Models\Location.cs" />
@@ -293,8 +276,8 @@
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TicketType.cs" />
-    <Compile Include="Models\Timetable.cs" />
-    <Compile Include="Models\TimetableEntry.cs" />
+    <Compile Include="Models\TimeTable.cs" />
+    <Compile Include="Models\TimeTableEntry.cs" />
     <Compile Include="Persistence\ApplicationDbContext.cs" />
     <Compile Include="Persistence\Repository\IRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\AutobusRepository.cs" />
@@ -420,23 +403,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905222056072_InitialMigration.resx">
-      <DependentUpon>201905222056072_InitialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905292030258_finishedMigration.resx">
-      <DependentUpon>201905292030258_finishedMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905292136412_LineChanges.resx">
-      <DependentUpon>201905292136412_LineChanges.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905292141314_Delete Line Temp.resx">
-      <DependentUpon>201905292141314_Delete Line Temp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905300952227_AddDiscountInPassanger.resx">
-      <DependentUpon>201905300952227_AddDiscountInPassanger.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

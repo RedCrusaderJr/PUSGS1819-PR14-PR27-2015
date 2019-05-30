@@ -59,7 +59,7 @@ namespace WebApp.Controllers
             //ticketDb.Price = ticket.Price;
             //ticketDb.PriceId = ticket.PriceId;
 
-            if (UnitOfWork.TicketRepository.Get(id) != null)
+            if (TicketExists(id))
             {
                 UnitOfWork.TicketRepository.Update(ticket);
             }

@@ -10,7 +10,7 @@ namespace WebApp.Persistence.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-		IAutobusRepository AutobusRepository { get; }
+        IAutobusRepository AutobusRepository { get; }
         ICataloguePriceRepository CataloguePriceRepository { get; }
         ICatalogueRepository CatalogueRepository { get; }
         IDiscountRepository DiscountRepository { get; }

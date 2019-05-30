@@ -147,6 +147,11 @@ E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csproj.Copy
 E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.dll
 E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.pdb
 E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csprojAssemblyReference.cache
+D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\WebGrease.dll
+E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.finishedMigration.resources
+E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.LineChanges.resources
+E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.DeleteLineTemp.resources
+E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.AddDiscountInPassanger.resources
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\WebApp.dll.config
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\WebApp.dll
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\WebApp.pdb
@@ -241,7 +246,6 @@ D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Thinktectu
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Unity.Abstractions.dll
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Unity.Container.dll
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\WebActivatorEx.dll
-D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\WebGrease.dll
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Microsoft.AspNet.SignalR.Core.pdb
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Microsoft.AspNet.SignalR.Core.xml
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Microsoft.AspNet.SignalR.SystemWeb.pdb
@@ -289,14 +293,7 @@ D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Microsoft.
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\System.Web.Http.Owin.xml
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.InitialMigration.resources
-D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.finishedmodel.resources
-D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csproj.GenerateResource.cache
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csproj.CoreCompileInputs.cache
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.csproj.CopyComplete
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.dll
 D:\FAX\BLOK_8\Projekat1819\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.pdb
-E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.finishedMigration.resources
-E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.LineChanges.resources
-E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.DeleteLineTemp.resources
-E:\Fax\Blok8\PUSGS1819-PR14-PR27-2015\WebApp\WebApp\obj\Debug\WebApp.Migrations.AddDiscountInPassanger.resources
