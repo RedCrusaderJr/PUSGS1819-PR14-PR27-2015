@@ -7,7 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Persistence.Repository.ModelRepositories
 {
-    public interface IPassengerRepository : IRepository<Passenger, PassengerType>
+    public interface IPassengerRepository : IRepository<Passenger, string>
     {
     }
 }

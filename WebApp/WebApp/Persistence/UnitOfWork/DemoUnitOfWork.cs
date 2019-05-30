@@ -19,7 +19,7 @@ namespace WebApp.Persistence.UnitOfWork
             _context = context;
         }
 
-		[Dependency]
+        [Dependency]
         public IAutobusRepository AutobusRepository { get; set; }
 
         [Dependency]
