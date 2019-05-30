@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -10,8 +11,9 @@ namespace WebApp.Models
     {
         //CONTROLLER
         [Key]
-        public int OrderNumber { get; set; }
-
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string OrderNumber { get; set; }
+        
         public List<Station> Stations { get; set; }
     }
 }

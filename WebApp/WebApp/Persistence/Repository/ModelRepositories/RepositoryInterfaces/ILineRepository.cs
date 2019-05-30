@@ -7,7 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Persistence.Repository.ModelRepositories
 {
-    public interface ILineRepository : IRepository<Line, int>
+    public interface ILineRepository : IRepository<Line, string>
     {
     }
 }

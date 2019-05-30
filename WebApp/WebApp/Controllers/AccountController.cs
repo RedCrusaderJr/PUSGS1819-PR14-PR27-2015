@@ -30,12 +30,7 @@ namespace WebApp.Controllers
 
         public AccountController(IUnitOfWork unitOfWork)
         {
-            this.UnitOfWork = unitOfWork;
-            if (UnitOfWork.LocationRepository.Find(l => l.LocationId == "12.22|13.22") != null)
-            {
-                UnitOfWork.LocationRepository.Add(new Location("12.22", "13.22"));
-                UnitOfWork.Complete();
-            }
+            
         }
 
         public AccountController(ApplicationUserManager userManager,

@@ -70,12 +70,67 @@ namespace WebApp.Migrations
                 userManager.AddToRole(user.Id, "AppUser");
             }
 
-            DemoUnitOfWork unitOfWork = new DemoUnitOfWork(context);    
-            if (!context.Locations.Any(l => l.LocationId == "12.11|13.11"))
-            { 
-                context.Locations.Add(new Location("12.11", "13.11"));
+            if (!context.Discounts.Any(d => d.DiscountTypeName == "Student"))
+            {
+                var discount = new Discount() { DiscountTypeName = "Student", DiscountCoeficient = 0.8 };
+                context.Discounts.Add(discount);
                 context.SaveChanges();
-                
+            }
+
+            if (!context.Discounts.Any(d => d.DiscountTypeName == "Senior"))
+            {
+                var discount = new Discount() { DiscountTypeName = "Senior", DiscountCoeficient = 0.9 };
+                context.Discounts.Add(discount);
+                context.SaveChanges();
+            }
+
+            if (!context.Discounts.Any(d => d.DiscountTypeName == "Regular"))
+            {
+                var discount = new Discount() { DiscountTypeName = "Regular", DiscountCoeficient = 1 };
+                context.Discounts.Add(discount);
+                context.SaveChanges();
+            }
+
+            if (!context.TicketTypes.Any(tt => tt.TicketTypeName == "Hour"))
+            {
+                var ticketType = new TicketType() { TicketTypeName = "Hour" };
+                context.TicketTypes.Add(ticketType);
+                context.SaveChanges();
+            }
+
+            if (!context.TicketTypes.Any(tt => tt.TicketTypeName == "Day"))
+            {
+                var ticketType = new TicketType() { TicketTypeName = "Day" };
+                context.TicketTypes.Add(ticketType);
+                context.SaveChanges();
+            }
+
+            if (!context.TicketTypes.Any(tt => tt.TicketTypeName == "Week"))
+            {
+                var ticketType = new TicketType() { TicketTypeName = "Week" };
+                context.TicketTypes.Add(ticketType);
+                context.SaveChanges();
+            }
+
+            if (!context.TicketTypes.Any(tt => tt.TicketTypeName == "Year"))
+            {
+                var ticketType = new TicketType() { TicketTypeName = "Year" };
+                context.TicketTypes.Add(ticketType);
+                context.SaveChanges();
+            }
+
+            if (!context.Timetables.Any(tt => tt.IsUrban == true))
+            {
+                var timetable = new Timetable() { IsUrban = true };
+                context.Timetables.Add(timetable);
+                context.SaveChanges();
+            }
+
+            if (!context.Timetables.Any(tt => tt.IsUrban == false))
+            {
+                var timetable = new Timetable() { IsUrban = false };
+                context.Timetables.Add(timetable);
+                context.SaveChanges();
             }
         }
     }

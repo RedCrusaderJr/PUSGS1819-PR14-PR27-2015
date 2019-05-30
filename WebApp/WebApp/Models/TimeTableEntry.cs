@@ -12,7 +12,7 @@ namespace WebApp.Models
         //CONTROLLER
         #region Fields
         private DayType _day = DayType.WORK_DAY;
-        private int _lineId;
+        private string _lineId;
         #endregion
 
         [Key]
@@ -28,12 +28,12 @@ namespace WebApp.Models
             set
             {
                 _day = value;
-                TimetableEntryId = $"{Day}|{LineId.ToString()}";
+                TimetableEntryId = $"{Day}|{LineId}";
             }
         }
 
         [ForeignKey("Line")]
-        public int LineId
+        public string LineId
         {
             get
             {

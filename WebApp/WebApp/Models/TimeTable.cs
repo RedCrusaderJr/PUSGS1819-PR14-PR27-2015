@@ -8,7 +8,7 @@ namespace WebApp.Models
 {
     public class Timetable
     {
-        //SEED, CONTROLLER
+        //CONTROLLER
         [Key]
         public bool IsUrban { get; set; }
         List<TimetableEntry> TimetableEntries { get; set; }

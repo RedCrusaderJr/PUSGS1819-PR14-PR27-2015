@@ -8,7 +8,7 @@ namespace WebApp.Models
 {
     public class TicketType
     {
-        //SEED
+        
         [Key]
         //HOUR, DAY, MONTH, YEAR
         public string TicketTypeName { get; set; }
