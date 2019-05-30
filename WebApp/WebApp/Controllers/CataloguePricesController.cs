@@ -14,6 +14,13 @@ using WebApp.Persistence.UnitOfWork;
 
 namespace WebApp.Controllers
 {
+
+    /*TODO: novi get: dozvole brisanja i modify
+    provere pri brisanju i modify
+    autorizacije admin: getAll(pravi), brise i modify i posebni get
+    passenger: getuje trenutne
+    */
+
     public class CataloguePricesController : ApiController
     {
         //TODO: Slozen objekat (za put, post)
@@ -23,10 +30,14 @@ namespace WebApp.Controllers
             UnitOfWork = unitOfWork;
         }
 
-        // GET: api/CataloguePrices
-        public IQueryable<CataloguePrice> GetCataloguePrices()
+        // GET: api/CataloguePrices/GetPassengerCataloguePrices
+        public IEnumerable<CataloguePrice> GetPassengerCataloguePrices()
         {
-            return UnitOfWork.CataloguePriceRepository.GetAll().AsQueryable();
+            //TODO: sadrzaj filtrirati sa DateTime.Now
+            DateTime now = DateTime.Now;
+
+            return UnitOfWork.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) > 0 && 
+                                                                           DateTime.Compare(now, c.Catalogue.End) < 0);
         }
 
         // GET: api/CataloguePrices/5

@@ -262,6 +262,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905301552227_ticket validation.cs" />
+    <Compile Include="Migrations\201905301552227_ticket validation.Designer.cs">
+      <DependentUpon>201905301552227_ticket validation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905301638130_line IsUrban.cs" />
+    <Compile Include="Migrations\201905301638130_line IsUrban.Designer.cs">
+      <DependentUpon>201905301638130_line IsUrban.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -404,6 +412,14 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201905301552227_ticket validation.resx">
+      <DependentUpon>201905301552227_ticket validation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905301638130_line IsUrban.resx">
+      <DependentUpon>201905301638130_line IsUrban.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

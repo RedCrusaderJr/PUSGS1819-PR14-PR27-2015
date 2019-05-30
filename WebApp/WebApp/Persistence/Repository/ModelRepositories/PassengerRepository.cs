@@ -12,5 +12,17 @@ namespace WebApp.Persistence.Repository.ModelRepositories
         public PassengerRepository(DbContext context) : base(context)
         {
         }
+
+        public override IEnumerable<Passenger> GetAll()
+        {
+            return context.Set<Passenger>().Include(c => c.Tickets)
+                                                .Include(c => c.Discount);
+        }
+
+        public override Passenger Get(string id)
+        {
+            return context.Set<Passenger>().Include(c => c.Tickets)
+                                                .Include(c => c.Discount).SingleOrDefault(c => c.Id.Equals(id));
+        }
     }
 }

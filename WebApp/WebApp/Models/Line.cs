@@ -14,6 +14,9 @@ namespace WebApp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string OrderNumber { get; set; }
         
+
+        public bool IsUrban { get; set; } 
+
         public List<Station> Stations { get; set; }
     }
 }

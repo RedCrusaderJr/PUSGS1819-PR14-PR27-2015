@@ -13,7 +13,10 @@ namespace WebApp.Models
 
         [ForeignKey("Price")]
         public string PriceId { get; set; }
-        public CataloguePrice Price {get; set;}
+        public CataloguePrice Price { get; set; }
+
+        public bool IsValid { get; set; } = true;
+
 
 
         public Ticket() { }
