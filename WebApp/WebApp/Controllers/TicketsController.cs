@@ -15,33 +15,32 @@ using WebApp.Persistence.UnitOfWork;
 namespace WebApp.Controllers
 {
     /*
-     * validacija karte
-     * specifican put autorizovan za rolu kontrolera, proglasava kartu nevalidnom
-     * autorizovanje posta na rolu passenger-a, slati ID passengera, VM za post
-     * delete autorizovan na passengera
-     * 
-     
-         */
+     * validacija karte DONE
+     * specifican put autorizovan za rolu kontrolera, proglasava kartu nevalidnom DONE
+     * autorizovanje posta na rolu passenger-a, slati ID passengera, VM za post DONE no VM required, id ide preko url-a
+     * delete autorizovan na passengera DONE
+     */
+
     public class TicketsController : ApiController
     {
 
-        public IUnitOfWork UnitOfWork { get; set; }
+        public IUnitOfWork Db { get; set; }
 
-        public TicketsController(IUnitOfWork unitOfWork)
+        public TicketsController(IUnitOfWork db)
         {
-            UnitOfWork = unitOfWork;
+            Db = db;
         }
         // GET: api/Tickets
         public IQueryable<Ticket> GetTickets()
         {
-            return UnitOfWork.TicketRepository.GetAll().AsQueryable();
+            return Db.TicketRepository.GetAll().AsQueryable();
         }
-        
+
         // GET: api/Tickets/5
         [ResponseType(typeof(Ticket))]
         public IHttpActionResult GetTicket(int id)
         {
-            Ticket ticket = UnitOfWork.TicketRepository.Get(id);
+            Ticket ticket = Db.TicketRepository.Get(id);
             if (ticket == null)
             {
                 return NotFound();
@@ -50,9 +49,52 @@ namespace WebApp.Controllers
             return Ok(ticket);
         }
 
+        //[Authorize(Roles ="Controller")]
+        [Route("api/Ticket/GetIsTicketValid")]
+        [ResponseType(typeof(bool))]
+        public IHttpActionResult GetIsTicketValid(int id)
+        {
+            bool isValid = false;
+
+            Ticket ticket = Db.TicketRepository.Get(id);
+            if(ticket == null)
+            {
+                return Ok(isValid);
+            }
+
+            DateTime now = DateTime.Now;
+            
+            switch(ticket.Price.TicketType.TicketTypeName)
+            {
+                case ("Hour") :
+                    DateTime hourCheck = new DateTime(ticket.DateOfIssue.Year, ticket.DateOfIssue.Month, ticket.DateOfIssue.Day, ticket.DateOfIssue.Hour + 1, 0, 0);
+                    isValid = DateTime.Compare(now, hourCheck) < 0;
+                    break;
+
+                case ("Day") :
+                    DateTime dayCheck = new DateTime(ticket.DateOfIssue.Year, ticket.DateOfIssue.Month, ticket.DateOfIssue.Day + 1);
+                    isValid = DateTime.Compare(now, dayCheck) < 0;
+                    break;
+
+                case ("Month") :
+                    DateTime monthCheck = new DateTime(ticket.DateOfIssue.Year, ticket.DateOfIssue.Month + 1, 1);
+                    isValid = DateTime.Compare(now, monthCheck) < 0;
+                    break;
+
+                case ("Year") :
+                    DateTime yearCheck = new DateTime(ticket.DateOfIssue.Year + 1, 1, 1);
+                    isValid = DateTime.Compare(now, yearCheck) < 0;
+                    break;
+            }
+
+            return Ok(isValid);
+        }
+
         // PUT: api/Tickets/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutTicket(int id, Ticket ticket)
+        //[Authorize(Roles ="Controller")]
+        [Route("api/Ticket/PutChangeValidityOfTicket")]
+        [ResponseType(typeof(bool))]
+        public IHttpActionResult PutChangeValidityOfTicket(int id, Ticket ticket)
         {
             if (!ModelState.IsValid)
             {
@@ -61,23 +103,22 @@ namespace WebApp.Controllers
 
             if (id != ticket.TicketId)
             {
+                
                 return BadRequest();
             }
-            //Ticket ticketDb = UnitOfWork.TicketRepository.Get(ticket.TicketId);
-            //ticketDb.Price = ticket.Price;
-            //ticketDb.PriceId = ticket.PriceId;
 
             if (TicketExists(id))
             {
-                UnitOfWork.TicketRepository.Update(ticket);
+                ticket.IsValid = !ticket.IsValid;
+                Db.TicketRepository.Update(ticket);
             }
             
 
             try
             {
-                UnitOfWork.Complete();
+                Db.Complete();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!TicketExists(id))
                 {
@@ -85,40 +126,72 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    throw;
+                    return InternalServerError(dbEx);
                 }
             }
+            catch(Exception e)
+            {
+                return InternalServerError(e);
+            }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(ticket.IsValid);
         }
 
         // POST: api/Tickets
+        //[Authorize(Roles = "AppUser")]
         [ResponseType(typeof(Ticket))]
-        public IHttpActionResult PostTicket(Ticket ticket)
+        public IHttpActionResult PostTicket(string passengerId, Ticket ticket)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            UnitOfWork.TicketRepository.Add(ticket);
-            UnitOfWork.Complete();
+            Passenger foundPassenger;
+            if (!TicketExists(ticket.TicketId) && (foundPassenger = Db.PassengerRepository.Get(passengerId)) != null)
+            {
+                foundPassenger.Tickets.Add(ticket);
+                //potencijalan konflikt u EF
+                //Db.TicketRepository.Add(ticket);
+            }
+            else
+            {
+                return Conflict();
+            }
 
+            try
+            {
+                Db.Complete();
+            }
+            catch(Exception e)
+            {
+                return InternalServerError(e);
+            }
+            
             return CreatedAtRoute("DefaultApi", new { id = ticket.TicketId }, ticket);
         }
 
         // DELETE: api/Tickets/5
+        //[Authorize(Roles = "AppUser")]
         [ResponseType(typeof(Ticket))]
         public IHttpActionResult DeleteTicket(int id)
         {
-            Ticket ticket = UnitOfWork.TicketRepository.Get(id);
+            Ticket ticket = Db.TicketRepository.Get(id);
             if (ticket == null)
             {
                 return NotFound();
             }
 
-            UnitOfWork.TicketRepository.Remove(ticket);
-            UnitOfWork.Complete();
+            Db.TicketRepository.Remove(ticket);
+
+            try
+            {
+                Db.Complete();
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
 
             return Ok(ticket);
         }
@@ -127,14 +200,14 @@ namespace WebApp.Controllers
         {
             if (disposing)
             {
-                UnitOfWork.Dispose();
+                Db.Dispose();
             }
             base.Dispose(disposing);
         }
 
         private bool TicketExists(int id)
         {
-            return UnitOfWork.TicketRepository.Get(id) != null;
+            return Db.TicketRepository.Get(id) != null;
         }
 
 

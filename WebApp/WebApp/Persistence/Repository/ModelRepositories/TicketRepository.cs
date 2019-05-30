@@ -15,11 +15,13 @@ namespace WebApp.Persistence.Repository.ModelRepositories
 
         public override IEnumerable<Ticket> GetAll()
         {
+            //TODO: mozda je potreban dublji include
             return context.Set<Ticket>().Include(c => c.Price);
         }
 
         public override Ticket Get(int id)
         {
+            //TODO: mozda je potreban dublji include
             return context.Set<Ticket>().Include(c => c.Price).SingleOrDefault(c => c.TicketId.Equals(id));
         }
     }
