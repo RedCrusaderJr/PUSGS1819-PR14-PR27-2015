@@ -102,6 +102,10 @@ namespace WebApp.Controllers
             {
                 Db.StationRepository.Add(station);
             }
+            else
+            {
+                return Conflict();
+            }
 
             try
             {
@@ -133,7 +137,7 @@ namespace WebApp.Controllers
             }
             catch (Exception e)
             {
-                throw e;
+                return InternalServerError(e);
             }
 
             return Ok(station);
