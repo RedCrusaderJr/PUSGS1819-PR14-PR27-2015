@@ -17,7 +17,6 @@ namespace WebApp.Controllers
     /*nema get all, nema get
      * put preko forme
      * post ide preko time table-a
-     * put preko forme
      * 
      */
     public class TimetableEntriesController : ApiController
@@ -48,6 +47,7 @@ namespace WebApp.Controllers
         }
 
         // PUT: api/TimetableEntries/5
+        //[Authorize(Roles = "Admin")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTimetableEntry(string id, TimetableEntry timetableEntry)
         {
@@ -94,6 +94,7 @@ namespace WebApp.Controllers
         }
 
         // POST: api/TimetableEntries
+        //[Authorize (Roles = "Admin")]
         [ResponseType(typeof(TimetableEntry))]
         public IHttpActionResult PostTimetableEntry(TimetableEntry timetableEntry)
         {
