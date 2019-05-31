@@ -21,7 +21,11 @@ export class AuthHttpService {
                 localStorage.jwt = data.access_token;
             },
             error => console.log(error)
-        );
-            
+        );      
+    }
+
+    register() {
+        let data;
+    
     }
 }

@@ -12,6 +12,7 @@ import { AuthHttpService } from './services/http/auth.service';
 import { TokenInerceptor } from './interceptors/token-interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { LoginComponent } from './login/login.component';
     HeaderComponent,
     OptionBarComponent,
     FunctionsBarComponent,
-    LoginComponent
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

@@ -11,7 +11,7 @@ export class HeaderComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.imgPath = "assets/img/WebAppHeader.png";
+    this.imgPath = "assets/img/wideHeader.png";
   }
 
 }
