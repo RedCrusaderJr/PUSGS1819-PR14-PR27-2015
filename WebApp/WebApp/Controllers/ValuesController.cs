@@ -16,6 +16,7 @@ namespace WebApp.Controllers
         {
         }
 
+        [Authorize(Roles = "Admin, AppUser")]
         // GET api/values
         public IEnumerable<string> Get()
         {
