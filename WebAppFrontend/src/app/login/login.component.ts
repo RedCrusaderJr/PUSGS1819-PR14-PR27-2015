@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../Models/User';
+import { AuthHttpService } from '../services/http/auth.service';
+import { HttpBackend } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -9,10 +11,15 @@ import { User } from '../Models/User';
 export class LoginComponent implements OnInit {
 
   baseUrl : string 
-  constructor() { }
+  constructor(private http: AuthHttpService) { }
 
   ngOnInit() {
     this.baseUrl = "http://localhost:4200/"
+  }
+
+  login(user:User)
+  {
+      this.http.logIn(user.username, user.password);
   }
   
 }
