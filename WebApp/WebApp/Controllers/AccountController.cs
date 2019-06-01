@@ -333,14 +333,24 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new Passenger() { UserName = model.Username, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+
+            
 
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
             }
+
+
+            result = await UserManager.AddToRoleAsync(user.Id, "AppUser");
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
 
             return Ok();
         }
