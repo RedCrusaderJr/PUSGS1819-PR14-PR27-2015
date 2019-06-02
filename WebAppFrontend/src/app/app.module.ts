@@ -13,6 +13,13 @@ import { TokenInerceptor } from './interceptors/token-interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { ProfileComponent } from './profile/profile.component';
+import { TimetableComponent } from './timetable/timetable.component';
+import { BusLinesComponent } from './bus-lines/bus-lines.component';
+import { TicketsComponent } from './tickets/tickets.component';
+import { BusLocationComponent } from './bus-location/bus-location.component';
+import { TicketValidatorComponent } from './ticket-validator/ticket-validator.component';
+import { MapBuilderComponent } from './map-builder/map-builder.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +29,14 @@ import { RegisterComponent } from './register/register.component';
     OptionBarComponent,
     FunctionsBarComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ProfileComponent,
+    TimetableComponent,
+    BusLinesComponent,
+    TicketsComponent,
+    BusLocationComponent,
+    TicketValidatorComponent,
+    MapBuilderComponent
   ],
   imports: [
     BrowserModule,
