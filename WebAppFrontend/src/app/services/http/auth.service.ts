@@ -12,7 +12,7 @@ export class AuthHttpService {
         let data = `username=${username}&password=${password}&grant_type=password`;
         let httpOptions = {
             headers: {
-                "Content-type":"application/x-ww-form-urlencoded"
+                "Content-type":"application/x-www-form-urlencoded"
             }
         }
 
