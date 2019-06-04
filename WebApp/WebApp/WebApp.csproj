@@ -276,6 +276,14 @@
     <Compile Include="Migrations\201905301747266_date of issue.Designer.cs">
       <DependentUpon>201905301747266_date of issue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906030748098_passangerChange.cs" />
+    <Compile Include="Migrations\201906030748098_passangerChange.Designer.cs">
+      <DependentUpon>201906030748098_passangerChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906031447005_passengerChange2.cs" />
+    <Compile Include="Migrations\201906031447005_passengerChange2.Designer.cs">
+      <DependentUpon>201906031447005_passengerChange2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -442,6 +450,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905301747266_date of issue.resx">
       <DependentUpon>201905301747266_date of issue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906030748098_passangerChange.resx">
+      <DependentUpon>201906030748098_passangerChange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906031447005_passengerChange2.resx">
+      <DependentUpon>201906031447005_passengerChange2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

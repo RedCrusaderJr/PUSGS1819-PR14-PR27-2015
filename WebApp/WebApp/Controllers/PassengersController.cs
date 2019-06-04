@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using WebApp.Models;
@@ -20,9 +24,24 @@ namespace WebApp.Controllers
      * prilagoditi put
      * 
          */
+    [RoutePrefix("api/Passengers")]
     public class PassengersController : ApiController
     { 
         public IUnitOfWork Db { get; set; }
+
+
+        private ApplicationUserManager _userManager;
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
         public PassengersController(IUnitOfWork db)
         {
@@ -37,38 +56,138 @@ namespace WebApp.Controllers
 
         // GET: api/Passengers/5
         [ResponseType(typeof(Passenger))]
-        public IHttpActionResult GetPassenger(string id)
+        public async Task<IHttpActionResult> GetPassenger(string id)
         {
             Passenger passenger = Db.PassengerRepository.Get(id);
             if (passenger == null)
             {
-                return NotFound();
+                ApplicationUser appUser = await UserManager.FindByIdAsync(id);
+                if (appUser == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(appUser);
+                }
             }
 
+            passenger.DateOfBirthString = passenger.DateOfBirth.ToString("yyyy-MM-dd");
             return Ok(passenger);
+        }
+
+        [HttpGet]
+        [Route("DownloadPicture/{id}")]
+        public IHttpActionResult DownloadPicture(string id)
+        {
+
+            Passenger passenger = Db.PassengerRepository.Get(id);
+
+            if (passenger == null)
+            {
+                return BadRequest("User doesn't exists.");
+            }
+
+            if (passenger.ImageUrl == null)
+            {
+                return BadRequest("Picture doesn't exists.");
+            }
+
+
+            var filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + passenger.ImageUrl);
+
+            FileInfo fileInfo = new FileInfo(filePath);
+            string type = fileInfo.Extension.Split('.')[1];
+            byte[] data = new byte[fileInfo.Length];
+
+            HttpResponseMessage response = new HttpResponseMessage();
+            using (FileStream fs = fileInfo.OpenRead())
+            {
+                fs.Read(data, 0, data.Length);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Content = new ByteArrayContent(data);
+                response.Content.Headers.ContentLength = data.Length;
+
+            }
+
+
+
+
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/png");
+
+            return Ok(data);
+
+
         }
 
         // PUT: api/Passengers/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutPassenger(string id, Passenger passenger)
+        public async Task<IHttpActionResult> PutPassenger(string id, Passenger passenger)
         {
+
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != passenger.Id)
+            if (id != passenger.UserName)
             {
                 return BadRequest();
             }
 
-            if (PassengerExists(id))
+            Passenger passengerDb = Db.PassengerRepository.Get(id);
+            if (passengerDb != null)
             {
-                Db.PassengerRepository.Update(passenger);
+                passengerDb.Name = passenger.Name;
+                passengerDb.Surname = passenger.Surname;
+                
+                passengerDb.DateOfBirthString = passenger.DateOfBirth.ToString("yyyy-MM-dd");
+                passengerDb.DateOfBirth = passenger.DateOfBirth;
+
+                if (passengerDb.Type != passenger.Type)
+                {
+                    passengerDb.EmailConfirmed = false;
+                    string filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + passenger.ImageUrl);
+                    if (File.Exists(filePath))
+                    { 
+                        File.Delete(filePath);
+                    }
+                    passengerDb.ImageUrl = null;
+                    passengerDb.Type = passenger.Type;
+                }
+
+                if (passenger.Email != passengerDb.Email)
+                {
+                    ApplicationUser passengerWithSameEmail = await UserManager.FindByEmailAsync(passenger.Email);
+                    if (passengerWithSameEmail != null)
+                    {
+                        ModelState.AddModelError("", "User with same email already exists");
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        passengerDb.Email = passenger.Email;
+                    }
+                }
+                
+
+                Db.PassengerRepository.Update(passengerDb);
             }
             else
             {
-                return NotFound();
+                ApplicationUser applicationUser = await UserManager.FindByIdAsync(id);
+                if (applicationUser != null)
+                {
+                    applicationUser.Email = passenger.Email;
+                    await UserManager.UpdateAsync(applicationUser);
+                    return StatusCode(HttpStatusCode.NoContent);
+                }
+                else
+                {
+                    return NotFound();
+                }
+                
             }
 
             try
