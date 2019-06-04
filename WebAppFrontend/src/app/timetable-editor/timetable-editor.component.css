@@ -30,13 +30,8 @@
 
   /* Change the link color on hover */
 .timetable li a:hover {
-    background-color:  rgba(228, 22, 22, 0.8) ;
+    background-color: #555;
     color: white;
-}
-
-.timetable li a.selected {
-  background-color:  rgba(228, 22, 22, 0.8) ;
-  color: white;
 }
 
 .timetable th:hover {

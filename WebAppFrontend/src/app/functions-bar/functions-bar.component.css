@@ -1,16 +1,25 @@
-li {
-    display:inline-block;
+.selected {
+  background-color: #000080 !important;
+  color: white;
 }
 
-li a {
-    display: block;
-    color: #000;
-    padding: 8px 16px;
-    text-decoration: none;
-  }
+.function {
+  padding: 0;
+}
+
+.function li {
+  display:inline-block;
+}
+
+.function li a {
+  display: block;
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+}
   
   /* Change the link color on hover */
-  li a:hover {
-    background-color: #000080;
-    color: white;
-  }
+.function  li a:hover {
+  background-color: #000080;
+  color: white;
+}

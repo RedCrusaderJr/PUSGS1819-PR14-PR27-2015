@@ -18,7 +18,7 @@ export class BaseHttpService<T>{
         return this.http.get<T[]>(this.baseUrl + this.specificUrl);
     }
 
-    getById(id:number):Observable<T> {
+    getById(id:any):Observable<T> {
         return this.http.get<T>(this.baseUrl + this.specificUrl + `/${id}`);
     }
 
@@ -26,5 +26,8 @@ export class BaseHttpService<T>{
         return this.http.post(this.baseUrl + this.specificUrl, data, options);
     }
     
+    put(data:any, options?:any) : Observable<any> {
+        return this.http.put(this.baseUrl + this.specificUrl, data, options);
+    }
 
 }
