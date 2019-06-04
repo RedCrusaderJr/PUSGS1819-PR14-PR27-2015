@@ -1,8 +1,39 @@
-<ul>
-  <li><a routerLink="timetable">Timetable</a></li>
-  <li><a routerLink="bus-lines">Bus lies</a></li>
-  <li><a routerLink="tickets">Tickets</a></li>
-  <li><a routerLink="bus-location">Bus location</a></li>
-  <li *ngIf="jwtService.getRole()==='Controller'"><a routerLink="ticket-validator">Ticket validator</a></li>
-  <li *ngIf="jwtService.getRole()==='Admin'"><a routerLink="map-builder">Map Builder</a></li>
-</ul>
+<div class=function>
+  <ul>
+    <li (click)="selectFunction(0)">
+      <a routerLink="timetable" [class.selected]="functionSelection==0">
+        Timetable
+      </a>
+    </li>
+    <li *ngIf="jwtService.getRole()==='Admin'" (click)="selectFunction(1)">
+      <a routerLink="timetable-editor" [class.selected]="functionSelection==1">
+        Timetable Editor
+      </a>
+    </li>
+    <li (click)="selectFunction(2)">
+      <a routerLink="bus-lines" [class.selected]="functionSelection==2">
+        Bus lies
+      </a>
+    </li>
+    <li *ngIf="jwtService.getRole()==='Admin'" (click)="selectFunction(3)">
+      <a routerLink="map-builder" [class.selected]="functionSelection==3">
+        Map Builder
+      </a>
+    </li>
+    <li (click)="selectFunction(4)">
+      <a routerLink="tickets" [class.selected]="functionSelection==4">
+        Tickets
+      </a>
+    </li>
+    <li *ngIf="jwtService.getRole()==='Controller'" (click)="selectFunction(5)">
+      <a routerLink="ticket-validator" [class.selected]="functionSelection==5">
+        Ticket validator
+      </a>
+    </li>
+    <li (click)="selectFunction(6)">
+      <a routerLink="bus-location" [class.selected]="functionSelection==6">
+        Bus location
+      </a>
+    </li>
+  </ul>
+</div>

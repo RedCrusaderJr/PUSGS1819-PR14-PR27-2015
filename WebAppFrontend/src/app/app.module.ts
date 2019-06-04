@@ -20,6 +20,7 @@ import { TicketsComponent } from './tickets/tickets.component';
 import { BusLocationComponent } from './bus-location/bus-location.component';
 import { TicketValidatorComponent } from './ticket-validator/ticket-validator.component';
 import { MapBuilderComponent } from './map-builder/map-builder.component';
+import { TimetableEditorComponent } from './timetable-editor/timetable-editor.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MapBuilderComponent } from './map-builder/map-builder.component';
     TicketsComponent,
     BusLocationComponent,
     TicketValidatorComponent,
-    MapBuilderComponent
+    MapBuilderComponent,
+    TimetableEditorComponent
   ],
   imports: [
     BrowserModule,

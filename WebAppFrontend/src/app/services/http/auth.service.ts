@@ -8,7 +8,7 @@ export class AuthHttpService {
 
     }
 
-    logIn(username: string, password: string)  {
+    logIn(username: string, password: string) {
         let data = `username=${username}&password=${password}&grant_type=password`;
         let httpOptions = {
             headers: {
@@ -25,14 +25,9 @@ export class AuthHttpService {
                 let decodedJwtData = JSON.parse(decodedJwtJsonData);
                 
                 let role = decodedJwtData.role;
-
-                localStorage.setItem('role', role);
+                
             },
-            error => {
-                console.log(error);
-            }
+            error => console.log(error)
         );      
     }
-
-    
 }

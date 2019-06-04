@@ -26,9 +26,8 @@ export class BaseHttpService<T>{
         return this.http.post(this.baseUrl + this.specificUrl, data, options);
     }
 
-    put(data:any, options?:any): Observable<any> {
+    put(data:any, options?:any) : Observable<any> {
         return this.http.put(this.baseUrl + this.specificUrl, data, options);
     }
-    
 
 }

@@ -1,0 +1,82 @@
+<div class=timetable>
+  <ul>
+    <li>
+      <a (click)="onIsUrbanSelection(true)" [class.selected]="isUrbanSelection===true">
+        Urban
+      </a>
+    </li>
+    <li>
+      <a (click)="onIsUrbanSelection(false)" [class.selected]="isUrbanSelection===false">
+        Suburban
+      </a>
+    </li>
+  </ul>
+
+  <ul *ngIf="isUrbanSelection==true">
+    <li *ngFor="let line of urbanLines" (click)="onLineSelection(line)"
+      [class.selected]="line.OrderNumber===lineSelection.OrderNumber">
+      {{line.OrderNumber}}
+    </li>
+  </ul>
+
+  <ul *ngIf="isUrbanSelection==false">
+    <li *ngFor="let line of suburbanLines" (click)="onLineSelection(line)"
+      [class.selected]="line.OrderNumber===lineSelection.OrderNumber">
+      {{line.OrderNumber}}
+    </li>
+  </ul>
+
+  <table>
+    <tr>
+      <th (click)="onDaySelection(0)" [class.selected]="daySelection==0">
+        Weekday
+      </th>
+      <th (click)="onDaySelection(1)" [class.selected]="daySelection==1">
+        Sathurday
+      </th>
+      <th (click)="onDaySelection(2)" [class.selected]="daySelection==2">
+        Sunday
+      </th>
+    </tr>
+    <ng-container *ngIf="daySelection==undefined || daySelection==null">
+      <tr *ngFor="let departure of filteredDepartures; let i = index">
+        <td>
+          <input type="text" [(ngModel)]="filteredDepartures[i].weekday" />
+        </td>
+        <td>
+          <input type="text" [(ngModel)]="filteredDepartures[i].sathurday" />
+        </td>
+        <td>
+          <input type="text" [(ngModel)]="filteredDepartures[i].sunday" />
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="daySelection!=undefined && daySelection!=null && daySelection==0">
+      <tr *ngFor="let departure of filteredDepartures; let i = index">
+        <td>
+          <input type="text" [(ngModel)]="filteredDepartures[i].weekday" />
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="daySelection!=undefined && daySelection!=null && daySelection==1">
+      <tr *ngFor="let departure of filteredDepartures; let i = index">
+        <td>
+          <input type="text" [(ngModel)]="filteredDepartures[i].sathurday" />
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="daySelection!=undefined && daySelection!=null && daySelection==2">
+      <tr *ngFor="let departure of filteredDepartures;  let i = index">
+        <td>
+          <input type="text" [(ngModel)]="filteredDepartures[i].sunday" />
+        </td>
+      </tr>
+    </ng-container>
+  </table>
+  <br />
+  <ul>
+    <li>
+      <a (click)="onSave()">Save</a>
+    </li>
+  </ul>
+</div>
