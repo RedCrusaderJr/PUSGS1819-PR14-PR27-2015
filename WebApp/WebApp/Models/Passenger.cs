@@ -12,8 +12,18 @@ namespace WebApp.Models
         [ForeignKey("Discount")]
         public string Type { get; set; }
 
+        
         public Discount Discount { get; set; }
 
+        public string Name { get; set; }
+
+        public string Surname { get; set; }
+
+        public string ImageUrl { get; set; }
+
+        public DateTime DateOfBirth { get; set; }
+
+        public string DateOfBirthString { get; set; }
 
         public List<Ticket> Tickets { get; set; }
     }

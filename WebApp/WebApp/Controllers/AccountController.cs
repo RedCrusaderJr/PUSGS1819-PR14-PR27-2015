@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -30,7 +31,7 @@ namespace WebApp.Controllers
 
         public AccountController(IUnitOfWork unitOfWork)
         {
-            
+            UnitOfWork = unitOfWork;
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -60,7 +61,7 @@ namespace WebApp.Controllers
         public UserInfoViewModel GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-            
+
 
             return new UserInfoViewModel
             {
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
         [Route("Logout")]
         public IHttpActionResult Logout()
         {
-            
+
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return Ok();
         }
@@ -130,7 +131,7 @@ namespace WebApp.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -260,12 +261,13 @@ namespace WebApp.Controllers
 
             bool hasRegistered = user != null;
 
+
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -323,17 +325,81 @@ namespace WebApp.Controllers
             return logins;
         }
 
+        
+
+
+        [HttpPost]
+        [Route("UplaodPicture/{id}")]
+        [AllowAnonymous]
+        public IHttpActionResult UploadImage(string id)
+        {
+            var httpRequest = HttpContext.Current.Request;
+            
+            try
+            {
+                if (httpRequest.Files.Count > 0)
+                {
+                    foreach (string file in httpRequest.Files)
+                    {
+
+                        Passenger passenger = UnitOfWork.PassengerRepository.Get(id);
+
+                        if (passenger == null)
+                        {
+                            return BadRequest("User does not exists.");
+                        }
+
+                        if (passenger.ImageUrl != null)
+                        {
+                            File.Delete(HttpContext.Current.Server.MapPath("~/UploadFile/" + passenger.ImageUrl));
+                        }
+                        
+                        
+
+                        var postedFile = httpRequest.Files[file];
+                        string fileName = id + "_" + postedFile.FileName;
+                        var filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + fileName);
+
+
+                        
+
+                        passenger.ImageUrl = fileName;
+                        passenger.Type = "Regular";
+                        UnitOfWork.PassengerRepository.Update(passenger);
+                        UnitOfWork.Complete();
+                        
+
+                        postedFile.SaveAs(filePath);
+                    }
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+            
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
         {
+            //var imageData = HttpContext.Current.Request.Params["username"];
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            var user = new Passenger() { UserName = model.Username, Email = model.Email };
+            
+            
+            
+            var user = new Passenger() { Id = model.Username, UserName = model.Username, Email = model.Email, DateOfBirth = model.DateOfBirth, Name = model.Name, Surname = model.Surname, Type = model.Type };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 

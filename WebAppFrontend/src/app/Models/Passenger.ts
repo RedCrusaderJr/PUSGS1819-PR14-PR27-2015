@@ -1,10 +1,9 @@
-export class RegistrationModel {
+export class Passenger {
     username : string;
     password : string;
-    confirmPassword : string;
     email : string;
     name : string;
     surname : string;
-    dateOfBirth : Date;
+    dateOfBirth : string;
     type : string;
 }

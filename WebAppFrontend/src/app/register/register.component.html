@@ -2,61 +2,106 @@
 
   <div class="register-group">
 
-      <label for="username">Username:</label>
-      <input id="username" formControlName="username" required/>
-      <br/>
+    <label for="username">Username:</label>
+    <input id="username" formControlName="username" required />
+    <br />
 
-      <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
-        <div *ngIf="f.username.errors.required">
-          Username is required.
-        </div>
-        <div *ngIf="f.username.errors.minlength">
-          Username must be at least 6 characters long.
-        </div>
+    <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
+      <div *ngIf="f.username.errors.required">
+        Username is required.
       </div>
-
-      <br/>
-      <label for="password">Password</label>
-      <input type="password" formControlName="password" required/>
-      <br/>
-
-      <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
-        <div *ngIf="f.password.errors.required">
-          Password is required.
-        </div>
-        <div *ngIf="f.password.errors.minlength">
-          Password must be at least 6 characters long. 
-        </div>
-        <div *ngIf="f.password.errors.pattern">
-            Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
-        </div>
+      <div *ngIf="f.username.errors.minlength">
+        Username must be at least 6 characters long.
       </div>
+    </div>
 
+    <br />
+    <label for="password">Password</label>
+    <input type="password" formControlName="password" required />
+    <br />
 
-      <br/>
-      <label for="confirmPassword">Confirm Password:</label>
-      <input type="password" formControlName="confirmPassword" required />
-      <br/>
-      <div *ngIf="registerForm.errors?.doesntMatch && (f.confirmPassword.dirty || f.confirmPassword.touched)" class="alert alert-danger">
-        Doesnt match with password.
+    <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
+      <div *ngIf="f.password.errors.required">
+        Password is required.
       </div>
-
-      <br/>
-      <label for="Email">Email:</label>
-      <input formControlName="email" required/>
-      <br/>
-
-      <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="alert alert-danger">
-        <div *ngIf="f.email.errors.required">
-          Email is required.
-        </div>
-        <div *ngIf="f.email.errors.email">
-          Please enter valid email address.
-        </div>
+      <div *ngIf="f.password.errors.minlength">
+        Password must be at least 6 characters long.
       </div>
+      <div *ngIf="f.password.errors.pattern">
+        Passwords must have at least one non letter or digit character. Passwords must have at least one digit
+        ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
+      </div>
+    </div>
 
-      
+
+    <br />
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" formControlName="confirmPassword" required />
+    <br />
+    <div *ngIf="registerForm.errors?.doesntMatch && (f.confirmPassword.dirty || f.confirmPassword.touched)"
+      class="alert alert-danger">
+      Doesnt match with password.
+    </div>
+
+    <br />
+    <label for="email">Email:</label>
+    <input formControlName="email" required />
+    <br />
+
+    <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="alert alert-danger">
+      <div *ngIf="f.email.errors.required">
+        Email is required.
+      </div>
+      <div *ngIf="f.email.errors.email">
+        Please enter valid email address.
+      </div>
+    </div>
+
+    <br />
+    <label for="name">Name:</label>
+    <input id="name" formControlName="name" required />
+    <br />
+
+    <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="alert alert-danger">
+      <div *ngIf="f.name.errors.required">
+        Name is required.
+      </div>
+    </div>
+
+    <br />
+    <label for="surname">Surname:</label>
+    <input id="surname" formControlName="surname" required />
+    <br />
+
+    <div *ngIf="f.surname.invalid && (f.surname.dirty || f.surname.touched)" class="alert alert-danger">
+      <div *ngIf="f.surname.errors.required">
+        Surname is required.
+      </div>
+    </div>
+
+    <br />
+    <label for="dateOfBirth">Date of birth:</label>
+    <input type="date" id="dateOfBirth" formControlName="dateOfBirth" />
+    <br />
+
   </div>
+
+  <br/>
+  <label for="Type">Type:</label>
+  <input type="radio" name="type" value="Regular" formControlName="type" checked="checked"/> <span>Regular</span>
+  <input type="radio" name="type" value="Senior" formControlName="type"/> <span>Senior</span>
+  <input type="radio" name="type" value="Student" formControlName="type"/> <span>Student</span>
+  <br/>
+
+  <div *ngIf="registerForm.get('type').value != 'Regular'">
+    <br />
+    <label for="Picture">Picture</label>
+    <input type="file" formControlName="picture" (change)="onFileSelected($event)"/>
+    <br />
+  </div>
+  
+
+  
   <button tpye="submit" [disabled]="registerForm.invalid"> Submit </button>
 </form>
 
@@ -65,5 +110,3 @@
     {{error}}
   </li>
 </ul>
-
-
