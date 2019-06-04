@@ -96,20 +96,20 @@ export class TimetableEditorComponent extends TimetableComponent implements OnIn
         if(this.validateDepartureFormat(departure.weekday)) {
           stringOfDepartures += departure.weekday + ',';
         } else {
-          stringOfDepartures += '-,';
+          stringOfDepartures += ',';
         }
       } else if(day == 1) {
         if(this.validateDepartureFormat(departure.sathurday))
         {
           stringOfDepartures += departure.sathurday + ',';
         } else {
-          stringOfDepartures += '-,';
+          stringOfDepartures += ',';
         }
       } else if(day == 2) {
         if(this.validateDepartureFormat(departure.sunday)) {
           stringOfDepartures += departure.sunday + ',';
         } else {
-          stringOfDepartures += '-,';
+          stringOfDepartures += ',';
         }
       }
     });
@@ -127,7 +127,7 @@ export class TimetableEditorComponent extends TimetableComponent implements OnIn
     if(this.filteredDepartures.length > 0)
     {
       let lastDeparture = this.filteredDepartures.pop();
-      if(lastDeparture.weekday === '-' && lastDeparture.sathurday === '-' && lastDeparture.sunday === '-') {
+      if(lastDeparture.weekday === '' && lastDeparture.sathurday === '' && lastDeparture.sunday === '') {
         this.finalizeSave(success);
         this.filteredDepartures.push(lastDeparture);
 

@@ -14,14 +14,14 @@ export class FunctionsBarComponent implements OnInit {
   constructor(private jwtService: JwtService) { }
 
   ngOnInit() {
+    this.functionSelection = 0;
   }
 
   selectFunction(selection: number) {
-    if(this.functionSelection != undefined && this.functionSelection == selection) {
-      this.functionSelection = undefined;
-
-    } else {
+    // if(this.functionSelection != undefined && this.functionSelection == selection) {
+    //   this.functionSelection = undefined;
+    // } else {
       this.functionSelection = selection;
-    }
+    // }
   }
 }

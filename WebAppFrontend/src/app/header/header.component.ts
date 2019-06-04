@@ -7,11 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  imgPath : string;
+  imgPath1 : string;
+  imgPath2 : string;
+  imgPath3 : string;
   constructor() { }
 
   ngOnInit() {
-    this.imgPath = "assets/img/wideHeader.png";
+    this.imgPath1 = "assets/img/wideHeader.png";
+    this.imgPath2 = "assets/img/meme1.jpg";
+    this.imgPath3 = "assets/img/meme2.jpg";
   }
 
 }
