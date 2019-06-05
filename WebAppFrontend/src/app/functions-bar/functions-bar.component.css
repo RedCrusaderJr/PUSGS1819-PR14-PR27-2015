@@ -1,25 +1,16 @@
-.selected {
-  background-color: #000080 !important;
-  color: white;
-}
-
-.function {
-  padding: 0;
-}
-
-.function li {
-  display:inline-block;
-}
-
-.function li a {
-  display: block;
-  color: #000;
-  padding: 8px 16px;
-  text-decoration: none;
-}
-  
-  /* Change the link color on hover */
-.function  li a:hover {
+.nav-pills .nav-link {
+  margin-top: 50px;
+  margin-bottom: 50px;
   background-color: #000080;
+}
+
+.nav-pills .nav-link:not(.active) {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  background-color: #ffffff;
+}
+
+.nav-pills .nav-link:not(.active):hover {
+  background-color: #0000b3cb !important;
   color: white;
 }

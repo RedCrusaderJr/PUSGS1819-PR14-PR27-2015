@@ -119,9 +119,9 @@ export class TimetableComponent implements OnInit {
 
   getDefaultRow() : DepartureTableRow {
     let newRow = {
-      weekday   : '-',
-      sathurday : '-',
-      sunday    : '-',     
+      weekday   : '',
+      sathurday : '',
+      sunday    : '',     
     }
     return newRow;
   }
@@ -188,9 +188,9 @@ export class TimetableComponent implements OnInit {
     
     for (let i = 0; i < maxLength; i++) {
       let departureRow : DepartureTableRow;
-      departureRow.weekday    = '-';
-      departureRow.sathurday  = '-';
-      departureRow.sunday     = '-';
+      departureRow.weekday    = '';
+      departureRow.sathurday  = '';
+      departureRow.sunday     = '';
       
       if(wdDepartures[i] != null && wdDepartures[i] != undefined)
       {
