@@ -1,0 +1,38 @@
+.img-fluid {
+  margin-top: 50px !important;
+  margin-left: -200px !important;
+  max-width: 300px !important;
+  max-height: 400px !important;
+  height: auto;
+}
+
+body {
+  padding-top: 30px;
+}
+
+.glyphicon {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+small {
+  display: block;
+  line-height: 1.428571429;
+  color: #999;
+}
+
+.card .card-inverse {
+  margin-top: 50px !important;
+  margin-left: 20px !important;
+}
+
+.text-color {
+  color: white !important;
+  margin-left: 20px !important;
+  font-style: oblique !important;
+}
+
+.text-margine {
+  margin-left: 60px !important;
+  font-size: 20px !important;
+}

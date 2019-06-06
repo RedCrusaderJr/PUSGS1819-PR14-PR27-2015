@@ -1,157 +1,163 @@
 <form [formGroup]="optionsForm">
-
-
-  <input type="radio" name="option" value="1" formControlName="option" (change)="change()" />
-  <span>Profile</span>
-  <input type="radio" name="option" value="2" formControlName="option" (change)="change()" />
-  <span>Update Profile</span>
-
-  <input type="radio" name="option" value="3" formControlName="option" (change)="change()" />
-  <span>Change Password</span>
-  <div *ngIf="jwtService.getRole() == 'AppUser'">
-    <input type="radio" name="option" value="4" formControlName="option" (change)="change()" />
-    <span>Update Picture</span>
+  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-secondary" [class.active]="buttonSelection==2">
+      <input type="radio" name="option" id="option2" value="2"
+        formControlName="option" (change)="change(2)"
+        autocomplete="off" class="form-check-input"> Update Profile
+    </label>
+    <label class="btn btn-secondary" [class.active]="buttonSelection==3">
+      <input type="radio" name="option" id="option3" value="3"
+        formControlName="option" (change)="change(3)"
+        autocomplete="off" class="form-check-input"> Change Password
+    </label>
+    <ng-container *ngIf="jwtService.getRole() == 'AppUser'">
+      <label class="btn btn-secondary" [class.active]="buttonSelection==4">
+        <input type="radio" name="option" id="option4" value="4"
+          formControlName="option" (change)="change(4)"
+          autocomplete="off" class="form-check-input" /> Update Picture
+      </label>
+    </ng-container>
   </div>
-
 </form>
 
-<ng-container id="profile" *ngIf='optionsForm.get("option").value === "1"'>
-  <label>Username:</label> <label>{{profile.username}}</label> <br />
-  <label>Email: {{profile.email}}</label> <br />
-
-  <div *ngIf="jwtService.getRole() == 'AppUser'">
-    <label>Name: {{profile.name}}</label> <br />
-    <label>Surname: {{profile.surname}}</label> <br />
-    <label>Date of birth: {{profile.dateOfBirth}}</label><br />
-    <label>Type: {{profile.type}}</label><br/>
-    <label>Picture: </label><img [src]="mySrc" />
-    
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card card-inverse" style="background-color: #333; border-color: #333; margin-top: 50px; max-height: 1500px; max-width: 40%;">
+        <div class="card-block">
+          <div class="row">
+            <div class="col-md-8 col-sm-8">
+              <h2 class="card-title text-color">Username: {{profile.username}}</h2>
+              <ng-container *ngIf="jwtService.getRole()=='AppUser'">
+                <p class="card-text text-color text-margine"><strong>Name: </strong>{{profile.name}} {{profile.surname}}</p>
+                <p class="card-text text-color text-margine"><strong>User type: </strong>{{profile.type}}</p>
+              </ng-container>
+            </div>
+            <div *ngIf="jwtService.getRole()=='AppUser'" class="col-md-4 col-sm-4 text-center">
+              <!-- max-height: 500px; max-width: 500px; border-radius:50%;-->
+              <img *ngIf="mySrc!=undefined && mySrc!=null; else noImage" [src]="mySrc" style="max-width: 200px; max-height: 200px;" class="btn-md img-fluid img-thumbnail">
+              <ng-template #noImage>
+                <img src="{{noImg}}" class="btn-md img-fluid img-thumbnail" />
+              </ng-template>
+            </div>
+            <div class="col-md-8 col-sm-8">
+              <p class="card-text text-color text-margine"><strong>e-mail: </strong>{{profile.email}}</p>
+              <ng-container *ngIf="jwtService.getRole()=='AppUser'">
+                <p class="card-text text-color text-margine"><strong>Date of Birth: </strong>{{profile.dateOfBirth}}</p>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+
+<ng-container *ngIf="buttonSelection==2">
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" (click)="onClickProfile()">
+    <div class="register-group">
+      <br />
+      <label for="email">Email:</label>
+      <input formControlName="email" required />
+      <br />
+      <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="alert alert-danger">
+        <div *ngIf="f.email.errors.required">
+          Email is required.
+        </div>
+        <div *ngIf="f.email.errors.email">
+          Please enter valid email address.
+        </div>
+      </div>
+      <div *ngIf='jwtService.getRole() =="AppUser" '>
+        <br />
+        <label for="name">Name:</label>
+        <input id="name" formControlName="name" required />
+        <br />
+
+        <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="alert alert-danger">
+          <div *ngIf="f.name.errors.required">
+            Name is required.
+          </div>
+        </div>
+
+        <br />
+        <label for="surname">Surname:</label>
+        <input id="surname" formControlName="surname" required />
+        <br />
+        <div *ngIf="f.surname.invalid && (f.surname.dirty || f.surname.touched)" class="alert alert-danger">
+          <div *ngIf="f.surname.errors.required">
+            Surname is required.
+          </div>
+        </div>
+
+        <input type="radio" name="type" value="Regular" formControlName="type" checked="checked" />
+        <span>Regular</span>
+        <input type="radio" name="type" value="Senior" formControlName="type" />
+        <span>Senior</span>
+        <input type="radio" name="type" value="Student" formControlName="type" />
+        <span>Student</span>
+
+        <br />
+        <label for="dateOfBirth">Date of birth:</label>
+        <input type="date" id="dateOfBirth" formControlName="dateOfBirth" />
+        <br />
+      </div>
+    </div>
+    <button tpye="submit" [disabled]="profileForm.invalid"> Submit </button>
+  </form>
 </ng-container>
 
-<form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf='optionsForm.get("option").value === "2"'
-  (click)="onClickProfile()">
-  <div class="register-group">
-
-
+<ng-container *ngIf="buttonSelection==3">
+  <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmitChangePassword()">
     <br />
-    <label for="email">Email:</label>
-    <input formControlName="email" required />
+    <label for="password">New password:</label>
+    <input type="password" formControlName="password" required />
     <br />
-
-    <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="alert alert-danger">
-      <div *ngIf="f.email.errors.required">
-        Email is required.
+    <div *ngIf="ch.password.invalid && (ch.password.dirty || ch.password.touched)" class="alert alert-danger">
+      <div *ngIf="ch.password.errors.required">
+        Password is required.
       </div>
-      <div *ngIf="f.email.errors.email">
-        Please enter valid email address.
+      <div *ngIf="ch.password.errors.minlength">
+        Password must be at least 6 characters long.
+      </div>
+      <div *ngIf="ch.password.errors.pattern">
+        Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
       </div>
     </div>
-
-
-
-    <div *ngIf='jwtService.getRole() == "AppUser"'>
-
-
-
-      <br />
-      <label for="name">Name:</label>
-      <input id="name" formControlName="name" required />
-      <br />
-
-      <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="alert alert-danger">
-        <div *ngIf="f.name.errors.required">
-          Name is required.
-        </div>
+    <br />
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" formControlName="confirmPassword" required />
+    <br />
+    <div *ngIf="changePasswordForm.errors?.doesntMatch && (ch.confirmPassword.dirty || ch.confirmPassword.touched)" class="alert alert-danger">
+      Doesnt match with password.
+    </div>
+    <br />
+    <label for="oldPassword">Old Password:</label>
+    <input type="password" formControlName="oldPassword" required />
+    <br />
+    <div *ngIf="ch.oldPassword.invalid && (ch.oldPassword.dirty || ch.oldPassword.touched)" class="alert alert-danger">
+      <div *ngIf="ch.oldPassword.errors.required">
+        Password is required.
       </div>
-
-      <br />
-      <label for="surname">Surname:</label>
-      <input id="surname" formControlName="surname" required />
-      <br />
-
-      <div *ngIf="f.surname.invalid && (f.surname.dirty || f.surname.touched)" class="alert alert-danger">
-        <div *ngIf="f.surname.errors.required">
-          Surname is required.
-        </div>
+      <div *ngIf="ch.oldPassword.errors.minlength">
+        Password must be at least 6 characters long.
       </div>
-
-      <input type="radio" name="type" value="Regular" formControlName="type" checked="checked" /> <span>Regular</span>
-      <input type="radio" name="type" value="Senior" formControlName="type" /> <span>Senior</span>
-      <input type="radio" name="type" value="Student" formControlName="type" /> <span>Student</span>
-
-      <br />
-      <label for="dateOfBirth">Date of birth:</label>
-      <input type="date" id="dateOfBirth" formControlName="dateOfBirth" />
-      <br />
+      <div *ngIf="ch.oldPassword.errors.pattern">
+        Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
+      </div>
     </div>
+    <button tpye="submit" [disabled]="changePasswordForm.invalid"> Submit
+      </button>
+  </form>
+</ng-container>
 
-
-  </div>
-
-
-  <button tpye="submit" [disabled]="profileForm.invalid"> Submit </button>
-</form>
-
-
-
-<form [formGroup]="changePasswordForm" *ngIf='optionsForm.get("option").value === "3"'
-  (ngSubmit)="onSubmitChangePassword()">
-  <br />
-  <label for="password">New password:</label>
-  <input type="password" formControlName="password" required />
-  <br />
-
-  <div *ngIf="ch.password.invalid && (ch.password.dirty || ch.password.touched)" class="alert alert-danger">
-    <div *ngIf="ch.password.errors.required">
-      Password is required.
-    </div>
-    <div *ngIf="ch.password.errors.minlength">
-      Password must be at least 6 characters long.
-    </div>
-    <div *ngIf="ch.password.errors.pattern">
-      Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9').
-      Passwords must have at least one uppercase ('A'-'Z').
-    </div>
-  </div>
-
-
-  <br />
-  <label for="confirmPassword">Confirm Password:</label>
-  <input type="password" formControlName="confirmPassword" required />
-  <br />
-  <div *ngIf="changePasswordForm.errors?.doesntMatch && (ch.confirmPassword.dirty || ch.confirmPassword.touched)"
-    class="alert alert-danger">
-    Doesnt match with password.
-  </div>
-
-
-  <br />
-  <label for="oldPassword">Old Password:</label>
-  <input type="password" formControlName="oldPassword" required />
-  <br />
-  <div *ngIf="ch.oldPassword.invalid && (ch.oldPassword.dirty || ch.oldPassword.touched)" class="alert alert-danger">
-    <div *ngIf="ch.oldPassword.errors.required">
-      Password is required.
-    </div>
-    <div *ngIf="ch.oldPassword.errors.minlength">
-      Password must be at least 6 characters long.
-    </div>
-    <div *ngIf="ch.oldPassword.errors.pattern">
-      Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9').
-      Passwords must have at least one uppercase ('A'-'Z').
-    </div>
-  </div>
-  <button tpye="submit" [disabled]="changePasswordForm.invalid"> Submit </button>
-</form>
-
-<div *ngIf='optionsForm.get("option").value === "4"'>
+<ng-container *ngIf="buttonSelection==4">
   <br />
   <label for="Picture">Picture</label>
   <input type="file" (change)="onFileSelected($event)" />
   <button type="submit" [disabled]="selectedFile == null" (click)="onSubmitPicture()">Submit</button>
   <br />
-</div>
+</ng-container>
 
 <ul class="serverErrors">
   <li *ngFor="let error of serverErrors">

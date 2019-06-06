@@ -17,7 +17,10 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class ProfileComponent implements OnInit {
   profile: Passenger = new Passenger();
   serverErrors: string[];
-  mySrc: SafeUrl;
+  // mySrc: SafeUrl;
+  mySrc: String;
+  noImg: String
+  buttonSelection: number;
 
   selectedFile: File = null;
   profileForm: FormGroup;
@@ -38,6 +41,74 @@ export class ProfileComponent implements OnInit {
   constructor(private sanitazer: DomSanitizer, private passengerService: PassengerService, private router: Router, private jwtService: JwtService, private fb: FormBuilder, private accountService: AccountService) {
 
   }
+
+  ngOnInit() {
+    this.buttonSelection = undefined;
+    this.noImg = "assets/img/NoImageToPreview.png";
+    if (this.jwtService.getRole() == "AppUser") {
+      this.profileForm = this.fb.group({
+        username: [this.profile.username,
+        [Validators.required,
+        Validators.minLength(6)]],
+
+        email: [this.profile.email,
+        [Validators.email]],
+        name: [this.profile.name,
+        Validators.required],
+        surname: [this.profile.surname,
+        Validators.required],
+        dateOfBirth: [this.profile.dateOfBirth, Validators.required],
+        type: [this.profile.type, Validators.required]
+      });
+    }
+    else {
+      this.profileForm = this.fb.group({
+        username: [this.profile.username,
+        [Validators.required,
+        Validators.minLength(6)]],
+        email: [this.profile.email,
+        [Validators.email]]
+      });
+    }
+
+    this.passengerService.getPassenger(this.jwtService.getNameId()).subscribe(
+      data => {
+        this.profile.username = data.UserName;
+        this.profileForm.patchValue({ username: data.UserName });
+        console.log(this.profileForm.get('username'));
+        this.profile.email = data.Email;
+        this.profileForm.patchValue({ email: data.Email });
+        if (this.jwtService.getRole() == "AppUser") {
+
+
+          this.profile.name = data.Name;
+          this.profile.surname = data.Surname;
+          this.profile.dateOfBirth = data.DateOfBirthString;
+          this.profile.type = data.Type;
+
+          this.profileForm.patchValue({ name: data.Name });
+          this.profileForm.patchValue({ surname: data.Surname });
+          this.profileForm.patchValue({ dateOfBirth: data.DateOfBirthString });
+          this.profileForm.patchValue({ type: data.Type });
+
+          this.passengerService.downloadImage(this.jwtService.getNameId()).subscribe(
+            data => {
+              this.mySrc = 'data:image/jpeg;base64,' + data;
+            },
+            err => {
+              console.log(err);
+            }
+          )
+        }
+
+
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+
   get f() { return this.profileForm.controls; }
   get ch() { return this.changePasswordForm.controls; }
   optionsForm = this.fb.group({
@@ -48,13 +119,17 @@ export class ProfileComponent implements OnInit {
     this.selectedFile = <File>event.target.files[0];
   }
 
-  change() {
+  change(selection: number) {
     this.serverErrors = [];
+    if (this.buttonSelection != undefined && this.buttonSelection == selection) {
+      this.buttonSelection = undefined;
+    } else {
+      this.buttonSelection = selection;
+    }
   }
 
   //#region Submits
   onSubmit() {
-
     let passengerToUpdate: Passenger = new Passenger();
 
     passengerToUpdate.username = this.jwtService.getNameId();
@@ -166,75 +241,9 @@ export class ProfileComponent implements OnInit {
       this.passengerService.downloadImage(this.jwtService.getNameId()).subscribe(data => {
         this.mySrc = 'data:image/jpeg;base64,' + data;
       },
-      error => console.log(error));
+        error => console.log(error));
     },
-    error => console.log(error));
+      error => console.log(error));
   }
   //#endregion
-
-  ngOnInit() {
-    if (this.jwtService.getRole() == "AppUser") {
-      this.profileForm = this.fb.group({
-        username: [this.profile.username,
-        [Validators.required,
-        Validators.minLength(6)]],
-
-        email: [this.profile.email,
-        [Validators.email]],
-        name: [this.profile.name,
-        Validators.required],
-        surname: [this.profile.surname,
-        Validators.required],
-        dateOfBirth: [this.profile.dateOfBirth, Validators.required],
-        type: [this.profile.type, Validators.required]
-      });
-    }
-    else {
-      this.profileForm = this.fb.group({
-        username: [this.profile.username,
-        [Validators.required,
-        Validators.minLength(6)]],
-        email: [this.profile.email,
-        [Validators.email]]
-      });
-    }
-
-    this.passengerService.getPassenger(this.jwtService.getNameId()).subscribe(
-      data => {
-        this.profile.username = data.UserName;
-        this.profileForm.patchValue({ username: data.UserName });
-        console.log(this.profileForm.get('username'));
-        this.profile.email = data.Email;
-        this.profileForm.patchValue({ email: data.Email });
-        if (this.jwtService.getRole() == "AppUser") {
-
-
-          this.profile.name = data.Name;
-          this.profile.surname = data.Surname;
-          this.profile.dateOfBirth = data.DateOfBirthString;
-          this.profile.type = data.Type;
-
-          this.profileForm.patchValue({ name: data.Name });
-          this.profileForm.patchValue({ surname: data.Surname });
-          this.profileForm.patchValue({ dateOfBirth: data.DateOfBirthString });
-          this.profileForm.patchValue({ type: data.Type });
-
-          this.passengerService.downloadImage(this.jwtService.getNameId()).subscribe(
-            data => {
-              this.mySrc = 'data:image/jpeg;base64,' + data;
-            },
-            err => {
-              console.log(err);
-            }
-          )
-        }
-
-
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  }
-
 }
