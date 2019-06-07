@@ -284,6 +284,10 @@
     <Compile Include="Migrations\201906031447005_passengerChange2.Designer.cs">
       <DependentUpon>201906031447005_passengerChange2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906062217409_CataloguePriceKey.cs" />
+    <Compile Include="Migrations\201906062217409_CataloguePriceKey.Designer.cs">
+      <DependentUpon>201906062217409_CataloguePriceKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -291,6 +295,7 @@
     <Compile Include="Models\Autobus.cs" />
     <Compile Include="Models\Catalogue.cs" />
     <Compile Include="Models\CataloguePrice.cs" />
+    <Compile Include="Models\CataloguePriceBindingModel.cs" />
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Line.cs" />
@@ -298,6 +303,7 @@
     <Compile Include="Models\Passenger.cs" />
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\Ticket.cs" />
+    <Compile Include="Models\TicketBindingModels.cs" />
     <Compile Include="Models\TicketType.cs" />
     <Compile Include="Models\TimeTable.cs" />
     <Compile Include="Models\TimeTableEntry.cs" />
@@ -458,6 +464,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906031447005_passengerChange2.resx">
       <DependentUpon>201906031447005_passengerChange2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906062217409_CataloguePriceKey.resx">
+      <DependentUpon>201906062217409_CataloguePriceKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -15,11 +15,7 @@ using WebApp.Persistence.UnitOfWork;
 namespace WebApp.Controllers
 {
 
-    /*TODO: novi get: dozvole brisanja i modify DONE
-    provere pri brisanju i modify DONE
-    autorizacije admin: getAll(pravi), brise i modify i posebni get DONE
-    passenger: getuje trenutne DONE
-    */
+
 
     public class CataloguePricesController : ApiController
     {
@@ -34,20 +30,20 @@ namespace WebApp.Controllers
         [Route("api/CataloguePrices/GetPassengerCataloguePrices")]
         public IEnumerable<CataloguePrice> GetPassengerCataloguePrices()
         {
-            //TODO: sadrzaj filtrirati sa DateTime.Now
             DateTime now = DateTime.Now;
 
-            return Db.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) > 0 && 
+            return Db.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) > 0 &&
                                                                            DateTime.Compare(now, c.Catalogue.End) < 0);
         }
 
 
-        //[Authorize(Roles ="Admin")]
-        [Route("api/CataloguePrice/GetAdminCataloguePrices")]
+        [Authorize(Roles = "Admin")]
+        [Route("api/CataloguePrices/GetAdminCataloguePrices")]
+        [HttpGet]
         public IEnumerable<CataloguePrice> GetAdminCataloguePrices()
         {
             DateTime now = DateTime.Now;
-            return Db.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) < 0);
+            return Db.CataloguePriceRepository.GetAll().Where(c => DateTime.Compare(now, c.Catalogue.Begin) < 0).OrderBy(a => a.Catalogue.Begin).ToList();
         }
 
         // GET: api/CataloguePrices/5
@@ -63,103 +59,246 @@ namespace WebApp.Controllers
             return Ok(cataloguePrice);
         }
 
-        // PUT: api/CataloguePrices/5
-        //[Authorize(Roles ="Admin")]
+
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutCataloguePrice(string id, CataloguePrice cataloguePrice)
+        [HttpPut]
+        [Route("api/CataloguePrices/PutCataloguePrice")]
+        public IHttpActionResult PutCataloguePrice(CataloguePriceBindingModel cataloguePrice)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (id != cataloguePrice.CataloguePriceId)
-            {
-                return BadRequest();
             }
 
             DateTime now = DateTime.Now;
-            if (CataloguePriceExists(id) && DateTime.Compare(now, cataloguePrice.Catalogue.Begin) < 0)
+            CataloguePrice hourPrice = Db.CataloguePriceRepository.Get(cataloguePrice.HourId);
+            CataloguePrice dayPrice = Db.CataloguePriceRepository.Get(cataloguePrice.DayId);
+            CataloguePrice monthPrice = Db.CataloguePriceRepository.Get(cataloguePrice.MonthId);
+            CataloguePrice yearPrice = Db.CataloguePriceRepository.Get(cataloguePrice.YearId);
+            if (hourPrice != null && dayPrice != null && monthPrice != null && yearPrice != null)
             {
-                Db.CataloguePriceRepository.Update(cataloguePrice);
+                if (hourPrice.Catalogue.Begin != cataloguePrice.Begin || hourPrice.Catalogue.End != cataloguePrice.End)
+                {
+
+                    if (cataloguePrice.Begin.CompareTo(cataloguePrice.End) > 0)
+                    {
+                        return BadRequest("Begin date is after end date.");
+                    }
+                    if (cataloguePrice.Begin.CompareTo(DateTime.Now) < 0)
+                    {
+                        return BadRequest("Begin date is before now.");
+
+                    }
+
+
+
+                    Catalogue catalogueDb = Db.CatalogueRepository.Find(cat => cat.Begin.Equals(hourPrice.Catalogue.Begin) && cat.End.Equals(hourPrice.Catalogue.End)).FirstOrDefault();
+                    if (!IsItValid(cataloguePrice.Begin, cataloguePrice.End, catalogueDb))
+                    {
+                        return Conflict();
+                    }
+
+                    catalogueDb.Begin = cataloguePrice.Begin;
+                    catalogueDb.End = cataloguePrice.End;
+
+                    Db.CatalogueRepository.Update(catalogueDb);
+
+                    Db.Complete();
+
+                    hourPrice = Db.CataloguePriceRepository.Get(cataloguePrice.HourId);
+                    dayPrice = Db.CataloguePriceRepository.Get(cataloguePrice.DayId);
+                    monthPrice = Db.CataloguePriceRepository.Get(cataloguePrice.MonthId);
+                    yearPrice = Db.CataloguePriceRepository.Get(cataloguePrice.YearId);
+
+
+
+                }
+
+                hourPrice.Price = cataloguePrice.HourPrice;
+                dayPrice.Price = cataloguePrice.DayPrice;
+                monthPrice.Price = cataloguePrice.MonthPrice;
+                yearPrice.Price = cataloguePrice.YearPrice;
+
+                Db.CataloguePriceRepository.Update(hourPrice);
+                Db.CataloguePriceRepository.Update(dayPrice);
+                Db.CataloguePriceRepository.Update(monthPrice);
+                Db.CataloguePriceRepository.Update(yearPrice);
+
+
+
+            }
+            else
+            {
+                return BadRequest("Catalogue price doesn't exists.");
             }
 
             try
             {
                 Db.Complete();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!CataloguePriceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return InternalServerError(e);
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(new { hourPrice, dayPrice, monthPrice, yearPrice });
         }
 
         // POST: api/CataloguePrices
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(CataloguePrice))]
-        public IHttpActionResult PostCataloguePrice(CataloguePrice cataloguePrice)
+        [HttpPost]
+        public IHttpActionResult PostCataloguePrice(CataloguePriceBindingModel cataloguePrice)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            
-            Db.CataloguePriceRepository.Add(cataloguePrice);
+
+            if (cataloguePrice.Begin.CompareTo(cataloguePrice.End) > 0)
+            {
+                return BadRequest("Begin date is after end date.");
+            }
+            if (cataloguePrice.Begin.CompareTo(DateTime.Now) < 0)
+            {
+                return BadRequest("Begin date is before now.");
+
+            }
+
+            if (!IsItValid(cataloguePrice.Begin, cataloguePrice.End))
+            {
+                return Conflict();
+            }
+
+
+            Db.CatalogueRepository.Add(new Catalogue() { Begin = cataloguePrice.Begin, End = cataloguePrice.End });
+
+            Db.Complete();
+
+            Catalogue addedCatalogue = Db.CatalogueRepository.Find(cat => cat.Begin == cataloguePrice.Begin && cat.End == cataloguePrice.End).FirstOrDefault();
+
+
+            CataloguePrice hourCataloguePrice = new CataloguePrice() { Price = cataloguePrice.HourPrice, TicketTypeId = "Hour", CatalogueId = addedCatalogue.CatalogueId };
+            CataloguePrice dayCataloguePrice = new CataloguePrice() { Price = cataloguePrice.DayPrice, TicketTypeId = "Day", CatalogueId = addedCatalogue.CatalogueId };
+            CataloguePrice monthCataloguePrice = new CataloguePrice() { Price = cataloguePrice.MonthPrice, TicketTypeId = "Month", CatalogueId = addedCatalogue.CatalogueId };
+            CataloguePrice yearCataloguePrice = new CataloguePrice() { Price = cataloguePrice.YearPrice, TicketTypeId = "Year", CatalogueId = addedCatalogue.CatalogueId };
+            Db.CataloguePriceRepository.Add(hourCataloguePrice);
+            Db.CataloguePriceRepository.Add(dayCataloguePrice);
+            Db.CataloguePriceRepository.Add(monthCataloguePrice);
+            Db.CataloguePriceRepository.Add(yearCataloguePrice);
+
+
 
             try
             {
                 Db.Complete();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
-                if (CataloguePriceExists(cataloguePrice.CataloguePriceId))
+                if (CataloguePriceExists(hourCataloguePrice.CataloguePriceId) || CataloguePriceExists(dayCataloguePrice.CataloguePriceId) || CataloguePriceExists(monthCataloguePrice.CataloguePriceId) || CataloguePriceExists(yearCataloguePrice.CataloguePriceId))
                 {
                     return Conflict();
                 }
                 else
                 {
-                    throw;
+                    return InternalServerError(e);
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = cataloguePrice.CataloguePriceId }, cataloguePrice);
+            cataloguePrice.HourId = hourCataloguePrice.CataloguePriceId;
+            cataloguePrice.DayId = dayCataloguePrice.CataloguePriceId;
+            cataloguePrice.MonthId = monthCataloguePrice.CataloguePriceId;
+            cataloguePrice.YearId = yearCataloguePrice.CataloguePriceId;
+
+            return Ok(new { hourCataloguePrice, dayCataloguePrice, monthCataloguePrice, yearCataloguePrice });
+        }
+
+        private bool IsItValid(DateTime begin, DateTime end, Catalogue excludeCatalogue = null)
+        {
+            List<Catalogue> allCatalogues = Db.CatalogueRepository.GetAll().ToList();
+
+
+            foreach (Catalogue catalogue in allCatalogues)
+            {
+                if ((begin.CompareTo(catalogue.Begin) >= 0 && begin.CompareTo(catalogue.End) <= 0) || (end.CompareTo(catalogue.Begin) >= 0 && end.CompareTo(catalogue.End) <= 0))
+                {
+                    if (excludeCatalogue != null)
+                    {
+                        continue;
+                    }
+                    return false;
+                }
+
+                if (begin.CompareTo(catalogue.Begin) <= 0 && end.CompareTo(catalogue.End) >= 0)
+                {
+                    if (excludeCatalogue != null)
+                    {
+                        continue;
+                    }
+                    return false;
+                }
+
+            }
+
+            return true;
         }
 
         // DELETE: api/CataloguePrices/5
-        //[Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(CataloguePrice))]
+        [HttpDelete]
+        [Route("api/DeleteCataloguePrice/{id}")]
         public IHttpActionResult DeleteCataloguePrice(string id)
         {
-            CataloguePrice cataloguePrice = Db.CataloguePriceRepository.Get(id);
-            if (cataloguePrice == null)
+            CataloguePrice hourCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Hour");
+            CataloguePrice dayCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Day");
+            CataloguePrice monthCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Month");
+            CataloguePrice yearCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Year");
+            if (hourCataloguePrice == null || dayCataloguePrice == null || monthCataloguePrice == null || yearCataloguePrice == null)
             {
                 return NotFound();
             }
             DateTime now = DateTime.Now;
-            if (DateTime.Compare(now, cataloguePrice.Catalogue.Begin) < 0)
+            if (DateTime.Compare(now, hourCataloguePrice.Catalogue.Begin) < 0)
             {
-                Db.CataloguePriceRepository.Remove(cataloguePrice);
-            }
-            try
-            {
-                Db.Complete();
-            }
-            catch (Exception)
-            {
-                return InternalServerError();
-            }
+                Catalogue catalogue = Db.CatalogueRepository.Get(hourCataloguePrice.Catalogue.CatalogueId);
+                if (catalogue == null)
+                {
+                    return NotFound();
+                }
+                Db.CataloguePriceRepository.Delete(hourCataloguePrice);
+                Db.CataloguePriceRepository.Delete(dayCataloguePrice);
+                Db.CataloguePriceRepository.Delete(monthCataloguePrice);
+                Db.CataloguePriceRepository.Delete(yearCataloguePrice);
 
-            return Ok(cataloguePrice);
+
+
+                //Db.Complete();
+                try
+                {
+                    Db.CatalogueRepository.Delete(catalogue);
+                }
+                catch(Exception e)
+                {
+                    return InternalServerError(e);
+                }
+
+
+                
+
+            }
+            //try
+            //{
+            //    Db.Complete();
+            //}
+            //catch (Exception e)
+            //{
+            //    return InternalServerError(e);
+            //}
+
+            return Ok();
         }
 
         protected override void Dispose(bool disposing)

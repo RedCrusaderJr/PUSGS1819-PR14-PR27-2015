@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
+// import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { BaseViewComponent } from './base-view/base-view.component';
@@ -22,6 +23,7 @@ import { BusLocationComponent } from './bus-location/bus-location.component';
 import { TicketValidatorComponent } from './ticket-validator/ticket-validator.component';
 import { MapBuilderComponent } from './map-builder/map-builder.component';
 import { TimetableEditorComponent } from './timetable-editor/timetable-editor.component';
+import { JwtService } from './services/jwt.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,7 @@ import { TimetableEditorComponent } from './timetable-editor/timetable-editor.co
     ReactiveFormsModule,
     AgmCoreModule.forRoot({apiKey: 'AIzaSyDnihJyw_34z5S1KZXp90pfTGAqhFszNJk'})
   ],
-  providers: [AuthHttpService, {provide: HTTP_INTERCEPTORS, useClass: TokenInerceptor, multi:true}],
+  providers: [AuthHttpService, {provide: HTTP_INTERCEPTORS, useClass: TokenInerceptor, multi:true}, JwtService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

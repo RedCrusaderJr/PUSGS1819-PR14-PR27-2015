@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Web.Http;
 using System.Web.Http.Description;
 using WebApp.Models;
@@ -34,6 +35,62 @@ namespace WebApp.Controllers
         public IQueryable<Ticket> GetTickets()
         {
             return Db.TicketRepository.GetAll().AsQueryable();
+        }
+
+        [Route("api/Ticket/PutChangeValidityOfTicket")]
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult PostTicketUnregistred(TicketUnregistratedBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            CataloguePrice cataloguePrice = Db.CataloguePriceRepository.Get(model.CataloguePriceId + "|Hour");
+
+            DateTime now = DateTime.Now;
+            if (DateTime.Compare(cataloguePrice.Catalogue.Begin, now) > 0 || DateTime.Compare(cataloguePrice.Catalogue.End, now) < 0)
+            {
+                return BadRequest("Invalid catalogue price");
+            }
+
+            if (cataloguePrice.TicketType.TicketTypeName != "Hour")
+            {
+                return BadRequest("Unregistred users can buy only a hour tickets.");
+            }
+
+
+
+            Ticket ticket = new Ticket() { DateOfIssue = DateTime.Now, PriceId = cataloguePrice.CataloguePriceId, IsValid = true };
+
+
+            Ticket ticketDb = Db.TicketRepository.Add(ticket);
+            Db.Complete();
+
+            ticketDb = Db.TicketRepository.Get(ticketDb.TicketId);
+            if (ticketDb == null)
+            {
+                return InternalServerError();    
+            }
+
+            MailMessage mail = new MailMessage("bid.incorporated.ns@gmail.com", model.Email);
+            SmtpClient client = new SmtpClient();
+            client.Port = 587;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = true;
+            client.Credentials = new NetworkCredential("bid.incorporated.ns@gmail.com", "B1i2d3i4n5c6");
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Host = "smtp.gmail.com";
+            mail.Subject = "Ticket information";
+            mail.Body = $"You successfully bought ticket. {Environment.NewLine} Your ticket id is: {ticketDb.TicketId}, your ticket price is {ticketDb.Price.Price} {Environment.NewLine} {Environment.NewLine} Best regards, {Environment.NewLine} BiD corporation";
+            client.Send(mail);
+
+            
+
+            return Ok("You successfully bought ticket. More information is avaliable at your email address.");
+
         }
 
         // GET: api/Tickets/5
