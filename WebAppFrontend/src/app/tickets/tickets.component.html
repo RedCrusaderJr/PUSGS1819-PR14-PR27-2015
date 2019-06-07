@@ -1,3 +1,153 @@
-<p>
-  tickets works!
-</p>
+<div class="currentCataloguePrice" *ngIf="data != null; else noCatalogues">
+  <tr>
+    <th colspan=2>{{data.Begin}} - {{data.End}}</th>
+  </tr>
+  <tr>
+    <td>Hour: </td>
+    <td>{{data.Hour}}</td>
+  </tr>
+  <tr>
+    <td>Day: </td>
+    <td>{{data.Day}}</td>
+  </tr>
+  <tr>
+    <td>Month: </td>
+    <td>{{data.Month}}</td>
+  </tr>
+  <tr>
+    <td>Year: </td>
+    <td>{{data.Year}}</td>
+  </tr>
+</div>
+
+<ng-template #noCatalogues>
+  <h2>You cannot buy tickets at this moment. Please try again later.</h2>
+</ng-template>
+
+
+<div id="accordionEx" class="accordion">
+  <ng-container *ngFor="let catalogue of catalogues; let i = index;">
+    <form [formGroup]="forms[i]" (ngSubmit)="onSubmitUpdate(i)">
+      <div class="card">
+        <div class="card-header" [id]="'heading' + i" (click)="onHeaderClick(i)">
+          <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" [attr.data-target]="'#data' + i"
+              [attr.aria-expanded]="headersArray[i] == true" [attr.aria-controls]="'data' + i">
+              <div class="input-group mb-3 singleRow">
+                <input type="date" class="form-control" formControlName="begin" placeholder="Begin date"
+                  aria-label="Begin date" aria-describedby="basic-addon2">
+                <input type="date" class="form-control" formControlName="end" placeholder="End date"
+                  aria-label="End date" aria-describedby="basic-addon2">
+
+              </div>
+            </button>
+          </h5>
+        </div>
+
+        <div [id]="'data' + i" class="collapse show" [class.show]="headersArray[i]==true"
+          [attr.aria-labelledby]="'heading' + i" data-parent="#accordionEx">
+          <div class="card-body">
+            <div class=" col-mb-20">
+              <div class="form-group row">
+                <div class="input-group-append ">
+                  <span class="input-group-text">Hour ticket</span>
+                </div>
+                <input type="number" formControlName="hour" placeholder="Price of hour ticket"
+                  aria-label="Price of hour ticket" aria-describedby="basic-addon2" />
+              </div>
+              <div class="form-group row">
+                <div class="input-group-append ">
+                  <span class="input-group-text">Day ticket</span>
+                </div>
+                <input type="number" formControlName="day" placeholder="Price of day ticket"
+                  aria-label="Price of day ticket" aria-describedby="basic-addon2" />
+              </div>
+              <div class="form-group row">
+                <div class="input-group-append ">
+                  <span class="input-group-text">Month ticket</span>
+                </div>
+                <input type="number" formControlName="month" placeholder="Price of month ticket"
+                  aria-label="Price of month ticket" aria-describedby="basic-addon2" />
+              </div>
+              <div class="form-group row">
+                <div class="input-group-append singleColumn">
+                  <span class="input-group-text">Year ticket</span>
+                </div>
+                <input type="number" formControlName="year" placeholder="Price of year ticket"
+                  aria-label="Price of year ticket" aria-describedby="basic-addon2" />
+              </div>
+              <div class="form-group row">
+                <button tpye="submit" [disabled]="forms[i].invalid"> Submit </button>
+              </div>
+
+              <div class="form-group row">
+                <button type="submit" (click)="onDeleteCatalogue(i)">Delete</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</div>
+
+
+
+<div id="accordionEx1" class="accordion" *ngIf="jwtService.getRole() == 'Admin'">
+  <div class="card">
+    <div class="card-header" id="headingOne" type="button" (click)="onAddClick()">
+      <h5 class="mb-0">
+        <button class="btn btn-link">
+          Add catalogue price
+        </button>
+      </h5>
+    </div>
+
+    <div id="collapseOne" class="collapse show" [class.show]="addFormOpen==true" aria-labelledby="headingOne"
+      data-parent="#accordionEx1">
+      <div class="card-body">
+        <form [formGroup]="addForm" (ngSubmit)="onSubmitAdd()">
+          <input type="date" class="form-control" formControlName="begin" placeholder="Begin date"
+            aria-label="Begin date" aria-describedby="basic-addon2">
+          <input type="date" class="form-control" formControlName="end" placeholder="End date" aria-label="End date"
+            aria-describedby="basic-addon2">
+          <div class=" col-mb-20">
+            <div class="form-group row">
+              <div class="input-group-append ">
+                <span class="input-group-text">Hour ticket</span>
+              </div>
+              <input type="number" formControlName="hour" placeholder="Price of hour ticket"
+                aria-label="Price of hour ticket" aria-describedby="basic-addon2" />
+            </div>
+            <div class="form-group row">
+              <div class="input-group-append ">
+                <span class="input-group-text">Day ticket</span>
+              </div>
+              <input type="number" formControlName="day" placeholder="Price of day ticket"
+                aria-label="Price of day ticket" aria-describedby="basic-addon2" />
+            </div>
+            <div class="form-group row">
+              <div class="input-group-append ">
+                <span class="input-group-text">Month ticket</span>
+              </div>
+              <input type="number" formControlName="month" placeholder="Price of month ticket"
+                aria-label="Price of month ticket" aria-describedby="basic-addon2" />
+            </div>
+            <div class="form-group row">
+              <div class="input-group-append singleColumn">
+                <span class="input-group-text">Year ticket</span>
+              </div>
+              <input type="number" formControlName="year" placeholder="Price of year ticket"
+                aria-label="Price of year ticket" aria-describedby="basic-addon2" />
+            </div>
+            <div class="form-group row">
+              <button tpye="submit" [disabled]="addForm.invalid"> Submit </button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

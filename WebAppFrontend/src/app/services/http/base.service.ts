@@ -30,4 +30,8 @@ export class BaseHttpService<T>{
         return this.http.put(this.baseUrl + this.specificUrl, data, options);
     }
 
+    delete(id: any, options?: any) : Observable<any> {
+        return this.http.delete(this.baseUrl + this.specificUrl + `/${id}`);
+    }
+
 }

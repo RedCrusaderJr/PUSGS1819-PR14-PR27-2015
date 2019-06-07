@@ -8,5 +8,6 @@ namespace WebApp.Persistence.Repository.ModelRepositories
 {
     public interface ICatalogueRepository : IRepository<Catalogue, int>
     {
+        void Delete(Catalogue catalogue);
     }
 }

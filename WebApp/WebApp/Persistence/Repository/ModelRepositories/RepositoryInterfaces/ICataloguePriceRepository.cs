@@ -9,5 +9,6 @@ namespace WebApp.Persistence.Repository.ModelRepositories
 {
     public interface ICataloguePriceRepository : IRepository<CataloguePrice, string>
     {
+        void Delete(CataloguePrice cataloguePrice);
     }
 }
