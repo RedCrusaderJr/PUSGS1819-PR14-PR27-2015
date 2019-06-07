@@ -1,5 +1,12 @@
-<form #f="ngForm" (submit)="login(f.value)">
-  Username: <input name="username" ngModel/> <br/>
-  Password: <input type="password" name="password" ngModel/><br/>
-  <input type="submit"/><br/>
-</form>
+<div class="text-center size">
+  <form class="form-signin" #f="ngForm" (submit)="login(f.value)">
+    <img class="mb-4" src="/assets/img/icon.jpg" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>
+    <label for="inputEmail" class="sr-only">Username</label>
+    <input type="text" name="username" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="" ngModel>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required="" ngModel>
+    <button class="btn btn-lg btn-primary btn-block" type="submit" style="background: rgba(217, 23, 16) !important">Log in</button>
+    <p class="mt-5 mb-3 text-muted">© 2019-2020 BiD Inc. All Rights Reserved</p>
+  </form>
+</div>

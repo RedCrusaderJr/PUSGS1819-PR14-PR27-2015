@@ -22,8 +22,8 @@ const routes: Routes = [
     { path: "bus-location"      , component: BusLocationComponent       },
     { path: "ticket-validator"  , component: TicketValidatorComponent   },
     { path: "map-builder"       , component: MapBuilderComponent        },
-    { path: ''                  , redirectTo: 'home', pathMatch: 'full' },
-    { path: '**'                , redirectTo: 'home'                    }
+    { path: ''                  , redirectTo: 'timetable', pathMatch: 'full' },
+    { path: '**'                , redirectTo: 'timetable'                    }
 ];
 
 @NgModule({

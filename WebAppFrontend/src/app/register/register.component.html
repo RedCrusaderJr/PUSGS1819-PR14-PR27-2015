@@ -1,109 +1,103 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<div class="signup-form">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <h2>Register</h2>
+    <p class="hint-text">Create your account. It's free and only takes a minute.</p>
+    <div class="form-group">
+      <div class="col-md-15">
+        <div class="row" style="margin-left: 20px;">
+          <div class="col-xs-6">
+            <input type="text" id="username" formControlName="username" placeholder="Username" required class="form-control">
+            <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
+              <ng-container *ngIf="f.username.errors.required">
+                <p>Username is required.</p>
+              </ng-container>
+              <ng-container *ngIf="f.username.errors.minlength">
+                <p>Username must be at least 6 characters long.</p>
+              </ng-container>
+            </div>
+            <input type="password" formControlName="password" placeholder="Password" required class="form-control">
+            <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
+              <ng-container *ngIf="f.password.errors.required">
+                Password is required.
+              </ng-container>
+              <ng-container *ngIf="f.password.errors.minlength">
+                <p>Password must be at least 6 characters long.</p>
+              </ng-container>
+              <ng-container *ngIf="f.password.errors.pattern">
+                <p>Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').</p>
+              </ng-container>
+            </div>
+            <input type="password" formControlName="confirmPassword" placeholder="Confirm Password" required class="form-control" />
+            <div *ngIf="registerForm.errors?.doesntMatch && (f.confirmPassword.dirty || f.confirmPassword.touched)" class="alert alert-danger">
+              <p>Doesnt match with password.</p>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group row" style="margin-left: 20px">
+              <div class="col-xs-6">
+                <input type="text" id="name" formControlName="name" placeholder="Name" required class="form-control" />
+                <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="alert alert-danger">
+                  <ng-container *ngIf="f.name.errors.required">
+                    <p>Name is required.</p>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="col-xs-6" style="margin-right: 5px">
+                <input type="text" id="surname" formControlName="surname" placeholder="Surname" required class="form-control" />
+                <div *ngIf="f.surname.invalid && (f.surname.dirty || f.surname.touched)" class="alert alert-danger">
+                  <ng-container *ngIf="f.surname.errors.required">
+                    <p>Surname is required.</p>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-xs-6" style="margin-left: 20px">
+              <input type="text" formControlName="email" placeholder="E - mail" required class="form-control" />
+              <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="alert alert-danger">
+                <div *ngIf="f.email.errors.required">
+                  <p>Email is required.</p>
+                </div>
+                <div *ngIf="f.email.errors.email">
+                  <p>Please enter valid email address. Example: johndo</p>
+                </div>
+              </div>
+            </div>
 
-  <div class="register-group">
-
-    <label for="username">Username:</label>
-    <input id="username" formControlName="username" required />
-    <br />
-
-    <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
-      <div *ngIf="f.username.errors.required">
-        Username is required.
-      </div>
-      <div *ngIf="f.username.errors.minlength">
-        Username must be at least 6 characters long.
+            <div class="form-group col-xs-6" style="margin-left: 15px; margin-right: -5px">
+              <div class="row">
+                <label for="dateOfBirth" style="margin-top: 12px; margin-left: 55px">Date of birth:</label>
+                <input type="date" id="dateOfBirth" formControlName="dateOfBirth" placeholder="Date of Birth" class="form-control" style="margin-left: 20px; width: 250px" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row" style="margin-left: 220px; margin-top: 20px">
+          <div class="col-xs-10" style="width: 100px">
+            <div class="row">
+              <span>Regular</span>
+              <input type="radio" name="type" value="Regular" formControlName="type" checked="checked" class="form-control" />
+            </div>
+          </div>
+          <div class="col-xs-10" style="width: 100px">
+            <div class="row">
+              <span>Senior</span>
+              <input type="radio" name="type" value="Senior" formControlName="type" class="form-control" />
+            </div>
+          </div>
+          <div class="col-xs-10" style="width: 100px">
+            <div class="row">
+              <span>Student</span>
+              <input type="radio" name="type" value="Student" formControlName="type" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-success btn-lg btn-block" style="background: rgba(217, 23, 16) !important; outline-color: rgba(217, 23, 16, 0.3) !important">Register Now</button>
+        </div>
       </div>
     </div>
-
-    <br />
-    <label for="password">Password</label>
-    <input type="password" formControlName="password" required />
-    <br />
-
-    <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
-      <div *ngIf="f.password.errors.required">
-        Password is required.
-      </div>
-      <div *ngIf="f.password.errors.minlength">
-        Password must be at least 6 characters long.
-      </div>
-      <div *ngIf="f.password.errors.pattern">
-        Passwords must have at least one non letter or digit character. Passwords must have at least one digit
-        ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
-      </div>
-    </div>
-
-
-    <br />
-    <label for="confirmPassword">Confirm Password:</label>
-    <input type="password" formControlName="confirmPassword" required />
-    <br />
-    <div *ngIf="registerForm.errors?.doesntMatch && (f.confirmPassword.dirty || f.confirmPassword.touched)"
-      class="alert alert-danger">
-      Doesnt match with password.
-    </div>
-
-    <br />
-    <label for="email">Email:</label>
-    <input formControlName="email" required />
-    <br />
-
-    <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="alert alert-danger">
-      <div *ngIf="f.email.errors.required">
-        Email is required.
-      </div>
-      <div *ngIf="f.email.errors.email">
-        Please enter valid email address.
-      </div>
-    </div>
-
-    <br />
-    <label for="name">Name:</label>
-    <input id="name" formControlName="name" required />
-    <br />
-
-    <div *ngIf="f.name.invalid && (f.name.dirty || f.name.touched)" class="alert alert-danger">
-      <div *ngIf="f.name.errors.required">
-        Name is required.
-      </div>
-    </div>
-
-    <br />
-    <label for="surname">Surname:</label>
-    <input id="surname" formControlName="surname" required />
-    <br />
-
-    <div *ngIf="f.surname.invalid && (f.surname.dirty || f.surname.touched)" class="alert alert-danger">
-      <div *ngIf="f.surname.errors.required">
-        Surname is required.
-      </div>
-    </div>
-
-    <br />
-    <label for="dateOfBirth">Date of birth:</label>
-    <input type="date" id="dateOfBirth" formControlName="dateOfBirth" />
-    <br />
-
-  </div>
-
-  <br/>
-  <label for="Type">Type:</label>
-  <input type="radio" name="type" value="Regular" formControlName="type" checked="checked"/> <span>Regular</span>
-  <input type="radio" name="type" value="Senior" formControlName="type"/> <span>Senior</span>
-  <input type="radio" name="type" value="Student" formControlName="type"/> <span>Student</span>
-  <br/>
-
-  <div *ngIf="registerForm.get('type').value != 'Regular'">
-    <br />
-    <label for="Picture">Picture</label>
-    <input type="file" formControlName="picture" (change)="onFileSelected($event)"/>
-    <br />
-  </div>
-  
-
-  
-  <button type="submit" [disabled]="registerForm.invalid"> Submit </button>
-</form>
+  </form>
+</div>
 
 <ul class="serverErrors">
   <li *ngFor="let error of serverErrors">
