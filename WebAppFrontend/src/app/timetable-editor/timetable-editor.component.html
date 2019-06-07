@@ -1,30 +1,24 @@
 <div class="timetable">
   <ul class="nav nav-pills">
     <li class="nav-item">
-      <a (click)="onIsUrbanSelection(true)" class="btn" [class.active]="isUrbanSelection==true" role="button"
-        aria-pressed="true">Urban</a>
+      <a (click)="onIsUrbanSelection(true)" class="btn" [class.active]="isUrbanSelection==true" role="button" aria-pressed="true">Urban</a>
     </li>
     <li class="nav-item">
-      <a (click)="onIsUrbanSelection(false)" class="btn" [class.active]="isUrbanSelection==false" role="button"
-        aria-pressed="true">Suburban</a>
+      <a (click)="onIsUrbanSelection(false)" class="btn" [class.active]="isUrbanSelection==false" role="button" aria-pressed="true">Suburban</a>
     </li>
   </ul>
 
   <ng-container *ngIf="isUrbanSelection==true">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a *ngFor="let line of urbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg"
-          [class.active]="line.OrderNumber===lineSelection.OrderNumber" role="button"
-          aria-pressed="true">{{line.OrderNumber}}</a>
+        <a *ngFor="let line of urbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===lineSelection.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
       </li>
     </ul>
   </ng-container>
   <ng-container *ngIf="isUrbanSelection==false">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a *ngFor="let line of suburbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg"
-          [class.active]="line.OrderNumber===lineSelection.OrderNumber" role="button"
-          aria-pressed="true">{{line.OrderNumber}}</a>
+        <a *ngFor="let line of suburbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===lineSelection.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
       </li>
     </ul>
   </ng-container>
@@ -48,8 +42,7 @@
         <tr *ngFor="let departure of filteredDepartures; let i = index" align="center">
           <td>
             <div class="input-group mb-3">
-              <input [(ngModel)]="filteredDepartures[i].weekday" type="text" class="form-control"
-                placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
+              <input [(ngModel)]="filteredDepartures[i].weekday" type="text" class="form-control" placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
               <div class="input-group-append">
                 <span class="input-group-text">example 09:15</span>
               </div>
@@ -57,8 +50,7 @@
           </td>
           <td>
             <div class="input-group mb-3">
-              <input [(ngModel)]="filteredDepartures[i].sathurday" type="text" class="form-control"
-                placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
+              <input [(ngModel)]="filteredDepartures[i].sathurday" type="text" class="form-control" placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
               <div class="input-group-append">
                 <span class="input-group-text">example 09:15</span>
               </div>
@@ -66,8 +58,7 @@
           </td>
           <td>
             <div class="input-group mb-3">
-              <input [(ngModel)]="filteredDepartures[i].sunday" type="text" class="form-control"
-                placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
+              <input [(ngModel)]="filteredDepartures[i].sunday" type="text" class="form-control" placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
               <div class="input-group-append">
                 <span class="input-group-text">example 09:15</span>
               </div>
@@ -79,8 +70,7 @@
         <tr *ngFor="let departure of filteredDepartures; let i = index" align="center">
           <td colspan=3>
             <div class="input-group mb-3 singleColumn">
-              <input [(ngModel)]="filteredDepartures[i].weekday" type="text" class="form-control"
-                placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
+              <input [(ngModel)]="filteredDepartures[i].weekday" type="text" class="form-control" placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
               <div class="input-group-append singleColumn">
                 <span class="input-group-text">example 09:15</span>
               </div>
@@ -92,8 +82,7 @@
         <tr *ngFor="let departure of filteredDepartures; let i = index" align="center">
           <td colspan=3>
             <div class="input-group mb-3 singleColumn">
-              <input [(ngModel)]="filteredDepartures[i].sathurday" type="text" class="form-control"
-                placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
+              <input [(ngModel)]="filteredDepartures[i].sathurday" type="text" class="form-control" placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
               <div class="input-group-append singleColumn">
                 <span class="input-group-text">example 09:15</span>
               </div>
@@ -105,8 +94,7 @@
         <tr *ngFor="let departure of filteredDepartures;  let i = index" align="center">
           <td colspan=3>
             <div class="input-group mb-3 singleColumn">
-              <input [(ngModel)]="filteredDepartures[i].sunday" type="text" class="form-control"
-                placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
+              <input [(ngModel)]="filteredDepartures[i].sunday" type="text" class="form-control" placeholder="Departure time" aria-label="Departure time" aria-describedby="basic-addon2">
               <div class="input-group-append singleColumn">
                 <span class="input-group-text">example 09:15</span>
               </div>

@@ -94,19 +94,17 @@ export class TimetableComponent implements OnInit {
               timetableEntry.lineId != undefined) &&
              (timetableEntry.line == undefined || timetableEntry.line == null)) {
               this.lineService.getLineById(timetableEntry.lineId).subscribe(data => {
-                if(data.IsUrban) {
+                if(data.isUrban) {
                   this.urbanLines.push(data);
                 } else {
                   this.suburbanLines.push(data);
                 }
-              },
-              err => console.log(err)
-            );
+              }, err => console.log(err));
           }
           else if((timetableEntry.lineId != "" && 
                    timetableEntry.lineId != null &&
                    timetableEntry.lineId != undefined)) {
-            if(timetableEntry.line.IsUrban) {
+            if(timetableEntry.line.isUrban) {
               this.urbanLines.push(timetableEntry.line);
             } else {
               this.suburbanLines.push(timetableEntry.line);
@@ -136,7 +134,7 @@ export class TimetableComponent implements OnInit {
   }
 
   onLineSelection(selection : Line) {
-    if(this.lineSelection != undefined && this.lineSelection.OrderNumber  == selection.OrderNumber) {
+    if(this.lineSelection != undefined && this.lineSelection.orderNumber  == selection.orderNumber) {
       this.lineSelection = undefined;
     } else {
       this.lineSelection = selection;
@@ -159,19 +157,19 @@ export class TimetableComponent implements OnInit {
     let sunDepartures : string[] = [];
 
     this.wdTimetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.OrderNumber) {
+      if(entry.lineId == this.lineSelection.orderNumber) {
         wdDepartures = this.parseDepartures(entry.timeOfDeparture);
       }
     });
 
     this.satTimetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.OrderNumber) {
+      if(entry.lineId == this.lineSelection.orderNumber) {
         satDepartures = this.parseDepartures(entry.timeOfDeparture);
       }
     });
 
     this.sunTimetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.OrderNumber) {
+      if(entry.lineId == this.lineSelection.orderNumber) {
         sunDepartures = this.parseDepartures(entry.timeOfDeparture);
       }
     });

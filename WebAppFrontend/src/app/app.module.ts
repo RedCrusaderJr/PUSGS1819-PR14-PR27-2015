@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AgmCoreModule } from '@agm/core';
 
 import { AppComponent } from './app.component';
 import { BaseViewComponent } from './base-view/base-view.component';
@@ -45,7 +46,8 @@ import { TimetableEditorComponent } from './timetable-editor/timetable-editor.co
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AgmCoreModule.forRoot({apiKey: 'AIzaSyDnihJyw_34z5S1KZXp90pfTGAqhFszNJk'})
   ],
   providers: [AuthHttpService, {provide: HTTP_INTERCEPTORS, useClass: TokenInerceptor, multi:true}],
   bootstrap: [AppComponent]

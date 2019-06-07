@@ -1,0 +1,77 @@
+.nav-pills .nav-link:not(.active) {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+}
+
+
+/* rgba(228, 22, 22, 0.8) */
+
+.selected {
+  background-color: #D91610 !important;
+  color: white !important;
+}
+
+.disabled {
+  background-color: rgba(217, 23, 16, 0.336);
+  color: gray;
+}
+
+.map-builder div td,
+div th {
+  margin-left: 5%;
+  align-content: center;
+  align-items: center;
+  align-self: center;
+  max-width: 600px;
+}
+
+.map-builder table {
+  width: 60%;
+  align-content: center !important;
+  align-items: center !important;
+  align-self: center !important;
+  margin-left: 5%;
+  margin-right: 5%;
+  max-width: 1700px;
+}
+
+.map-builder .btn {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: white;
+  background-color: rgba(217, 23, 16);
+}
+
+.map-builder .btn:not(.active) {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: rgba(217, 23, 16, 0.8);
+  background-color: white;
+}
+
+.map-builder>a {
+  background-color: rgba(217, 23, 16) !important;
+  color: white !important;
+  margin-left: 100px !important;
+}
+
+.map-builder>a:hover {
+  background-color: rgba(217, 23, 16, 0.7) !important;
+  color: white !important;
+  /* margin-left: 500px !important; */
+}
+
+.map-builder .nav-pills {
+  margin-left: 10px;
+}
+
+.map-builder th:hover {
+  background-color: rgba(217, 23, 16, 0.85);
+  color: white;
+}
+
+.map-builder .nav a:hover {
+  background-color: rgba(217, 23, 16, 0.85) !important;
+  color: white !important;
+}

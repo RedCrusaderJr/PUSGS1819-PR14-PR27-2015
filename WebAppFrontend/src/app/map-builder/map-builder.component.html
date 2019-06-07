@@ -1,3 +1,130 @@
-<p>
-  map-builder works!
-</p>
+<div class="map-builder">
+  <div class="form-group col-md-15">
+    <div class="form-group row">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a (click)="onLineActionSelection(0)" class="btn" [class.active]="lineActionSelection==0" role="button" aria-pressed="true">Add Line</a>
+        </li>
+        <li class="nav-item">
+          <a (click)="onLineActionSelection(1)" class="btn" [class.active]="lineActionSelection==1" role="button" aria-pressed="true">Select Line</a>
+        </li>
+        <li class="nav-item">
+          <a (click)="onLineActionSelection(2)" class="btn" [class.disabled]="selectedLine==undefined || selectedLine==null" [class.active]="lineActionSelection==2" role="button" aria-pressed="true">Modify Line</a>
+        </li>
+        <li class="nav-item">
+          <a (click)="onLineActionSelection(3)" class="btn" [class.disabled]="selectedLine==undefined || selectedLine==null" [class.active]="lineActionSelection==3" role="button" aria-pressed="true">Delete Line</a>
+        </li>
+      </ul>
+      <ng-container *ngIf="lineActionSelection==1">
+        <ng-container *ngIf="lines != undefined && lines != null && lines.length > 0; else noLines">
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a *ngFor="let line of lines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===selectedLine.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
+            </li>
+          </ul>
+        </ng-container>
+      </ng-container>
+      <ng-template #noLines>
+        <h4>No lines to preview</h4>
+      </ng-template>
+    </div>
+    <div class="form-group row">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a (click)="onStationActionSelection(0)" class="btn" [class.disabled]="!stationActionEnabled" [class.active]="stationActionSelection==0" role="button" aria-pressed="true">Add Station</a>
+        </li>
+        <li class="nav-item">
+          <a (click)="onStationActionSelection(1)" class="btn" [class.disabled]="!stationActionEnabled" [class.active]="stationActionSelection==1" role="button" aria-pressed="true">Select Station</a>
+        </li>
+        <li class="nav-item">
+          <a (click)="onStationActionSelection(2)" class="btn" [class.disabled]="!stationActionEnabled || (selectedStation==undefined || selectedStation==null)" [class.active]="stationActionSelection==2" role="button" aria-pressed="true">Delete Station</a>
+        </li>
+      </ul>
+    </div>
+    <div class="form-group row">
+      <div class="form-group col-xs-6">
+        <!-- Kreiramo mapu -->
+        <agm-map [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude" [zoom]="18" (mapClick)="onMapClick($event)">
+          <agm-marker [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude" [title]="markerInfo.title" [label]="markerInfo.label" [iconUrl]="markerInfo.iconUrl">
+            <!-- Svakom markeru dodajemo info-window (Nije obavezno!) -->
+            <agm-info-window [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude">
+              <!-- U info-window stavljamo html -->
+              <span style="font-size: 16px;font-family:'Times New Roman'">Fakultet tehničkih nauka</span>
+              <br/>
+              <span style="font-family:'Times New Roman'; color:gray;"><strong>Jugodrvo</strong></span>
+              <span style="font-family:'Times New Roman'; color:gray;">Bulevar oslobođenja 131</span>
+              <a [href]="markerInfo.link">See the site.</a>
+            </agm-info-window>
+          </agm-marker>
+
+          <agm-polyline [strokeColor]="polyline.color">
+            <agm-polyline-point *ngFor="let point of polyline.path" [latitude]="point.latitude" [longitude]="point.longitude">
+            </agm-polyline-point>
+          </agm-polyline>
+
+          <ng-container *ngFor="let station of stationsOnMap">
+            <agm-marker *ngFor="let point of station.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="station.icon">
+            </agm-marker>
+          </ng-container>
+        </agm-map>
+      </div>
+
+      <div *ngIf="lineActionSelection == 0 || (selectedLine != undefined && selectedLine != null)" class="form-group col-xs-6" style="margin-left: 20px">
+        <div class="form-group col-xs-6">
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a (click)="onIsUrbanSelection(true)" class="btn" [class.active]="isUrbanSelection==true" role="button" aria-pressed="true">Urban</a>
+            </li>
+            <li class="nav-item">
+              <a (click)="onIsUrbanSelection(false)" class="btn" [class.active]="isUrbanSelection==false" role="button" aria-pressed="true">Suburban</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6">
+          <div class="form-group">
+            <input type="text" id="orderNumber" placeholder="Order Nuber" required class="form-control">
+          </div>
+          <div class="form-group">
+            <p>Line Path: </p>
+            <ng-container *ngIf="selectedLine != null && selectedLine != undefined && selectedLine.path != undefined && selectedLine.path != null">
+              <ul>
+                <ng-container *ngFor="let point of selectedLine.path.split('|')">
+                  <li *ngIf="point!=''">
+                    <p>
+                      <span>(</span>
+                      <ng-container *ngFor="let coordinate of point.split('-'); let i = index">
+                        <span>{{coordinate}}</span>
+                        <ng-container *ngIf="i == 0">
+                          <span>, </span>
+                        </ng-container>
+                      </ng-container>
+                      <span>)</span>
+                    </p>
+                  </li>
+                </ng-container>
+              </ul>
+            </ng-container>
+          </div>
+          <div class="form-group">
+            <table>
+              <thead>
+                <th colspan=3>
+                  <h5>Stations</h5>
+                </th>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="selectedLine != null && selectedLine != undefined && selectedLine.stations != null && selectedLine.stations != undefined">
+                  <tr *ngFor="let station of selectedLine.stations">
+                    <td>{{station.name}}</td>
+                    <td>{{station.latitude}}</td>
+                    <td>{{station.longitude}}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

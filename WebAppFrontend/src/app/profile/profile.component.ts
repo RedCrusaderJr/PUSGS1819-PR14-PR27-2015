@@ -39,7 +39,6 @@ export class ProfileComponent implements OnInit {
   }, { validators: ConfirmPasswordValidator });
 
   constructor(private sanitazer: DomSanitizer, private passengerService: PassengerService, private router: Router, private jwtService: JwtService, private fb: FormBuilder, private accountService: AccountService) {
-
   }
 
   ngOnInit() {
