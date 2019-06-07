@@ -4,16 +4,17 @@ import { FormBuilder, Validators, FormsModule, FormGroup, FormControl } from '@a
 import { validateConfig } from '@angular/router/src/config';
 import { CataloguePriceService } from '../services/http/cataloguePrice.service';
 import { formatDate } from '@angular/common';
+import { TicketService } from '../services/http/ticket.service';
 
 @Component({
   selector: 'app-tickets',
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css'],
-  providers: [JwtService, FormBuilder, CataloguePriceService]
+  providers: [JwtService, FormBuilder, CataloguePriceService, TicketService]
 })
 export class TicketsComponent implements OnInit {
 
-  constructor(private jwtService: JwtService, private fb: FormBuilder, private cataloguePriceService: CataloguePriceService) { }
+  constructor(private jwtService: JwtService, private fb: FormBuilder, private cataloguePriceService: CataloguePriceService, private ticketService : TicketService) { }
   data = null;
   catalogues = [];
   forms: FormGroup[] = [];
@@ -26,6 +27,10 @@ export class TicketsComponent implements OnInit {
     month: ["", [Validators.required, Validators.min(0)]],
     year: ["", [Validators.required, Validators.min(0)]]
   });
+
+  emailForm = this.fb.group({
+    emailAddress: ["", [Validators.required, Validators.email]]
+  })
 
   addTicketPriceForm = this.fb.group({
     begin: [Date.now, Validators.required],
@@ -99,6 +104,7 @@ export class TicketsComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.jwtService.getRole() == undefined);
     this.cataloguePriceService.getAllCataloguePrice().subscribe(
       retValue => {
         console.log(retValue);
@@ -110,6 +116,7 @@ export class TicketsComponent implements OnInit {
           this.data[retValue[1].TicketTypeId] = retValue[1].Price;
           this.data[retValue[2].TicketTypeId] = retValue[2].Price;
           this.data[retValue[3].TicketTypeId] = retValue[3].Price;
+          this.data.CatalogueId = retValue[0].CatalogueId;
 
         }
         else {
@@ -121,6 +128,24 @@ export class TicketsComponent implements OnInit {
 
     this.initiliazeCataloguePrices();
 
+  }
+
+  priceSelected : boolean = false;
+  onSubmitEmail() {
+    if (this.selectedPrice > 0) {
+      
+      this.priceSelected = true;
+      console.log(this.data.CatalogueId);
+      let sendData = {CataloguePriceId : this.data.CatalogueId,
+                      Email : this.emailForm.get('emailAddress').value}
+      
+      this.ticketService.buyTicketUnregistred(sendData).subscribe(data => alert(data), error => console.log(error));
+      this.emailForm.reset();
+      
+    }
+    else {
+      this.priceSelected = false;
+    }
   }
 
   onSubmitUpdate(i: number) {
@@ -146,6 +171,24 @@ export class TicketsComponent implements OnInit {
     }, err => console.log(err))
   }
 
+  selectedPrice : number = 0;
+
+  onPriceTableRowClick(type: string) {
+    switch(type) {
+      case 'hour' :
+        this.selectedPrice = this.data.Hour;
+        break;
+      case 'day' :
+        this.selectedPrice = this.data.Day;
+        break;
+      case 'month' :
+        this.selectedPrice = this.data.Month;
+        break;
+      case 'year' :
+        this.selectedPrice = this.data.Year;
+        break;
+    }
+  }
   addFormOpen: boolean = false;
   onAddClick() {
     this.addFormOpen = !this.addFormOpen;

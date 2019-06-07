@@ -15,9 +15,9 @@ namespace WebApp.Persistence.Repository
             this.context = context;
         }
 
-        public void Add(TEntity entity)
+        public TEntity Add(TEntity entity)
         {
-            context.Set<TEntity>().Add(entity);
+            return context.Set<TEntity>().Add(entity);
         }
 
         public void AddRange(IEnumerable<TEntity> entities)

@@ -2,22 +2,35 @@
   <tr>
     <th colspan=2>{{data.Begin}} - {{data.End}}</th>
   </tr>
-  <tr>
+  <tr (click)="onPriceTableRowClick('hour')">
     <td>Hour: </td>
     <td>{{data.Hour}}</td>
   </tr>
-  <tr>
+  <tr (click)="onPriceTableRowClick('day')">
     <td>Day: </td>
     <td>{{data.Day}}</td>
   </tr>
-  <tr>
+  <tr (click)="onPriceTableRowClick('month')">
     <td>Month: </td>
     <td>{{data.Month}}</td>
   </tr>
-  <tr>
+  <tr (click)="onPriceTableRowClick('year')">
     <td>Year: </td>
     <td>{{data.Year}}</td>
   </tr>
+
+  <label>Your price is: {{selectedPrice}}</label>
+
+  
+  <div id="unregistratedUser" *ngIf="jwtService.getRole() == undefined">
+    <br/>
+    <form [formGroup]="emailForm" (ngSubmit)="onSubmitEmail()">
+      <label for="emailAddress">Enter your email address: </label>
+      <input type="email" formControlName="emailAddress"/>
+      <button type="submit">Submit</button>
+    </form>
+      
+  </div>
 </div>
 
 <ng-template #noCatalogues>

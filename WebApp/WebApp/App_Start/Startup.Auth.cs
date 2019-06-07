@@ -41,7 +41,7 @@ namespace WebApp
             OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
             {
                 //For Dev enviroment only (on production should be AllowInsecureHttp = false)
-                AllowInsecureHttp = true,
+                AllowInsecureHttp = false,
                 TokenEndpointPath = new PathString("/oauth/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 Provider = new CustomOAuthProvider(),

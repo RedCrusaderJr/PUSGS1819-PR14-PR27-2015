@@ -10,18 +10,20 @@ import { BusLocationComponent } from './bus-location/bus-location.component';
 import { MapBuilderComponent } from './map-builder/map-builder.component';
 import { TicketValidatorComponent } from './ticket-validator/ticket-validator.component';
 import { TimetableEditorComponent } from './timetable-editor/timetable-editor.component';
+import { AdminGuard } from './guards/admin.guard';
+import { ControlContainer } from '@angular/forms';
 
 const routes: Routes = [
-    { path: "login"             , component: LoginComponent             },
+    { path: "login"             , component: LoginComponent           },
     { path: "register"          , component: RegisterComponent          },
     { path: "profile"           , component: ProfileComponent           },
     { path: "timetable"         , component: TimetableComponent         },
-    { path: "timetable-editor"  , component: TimetableEditorComponent   },
+    { path: "timetable-editor"  , component: TimetableEditorComponent, canActivate: [AdminGuard]   },
     { path: "bus-lines"         , component: BusLinesComponent          },
     { path: "tickets"           , component: TicketsComponent           },
     { path: "bus-location"      , component: BusLocationComponent       },
-    { path: "ticket-validator"  , component: TicketValidatorComponent   },
-    { path: "map-builder"       , component: MapBuilderComponent        },
+    { path: "ticket-validator"  , component: TicketValidatorComponent, canActivate: [ControlContainer] },
+    { path: "map-builder"       , component: MapBuilderComponent, canActivate: [AdminGuard]        },
     { path: ''                  , redirectTo: 'timetable', pathMatch: 'full' },
     { path: '**'                , redirectTo: 'timetable'                    }
 ];

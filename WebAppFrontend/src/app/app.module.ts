@@ -22,6 +22,7 @@ import { BusLocationComponent } from './bus-location/bus-location.component';
 import { TicketValidatorComponent } from './ticket-validator/ticket-validator.component';
 import { MapBuilderComponent } from './map-builder/map-builder.component';
 import { TimetableEditorComponent } from './timetable-editor/timetable-editor.component';
+import { JwtService } from './services/jwt.service';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,7 @@ import { TimetableEditorComponent } from './timetable-editor/timetable-editor.co
     AppRoutingModule,
     ReactiveFormsModule
   ],
-  providers: [AuthHttpService, {provide: HTTP_INTERCEPTORS, useClass: TokenInerceptor, multi:true}],
+  providers: [AuthHttpService, {provide: HTTP_INTERCEPTORS, useClass: TokenInerceptor, multi:true}, JwtService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
