@@ -23,6 +23,7 @@ import { TicketValidatorComponent } from './ticket-validator/ticket-validator.co
 import { MapBuilderComponent } from './map-builder/map-builder.component';
 import { TimetableEditorComponent } from './timetable-editor/timetable-editor.component';
 import { JwtService } from './services/jwt.service';
+import { ValidateUsersComponent } from './validate-users/validate-users.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { JwtService } from './services/jwt.service';
     BusLocationComponent,
     TicketValidatorComponent,
     MapBuilderComponent,
-    TimetableEditorComponent
+    TimetableEditorComponent,
+    ValidateUsersComponent
   ],
   imports: [
     BrowserModule,

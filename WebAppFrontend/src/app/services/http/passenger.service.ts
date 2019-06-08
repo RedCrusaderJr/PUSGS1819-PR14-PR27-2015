@@ -20,4 +20,14 @@ export class PassengerService extends BaseHttpService<any> {
         let headers = new HttpHeaders({'Content-Type' : 'application/json'});
         return this.http.get(this.baseUrl + this.specificUrl + "/" + id);
     }
+
+    getAllUnvalidatedUsers() : Observable<any> {
+        this.specificUrl = "/api/Passengers/GetAllUnvalidatedUsers";
+        return this.getAll();
+    }
+
+    validateUser(data : any) : Observable<any> {
+        this.specificUrl = "/api/Passengers/ValidateUser";
+        return this.put(data);
+    } 
 } 

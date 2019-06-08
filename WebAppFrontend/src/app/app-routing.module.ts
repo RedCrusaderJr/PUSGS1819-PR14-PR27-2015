@@ -12,6 +12,8 @@ import { TicketValidatorComponent } from './ticket-validator/ticket-validator.co
 import { TimetableEditorComponent } from './timetable-editor/timetable-editor.component';
 import { AdminGuard } from './guards/admin.guard';
 import { ControlContainer } from '@angular/forms';
+import { ValidateUsersComponent } from './validate-users/validate-users.component';
+import { ControllerGuard } from './guards/controller.guard';
 
 const routes: Routes = [
     { path: "login"             , component: LoginComponent           },
@@ -24,6 +26,7 @@ const routes: Routes = [
     { path: "bus-location"      , component: BusLocationComponent       },
     { path: "ticket-validator"  , component: TicketValidatorComponent, canActivate: [ControlContainer] },
     { path: "map-builder"       , component: MapBuilderComponent, canActivate: [AdminGuard]        },
+    { path: "validate-users"    , component: ValidateUsersComponent, canActivate: [ControllerGuard]},
     { path: ''                  , redirectTo: 'timetable', pathMatch: 'full' },
     { path: '**'                , redirectTo: 'timetable'                    }
 ];

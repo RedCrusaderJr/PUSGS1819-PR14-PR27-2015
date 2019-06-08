@@ -25,6 +25,8 @@ namespace WebApp.Models
 
         public string DateOfBirthString { get; set; }
 
+        public ProcessingPhase ProcessingPhase { get; set; } = ProcessingPhase.PENDING;
+
         public List<Ticket> Tickets { get; set; }
     }
 }

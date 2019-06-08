@@ -27,4 +27,8 @@
     <a  class="nav-link" [class.active]='functionSelection==6'
         routerLink="bus-location">Bus location</a>
   </li>
+  <li class="nav-item" *ngIf="jwtService.getRole()==='Controller'" (click)="selectFunction(7)">
+    <a class="nav-link" [class.activate]='functionSelection==6'
+       routerLink="validate-users">Validate users</a>
+  </li>
 </ul>

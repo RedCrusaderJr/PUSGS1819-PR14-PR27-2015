@@ -98,4 +98,14 @@ namespace WebApp.Models
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+
+    public class ValidatePassengerBindingModel
+    {
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        public ProcessingPhase ProcessingPhase { get; set; }
+
+        public string Reason { get; set; }
+    }
 }

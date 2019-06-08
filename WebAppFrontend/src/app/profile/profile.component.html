@@ -1,19 +1,16 @@
 <form [formGroup]="optionsForm">
   <div class="btn-group btn-group-toggle" data-toggle="buttons">
     <label class="btn btn-secondary" [class.active]="buttonSelection==2">
-      <input type="radio" name="option" id="option2" value="2"
-        formControlName="option" (change)="change(2)"
+      <input type="radio" name="option" id="option2" value="2" formControlName="option" (change)="change(2)"
         autocomplete="off" class="form-check-input"> Update Profile
     </label>
     <label class="btn btn-secondary" [class.active]="buttonSelection==3">
-      <input type="radio" name="option" id="option3" value="3"
-        formControlName="option" (change)="change(3)"
+      <input type="radio" name="option" id="option3" value="3" formControlName="option" (change)="change(3)"
         autocomplete="off" class="form-check-input"> Change Password
     </label>
     <ng-container *ngIf="jwtService.getRole() == 'AppUser'">
       <label class="btn btn-secondary" [class.active]="buttonSelection==4">
-        <input type="radio" name="option" id="option4" value="4"
-          formControlName="option" (change)="change(4)"
+        <input type="radio" name="option" id="option4" value="4" formControlName="option" (change)="change(4)"
           autocomplete="off" class="form-check-input" /> Update Picture
       </label>
     </ng-container>
@@ -23,19 +20,33 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <div class="card card-inverse" style="background-color: #333; border-color: #333; margin-top: 50px; max-height: 1500px; max-width: 40%;">
+      <div class="card card-inverse"
+        style="background-color: #333; border-color: #333; margin-top: 50px; max-height: 1500px; max-width: 40%;">
         <div class="card-block">
           <div class="row">
             <div class="col-md-8 col-sm-8">
               <h2 class="card-title text-color">Username: {{profile.username}}</h2>
               <ng-container *ngIf="jwtService.getRole()=='AppUser'">
-                <p class="card-text text-color text-margine"><strong>Name: </strong>{{profile.name}} {{profile.surname}}</p>
+                <p class="card-text text-color text-margine"><strong>Name: </strong>{{profile.name}} {{profile.surname}}
+                </p>
                 <p class="card-text text-color text-margine"><strong>User type: </strong>{{profile.type}}</p>
+                <p class="card-text text-color text-margine"><strong>Status: </strong>
+                  <label *ngIf="profile.ProcessingPhase == 0">
+                    Pending
+                  </label>
+                  <label *ngIf="profile.ProcessingPhase == 1">
+                    Accepted
+                  </label>
+                  <label *ngIf="profile.ProcessingPhase == 2">
+                    Rejected
+                  </label>
+                </p>
               </ng-container>
             </div>
             <div *ngIf="jwtService.getRole()=='AppUser'" class="col-md-4 col-sm-4 text-center">
               <!-- max-height: 500px; max-width: 500px; border-radius:50%;-->
-              <img *ngIf="mySrc!=undefined && mySrc!=null; else noImage" [src]="mySrc" style="max-width: 200px; max-height: 200px;" class="btn-md img-fluid img-thumbnail">
+              <img *ngIf="mySrc!=undefined && mySrc!=null; else noImage" [src]="mySrc"
+                style="max-width: 200px; max-height: 200px;" class="btn-md img-fluid img-thumbnail">
               <ng-template #noImage>
                 <img src="{{noImg}}" class="btn-md img-fluid img-thumbnail" />
               </ng-template>
@@ -121,14 +132,16 @@
         Password must be at least 6 characters long.
       </div>
       <div *ngIf="ch.password.errors.pattern">
-        Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
+        Passwords must have at least one non letter or digit character. Passwords must have at least one digit
+        ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
       </div>
     </div>
     <br />
     <label for="confirmPassword">Confirm Password:</label>
     <input type="password" formControlName="confirmPassword" required />
     <br />
-    <div *ngIf="changePasswordForm.errors?.doesntMatch && (ch.confirmPassword.dirty || ch.confirmPassword.touched)" class="alert alert-danger">
+    <div *ngIf="changePasswordForm.errors?.doesntMatch && (ch.confirmPassword.dirty || ch.confirmPassword.touched)"
+      class="alert alert-danger">
       Doesnt match with password.
     </div>
     <br />
@@ -143,11 +156,12 @@
         Password must be at least 6 characters long.
       </div>
       <div *ngIf="ch.oldPassword.errors.pattern">
-        Passwords must have at least one non letter or digit character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
+        Passwords must have at least one non letter or digit character. Passwords must have at least one digit
+        ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z').
       </div>
     </div>
     <button tpye="submit" [disabled]="changePasswordForm.invalid"> Submit
-      </button>
+    </button>
   </form>
 </ng-container>
 

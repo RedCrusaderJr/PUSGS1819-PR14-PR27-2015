@@ -288,6 +288,14 @@
     <Compile Include="Migrations\201906062217409_CataloguePriceKey.Designer.cs">
       <DependentUpon>201906062217409_CataloguePriceKey.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906080833042_ticketCatPriceIsRequired.cs" />
+    <Compile Include="Migrations\201906080833042_ticketCatPriceIsRequired.Designer.cs">
+      <DependentUpon>201906080833042_ticketCatPriceIsRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906080946516_ProcessingType.cs" />
+    <Compile Include="Migrations\201906080946516_ProcessingType.Designer.cs">
+      <DependentUpon>201906080946516_ProcessingType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -467,6 +475,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906062217409_CataloguePriceKey.resx">
       <DependentUpon>201906062217409_CataloguePriceKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906080833042_ticketCatPriceIsRequired.resx">
+      <DependentUpon>201906080833042_ticketCatPriceIsRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906080946516_ProcessingType.resx">
+      <DependentUpon>201906080946516_ProcessingType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

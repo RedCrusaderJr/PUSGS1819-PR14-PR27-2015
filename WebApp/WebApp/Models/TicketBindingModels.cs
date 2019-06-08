@@ -12,5 +12,16 @@ namespace WebApp.Models
         public string Email { get; set; }
         [Required]
         public string CataloguePriceId { get; set; }
+
+        
+    }
+
+    public class AddTicketBindingModel
+    {
+        [Required]
+        public string PriceId { get; set; }
+        
+        [Required]
+        public string PassengerType { get; set; }
     }
 }

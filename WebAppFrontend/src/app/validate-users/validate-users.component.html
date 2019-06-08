@@ -1,0 +1,37 @@
+<h2>Unvalidate users:</h2>
+
+<div *ngIf="unvalidatedUsers == null || unvalidatedUsers == []">
+  <label>There is no unvalidated users now.</label>
+</div>
+
+<div id="unvalidatedUsers" *ngIf="unvalidatedUsers != null && unvalidatedUsers != []">
+  <tr *ngFor="let user of unvalidatedUsers; let i = index">
+    <td>
+      {{user.UserName}}
+    </td>
+    <td>
+      {{user.Type}}
+    </td>
+    <td>
+      <button type="button" (click)="onValidateClick(i)">Validate</button>
+    </td>
+  </tr>
+</div>
+
+<div id="userToValidate" *ngIf="userToValidate != null && userToValidate != undefined">
+  <h3>User to validate</h3>
+  <label>Username: {{userToValidate.UsernName}}</label><br/>
+  <label>Type: {{userToValidate.Type}}</label><br/>
+  <label>Image: </label>
+  <img [src]="imageToValidate" style="max-width: 200px; max-height: 200px;" class="btn-md img-fluid img-thumbnail"/><br/>
+  <br/>
+  <label>Reason: </label>
+  <form [formGroup]="reasonForm">
+    <input type="text" formControlName="reason" />
+    <button type="input" (click)="onValidateUser(1)">Accept</button>
+    <button type="input" (click)="onValidateUser(2)">Reject</button>
+  </form>
+
+  
+
+</div>

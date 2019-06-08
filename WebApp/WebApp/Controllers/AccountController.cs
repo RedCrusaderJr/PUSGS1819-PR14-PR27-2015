@@ -364,7 +364,7 @@ namespace WebApp.Controllers
                         
 
                         passenger.ImageUrl = fileName;
-                        passenger.Type = "Regular";
+                        passenger.ProcessingPhase = ProcessingPhase.PENDING;
                         UnitOfWork.PassengerRepository.Update(passenger);
                         UnitOfWork.Complete();
                         
