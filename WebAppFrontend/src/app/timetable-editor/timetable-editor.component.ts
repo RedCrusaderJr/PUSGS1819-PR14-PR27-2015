@@ -72,7 +72,7 @@ export class TimetableEditorComponent extends TimetableComponent implements OnIn
     }
 
     this.timetables[timetableIndex].timetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.OrderNumber) {
+      if(entry.lineId == this.lineSelection.orderNumber) {
         if(this.daySelection == undefined || this.daySelection == null) {
             //za svaki od najvise 3 entrija po liniji
             entry.timeOfDeparture = this.formatDeparturesToString(this.filteredDepartures, entry.day);
