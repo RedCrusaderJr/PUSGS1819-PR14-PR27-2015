@@ -1,6 +1,6 @@
 <div class="map-builder">
   <div class="form-group col-md-15">
-    <div class="form-group row">
+    <div id="lineActions" class="form-group row">
       <ul class="nav nav-pills">
         <li class="nav-item">
           <a (click)="onLineActionSelection(0)" class="btn" [class.active]="lineActionSelection==0" role="button" aria-pressed="true">Add Line</a>
@@ -28,7 +28,7 @@
         <h4>No lines to preview</h4>
       </ng-template>
     </div>
-    <div class="form-group row">
+    <div id="stationActions" class="form-group row">
       <ul class="nav nav-pills">
         <li class="nav-item">
           <a (click)="onStationActionSelection(0)" class="btn" [class.disabled]="!stationActionEnabled" [class.active]="stationActionSelection==0" role="button" aria-pressed="true">Add Station</a>
@@ -42,7 +42,7 @@
       </ul>
     </div>
     <div class="form-group row">
-      <div class="form-group col-xs-6">
+      <div id="map" class="form-group col-xs-6">
         <!-- Kreiramo mapu -->
         <agm-map [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude" [zoom]="18" (mapClick)="onMapClick($event)">
           <agm-marker [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude" [title]="markerInfo.title" [label]="markerInfo.label" [iconUrl]="markerInfo.iconUrl">
@@ -57,19 +57,50 @@
             </agm-info-window>
           </agm-marker>
 
-          <agm-polyline [strokeColor]="polyline.color">
-            <agm-polyline-point *ngFor="let point of polyline.path" [latitude]="point.latitude" [longitude]="point.longitude">
-            </agm-polyline-point>
-          </agm-polyline>
+          <ng-container *ngIf="polyline!=undefined && polyline!=null && polyline.path!=undefined && polyline.path!=null">
+            <agm-polyline [strokeColor]="polyline.color">
+              <agm-polyline-point *ngFor="let point of polyline.path" [latitude]="point.latitude" [longitude]="point.longitude">
+              </agm-polyline-point>
+            </agm-polyline>
+          </ng-container>
 
-          <ng-container *ngFor="let station of stationsOnMap">
-            <agm-marker *ngFor="let point of station.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="station.icon">
+          <ng-container *ngIf="polyline != undefined && polyline!=null && polyline.path != undefined && polyline.path!=null">
+            <!-- <ng-container *ngIf="polyline.path != undefined && polyline.path!=null"> -->
+            <ng-container *ngFor="let point of polyline.path; let i = index">
+              <agm-marker *ngIf="i==0 || i==polyline.path.length-1" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="polyline.icon">
+              </agm-marker>
+            </ng-container>
+            <!-- </ng-container> -->
+          </ng-container>
+
+          <ng-container *ngIf="stationsOnMap != undefined  && stationsOnMap != null">
+            <ng-container *ngFor="let station of stationsOnMap">
+              <ng-container *ngIf="station != undefined  && station != null && station.path != undefined && station.path != null">
+                <!-- <ng-container *ngIf="station.path != undefined && station.path != null"> -->
+                <agm-marker *ngFor="let point of station.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="station.icon">
+                </agm-marker>
+                <!-- </ng-container> -->
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="tempStationOnMap != undefined && tempStationOnMap != null && tempStationOnMap.path != undefined && tempStationOnMap.path != null">
+            <agm-marker *ngFor="let point of tempStationOnMap.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="tempStationOnMap.icon">
             </agm-marker>
           </ng-container>
         </agm-map>
       </div>
 
-      <div *ngIf="lineActionSelection == 0 || (selectedLine != undefined && selectedLine != null)" class="form-group col-xs-6" style="margin-left: 20px">
+      <div id="linePreview" *ngIf="linePreviewEnabled && (lineActionSelection == 0 || (selectedLine != undefined && selectedLine != null))" class="form-group col-xs-6" style="margin-left: 20px">
+        <div class="row">
+          <h5>Line Preview</h5>
+          <ul class="form-group nav nav-pills">
+            <li class="nav-item">
+              <a (click)="onLineConfirm()" class="btn" role="button" aria-pressed="true" [class.disabled]="!(selectedLine != undefined && selectedLine != null && selectedLine.orderNumber != undefined && selectedLine.orderNumber != null && this.selectedLine.orderNumber != '')"
+                [class.active]="selectedLine != undefined && selectedLine != null && selectedLine.orderNumber != undefined && selectedLine.orderNumber != null && this.selectedLine.orderNumber != ''">Confirm line</a>
+            </li>
+          </ul>
+        </div>
         <div class="form-group col-xs-6">
           <ul class="nav nav-pills">
             <li class="nav-item">
@@ -81,16 +112,20 @@
           </ul>
         </div>
         <div class="col-xs-6">
-          <div class="form-group">
-            <input type="text" id="orderNumber" placeholder="Order Nuber" required class="form-control">
+          <div *ngIf="selectedLine!=undefined && selectedLine!=null && selectedLine.orderNumber!=undefined && selectedLine.orderNumber!=null" class="form-group">
+            <input type="text" id="orderNumber" placeholder="Order Number" required class="form-control" [(ngModel)]="selectedLine.orderNumber">
           </div>
-          <div class="form-group">
-            <p>Line Path: </p>
-            <ng-container *ngIf="selectedLine != null && selectedLine != undefined && selectedLine.path != undefined && selectedLine.path != null">
-              <ul>
+          <div *ngIf="selectedLine!=undefined && selectedLine!=null && selectedLine.path !=undefined && selectedLine.path !=null" class="form-group">
+            <ul class="nav nav-pills">
+              <li class="nav-item">
+                <a (click)="onLinePathClick()" class="btn" [class.disabled]="selectedLine.path == undefined || selectedLine.path == null || selectedLine.path==''" [class.active]="linePathSelected" role="button" aria-pressed="true">Line Path</a>
+              </li>
+            </ul>
+            <ng-container *ngIf="linePathSelected && selectedLine!=undefined && selectedLine!=null && selectedLine.path!=undefined && selectedLine.path!=null">
+              <ul class="nav-pills" style="list-style: none;">
                 <ng-container *ngFor="let point of selectedLine.path.split('|')">
-                  <li *ngIf="point!=''">
-                    <p>
+                  <li *ngIf="point!=''" lass="nav-item">
+                    <p style="font-size: 10px">
                       <span>(</span>
                       <ng-container *ngFor="let coordinate of point.split('-'); let i = index">
                         <span>{{coordinate}}</span>
@@ -109,7 +144,7 @@
             <table>
               <thead>
                 <th colspan=3>
-                  <h5>Stations</h5>
+                  <h6>Stations</h6>
                 </th>
               </thead>
               <tbody>
@@ -122,6 +157,32 @@
                 </ng-container>
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="stationPreview" *ngIf="stationPreviewEnabled && (stationActionSelection==0 || (selectedStation != undefined && selectedStation != null))" class="form-group col-xs-6" style="margin-left: 20px">
+        <div class="row">
+          <h5>Station preview</h5>
+          <ul class="form-group nav nav-pills">
+            <li class="nav-item">
+              <a (click)="onStationConfirm()" class="btn" role="button" aria-pressed="true" [class.disabled]="!(selectedStation != undefined && selectedStation != null &&
+                                selectedStation.latitude != undefined && selectedStation.latitude != null && 
+                                selectedStation.longitude != undefined && selectedStation.longitude != null &&
+                                selectedStation.name != undefined && selectedStation.name != null && selectedStation.name != '')" [class.active]="selectedStation != undefined && selectedStation != null &&
+                              selectedStation.latitude != undefined && selectedStation.latitude != null && 
+                              selectedStation.longitude != undefined && selectedStation.longitude != null &&
+                              selectedStation.name != undefined && selectedStation.name != null && selectedStation.name != ''">Confirm Station</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6">
+          <div class="form-group">
+            <ng-container *ngIf="selectedStation!=undefined && selectedStation!=null">
+              <input type="text" id="stationName" placeholder="Station Name" required class="form-control" [(ngModel)]="selectedStation.name">
+              <input type="text" id="longitude" placeholder="Longitude" disabled required class="form-control" [(ngModel)]="selectedStation.longitude">
+              <input type="text" id="latitude" placeholder="Latitude" disabled required class="form-control" [(ngModel)]="selectedStation.latitude">
+            </ng-container>
           </div>
         </div>
       </div>

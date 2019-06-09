@@ -75,3 +75,18 @@ div th {
   background-color: rgba(217, 23, 16, 0.85) !important;
   color: white !important;
 }
+
+.map-builder .nav-pills p:hover {
+  background-color: rgba(217, 23, 16, 0.6) !important;
+  color: white !important;
+  margin-left: -15px !important;
+  font-size: 16px !important;
+}
+
+.map-builder .form-group .col-xs-6 {
+  margin-left: 20px;
+}
+
+.map-builder .form-group .col-xs-6 h5 {
+  margin-left: 15px;
+}

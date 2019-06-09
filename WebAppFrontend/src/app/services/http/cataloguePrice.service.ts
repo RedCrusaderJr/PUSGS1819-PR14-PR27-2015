@@ -3,12 +3,12 @@ import { Observable } from 'rxjs';
 
 export class CataloguePriceService extends BaseHttpService<any> {
 
-    getAllCataloguePrice() {
+    getAllCataloguePrice() : Observable<any> {
         this.specificUrl = "/api/CataloguePrices/GetPassengerCataloguePrices"
         return this.getAll();
     }
 
-    getAllAdminCataloguePrices() {
+    getAllAdminCataloguePrices() : Observable<any> {
         this.specificUrl = "/api/CataloguePrices/GetAdminCataloguePrices";
         return this.getAll();
     }
