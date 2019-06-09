@@ -23,9 +23,10 @@ namespace WebApp.Controllers
         }
 
         // GET: api/Lines
-        public IQueryable<Line> GetLines()
+        public IEnumerable<Line> GetLines()
         {
-            return UnitOfWork.LineRepository.GetAll().AsQueryable();
+            var result = UnitOfWork.LineRepository.GetAll().ToList();
+            return result;
         }
 
         // GET: api/Lines/5

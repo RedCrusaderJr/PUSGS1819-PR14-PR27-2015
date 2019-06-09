@@ -18,5 +18,7 @@ namespace WebApp.Models
         public bool IsUrban { get; set; } 
 
         public List<Station> Stations { get; set; }
+
+        public string Path { get; set; }
     }
 }

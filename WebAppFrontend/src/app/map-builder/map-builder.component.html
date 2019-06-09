@@ -9,10 +9,10 @@
           <a (click)="onLineActionSelection(1)" class="btn" [class.active]="lineActionSelection==1" role="button" aria-pressed="true">Select Line</a>
         </li>
         <li class="nav-item">
-          <a (click)="onLineActionSelection(2)" class="btn" [class.disabled]="selectedLine==undefined || selectedLine==null" [class.active]="lineActionSelection==2" role="button" aria-pressed="true">Modify Line</a>
+          <a (click)="onLineActionSelection(2)" class="btn" [class.disabled]="!modDelEnabled" [class.active]="lineActionSelection==2" role="button" aria-pressed="true">Modify Line</a>
         </li>
         <li class="nav-item">
-          <a (click)="onLineActionSelection(3)" class="btn" [class.disabled]="selectedLine==undefined || selectedLine==null" [class.active]="lineActionSelection==3" role="button" aria-pressed="true">Delete Line</a>
+          <a (click)="onLineActionSelection(3)" class="btn" [class.disabled]="!modDelEnabled" [class.active]="lineActionSelection==3" role="button" aria-pressed="true">Delete Line</a>
         </li>
       </ul>
       <ng-container *ngIf="lineActionSelection==1">
@@ -148,7 +148,7 @@
                 </th>
               </thead>
               <tbody>
-                <ng-container *ngIf="selectedLine != null && selectedLine != undefined && selectedLine.stations != null && selectedLine.stations != undefined">
+                <ng-container *ngIf="selectedLine != undefined && selectedLine != null && selectedLine.stations != undefined && selectedLine.stations != null">
                   <tr *ngFor="let station of selectedLine.stations">
                     <td>{{station.name}}</td>
                     <td>{{station.latitude}}</td>

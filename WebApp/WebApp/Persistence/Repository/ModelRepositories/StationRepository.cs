@@ -15,14 +15,12 @@ namespace WebApp.Persistence.Repository.ModelRepositories
 
         public override IEnumerable<Station> GetAll()
         {
-            return context.Set<Station>().Include(c => c.StationLocation)
-                                                .Include(c => c.Lines);
+            return context.Set<Station>();
         }
 
         public override Station Get(int id)
         {
-            return context.Set<Station>().Include(c => c.StationLocation)
-                                                .Include(c => c.Lines).SingleOrDefault(c => c.StationId.Equals(id));
+            return context.Set<Station>().SingleOrDefault(c => c.StationId.Equals(id));
         }
     }
 }

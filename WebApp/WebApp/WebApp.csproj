@@ -297,6 +297,10 @@
     <Compile Include="Migrations\201906080946516_ProcessingType.Designer.cs">
       <DependentUpon>201906080946516_ProcessingType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906091322170_Line and Station modification.cs" />
+    <Compile Include="Migrations\201906091322170_Line and Station modification.Designer.cs">
+      <DependentUpon>201906091322170_Line and Station modification.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -308,7 +312,6 @@
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Line.cs" />
-    <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Passenger.cs" />
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\Ticket.cs" />
@@ -323,14 +326,12 @@
     <Compile Include="Persistence\Repository\ModelRepositories\CatalogueRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\DiscountRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\LineRepository.cs" />
-    <Compile Include="Persistence\Repository\ModelRepositories\LocationRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\PassengerRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\IAutobusRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\ICataloguePriceRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\ICatalogueRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\IDiscountRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\ILineRepository.cs" />
-    <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\ILocationRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\IPassengerRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\IStationRepository.cs" />
     <Compile Include="Persistence\Repository\ModelRepositories\RepositoryInterfaces\ITicketRepository.cs" />
@@ -482,6 +483,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906080946516_ProcessingType.resx">
       <DependentUpon>201906080946516_ProcessingType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906091322170_Line and Station modification.resx">
+      <DependentUpon>201906091322170_Line and Station modification.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

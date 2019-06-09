@@ -35,9 +35,6 @@ namespace WebApp.Persistence.UnitOfWork
         public ILineRepository LineRepository { get; set; }
 
         [Dependency]
-        public ILocationRepository LocationRepository { get; set; }
-
-        [Dependency]
         public IPassengerRepository PassengerRepository { get; set; }
 
         [Dependency]

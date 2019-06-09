@@ -46,6 +46,7 @@ export class MapBuilderComponent implements OnInit {
   lineConfirmEnabled : boolean;
   stationPreviewEnabled : boolean;
   stationConfirmEnabled : boolean;
+  modDelEnabled : boolean;
   //#endregion
   //#endregion fields
 
@@ -63,28 +64,36 @@ export class MapBuilderComponent implements OnInit {
 
   //#region maintenance
   updateLines() {
-    this.lineService.getAll().subscribe(data => {
-      data.forEach(line => {
+    this.lines = [];
+    this.lineService.getAllLines().subscribe(data => {
+      console.log(data);
+      if(data!=undefined && data!=null) {
+        data.forEach(line => {
 
-        let lineToPush: Line = {
-          isUrban: line.isUrban,
-          orderNumber: line.orderNumber,
-          path: line.path,
-          stations: [],
-        };
-
-        line.stations.forEach(station => {
-          let stationToPush: Station = {
-            latitude: station.latitude,
-            longitude: station.longitude,
-            name: station.name,
+          let lineToPush: Line = {
+            isUrban: line.IsUrban,
+            orderNumber: line.OrderNumber,
+            path: line.Path,
+            stations: [],
           };
-
-          lineToPush.stations.push(stationToPush);
+  
+          console.log(line.Stations);
+          if(line.Stations != undefined && line.Stations != null)
+          {
+            line.Stations.forEach(station => {
+              let stationToPush: Station = {
+                latitude: station.Latitude,
+                longitude: station.Longitude,
+                name: station.Name,
+              };
+    
+              lineToPush.stations.push(stationToPush);
+            });
+          }
+  
+          this.lines.push(lineToPush)
         });
-
-        this.lines.push(lineToPush)
-      });
+      }
     }, err => console.log(err));
   }
 
@@ -100,7 +109,6 @@ export class MapBuilderComponent implements OnInit {
   defaultVariablesState() {
     this.lineActionSelection = undefined;
     this.stationActionSelection = undefined;
-    this.lines = [];
     this.linePathSelected = false;
     this.isUrbanSelection = true;
   }
@@ -112,6 +120,7 @@ export class MapBuilderComponent implements OnInit {
     this.lineConfirmEnabled = false;
     this.stationPreviewEnabled = false;
     this.stationConfirmEnabled = false;
+    this.modDelEnabled = false;
   }
 
   getDefaultLine() : Line {
@@ -152,20 +161,21 @@ export class MapBuilderComponent implements OnInit {
       }
       //select line
       else if (this.lineActionSelection == 1) {
+        this.updateLines();
         this.stationActionEnabled = false;
         this.pathModificationEnabled = false;
-        this.linePreviewEnabled = true;
+        this.linePreviewEnabled = false;
       }
 
       //modify line
-      else if (this.lineActionSelection == 2) {
+      else if (this.lineActionSelection == 2 && this.modDelEnabled) {
         this.stationActionEnabled = true;
         this.pathModificationEnabled = true;
         this.linePreviewEnabled = true;
       }
 
       //delete line
-      else if (this.lineActionSelection == 3) {
+      else if (this.lineActionSelection == 3 && this.modDelEnabled) {
         this.stationActionEnabled = false;
         this.pathModificationEnabled = false;
         this.linePreviewEnabled = true;
@@ -195,9 +205,14 @@ export class MapBuilderComponent implements OnInit {
 
   onLineSelection(lineSelection: Line) {
     if (this.selectedLine != undefined && this.selectedLine.orderNumber == lineSelection.orderNumber) {
-      this.selectedLine = undefined;
+      this.selectedLine = this.getDefaultLine();
+      this.modDelEnabled = false;
+      this.linePreviewEnabled = false;
     } else {
+      console.log(lineSelection);
       this.selectedLine = lineSelection;
+      this.modDelEnabled = true;
+      this.linePreviewEnabled = true;
     }
   }
 
@@ -290,10 +305,6 @@ export class MapBuilderComponent implements OnInit {
     this.selectedLine.stations.push(this.selectedStation);
     this.selectedStation = this.getDefaultStation();
     this.stationPreviewEnabled = false;
-  }
-  
-  onAddNewLine() {
-    
   }
   
   onModifiyLine() {
