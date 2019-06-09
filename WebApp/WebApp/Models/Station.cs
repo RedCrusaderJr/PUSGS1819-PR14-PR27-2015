@@ -18,11 +18,9 @@ namespace WebApp.Models
         [StringLength(300)]
         public string Name { get; set; }
 
-        [ForeignKey("StationLocation")]
-        public string LocationId { get; set; }
-        public Location StationLocation { get; set; }
-
-        public List<Line> Lines { get; set; }
+        public double Longitude { get; set; }
+        
+        public double Latitude { get; set; }
 
         public Station()
         {

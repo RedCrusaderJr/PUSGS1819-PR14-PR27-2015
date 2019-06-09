@@ -16,7 +16,6 @@ namespace WebApp.Persistence
         public DbSet<CataloguePrice> CataloguePrices { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Line> Lines { get; set; }
-        public DbSet<Location> Locations { get; set; }
         public DbSet<Passenger> Passengers { get; set; }
         public DbSet<Station> Stations { get; set; }
         public DbSet<Ticket> Tickets { get; set; }

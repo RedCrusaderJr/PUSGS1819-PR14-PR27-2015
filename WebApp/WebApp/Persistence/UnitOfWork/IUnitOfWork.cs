@@ -15,7 +15,6 @@ namespace WebApp.Persistence.UnitOfWork
         ICatalogueRepository CatalogueRepository { get; }
         IDiscountRepository DiscountRepository { get; }
         ILineRepository LineRepository { get; }
-        ILocationRepository LocationRepository { get; }
         IPassengerRepository PassengerRepository { get; }
         IStationRepository StationRepository { get; }
         ITicketRepository TicketRepository { get; }

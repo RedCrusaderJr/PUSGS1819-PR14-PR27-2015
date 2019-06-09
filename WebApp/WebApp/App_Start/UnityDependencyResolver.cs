@@ -75,7 +75,6 @@ namespace WebApp.App_Start
             container.RegisterType<ICatalogueRepository, CatalogueRepository>();
             container.RegisterType<IDiscountRepository, DiscountRepository>();
             container.RegisterType<ILineRepository, LineRepository>();
-            container.RegisterType<ILocationRepository, LocationRepository>();
             container.RegisterType<IPassengerRepository, PassengerRepository>();
             container.RegisterType<IStationRepository, StationRepository>();
             container.RegisterType<ITicketRepository, TicketRepository>();
