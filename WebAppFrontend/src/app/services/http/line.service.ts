@@ -1,15 +1,21 @@
 import { BaseHttpService } from './base.service';
 import { Line } from 'src/app/Models/Line';
+import { Observable } from 'rxjs';
 
 export class LineService extends BaseHttpService<Line> {
     
-    getAllLines() {
+    getAllLines() : Observable<any> {
         this.specificUrl ="/api/Lines";
         return super.getAll();
     }
 
-    getLineById(id: string) {
+    getLineById(id: string) : Observable<any> {
         this.specificUrl="/api/Lines";
         return super.getById(id);
+    }
+
+    postLine(data: Line) : Observable<any> {
+        this.specificUrl="/api/Lines";
+        return super.post(data);
     }
 }

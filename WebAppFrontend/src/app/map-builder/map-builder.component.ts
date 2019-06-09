@@ -10,49 +10,59 @@ import { Station } from '../Models/Station';
   selector: 'app-map-builder',
   templateUrl: './map-builder.component.html',
   styleUrls: ['./map-builder.component.css'],
-  styles: ['agm-map {height: 700px; width: 1000px;}'],
+  styles: ['agm-map {height: 500px; width: 800px;}'],
   providers: [LineService]
   // da li NgZone ide u provajdere 
 })
 export class MapBuilderComponent implements OnInit {
 
-  isUrbanSelection: boolean;
-  markerInfo: MarkerInfo;
-  lines: Line[];
-  selectedLine: Line;
-  selectedStation: Station;
+  //#region fields
+  
+  //#region map
   public polyline: Polyline;
+  public tempStationOnMap : Polyline;
   public stationsOnMap: Polyline[];
   public zoom: number;
+  markerInfo: MarkerInfo;
+  //#endregion
+
+  //#region lines
   lineActionSelection: number;
+  linePathSelected : boolean;
+  lines: Line[];
+  selectedLine: Line;
+  isUrbanSelection: boolean;
+  //#endregion
+
+  //#region stations
+  selectedStation: Station;
   stationActionSelection: number;
-  stationActionEnabled: boolean;
+  //#endregion
+  
+  //#region enablers
   pathModificationEnabled: boolean;
+  stationActionEnabled: boolean;
+  linePreviewEnabled : boolean;
+  lineConfirmEnabled : boolean;
+  stationPreviewEnabled : boolean;
+  stationConfirmEnabled : boolean;
+  //#endregion
+  //#endregion fields
+
 
   constructor(private ngZone: NgZone, private lineService: LineService) { }
 
   ngOnInit() {
-    this.stationsOnMap = [];
-    this.isUrbanSelection = true;
-    this.pathModificationEnabled = true;
-    this.lineActionSelection = undefined;
-    this.stationActionSelection = undefined;
-    this.selectedLine = undefined;
-    this.stationActionEnabled = false;
+    this.defaultMapSetup();
+    this.defaultVariablesState();
+    this.defaultEnablersState();
+    this.selectedLine = this.getDefaultLine();
     this.selectedStation = undefined;
-    this.lines = [];
-
-    this.initLines();
-
-    this.markerInfo = new MarkerInfo(new GeoLocation(45.242268, 19.842954),
-      "assets/ftn.png",
-      "Jugodrvo", "", "http://ftn.uns.ac.rs/691618389/fakultet-tehnickih-nauka");
-
-    this.polyline = new Polyline([], 'blue', null);
-    // { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } }
+    this.updateLines();
   }
 
-  initLines() {
+  //#region maintenance
+  updateLines() {
     this.lineService.getAll().subscribe(data => {
       data.forEach(line => {
 
@@ -78,12 +88,58 @@ export class MapBuilderComponent implements OnInit {
     }, err => console.log(err));
   }
 
+  defaultMapSetup() {
+    this.stationsOnMap = [];
+    this.markerInfo = new MarkerInfo(new GeoLocation(45.242268, 19.842954),
+                      "assets/ftn.png",
+                      "Jugodrvo", "", "http://ftn.uns.ac.rs/691618389/fakultet-tehnickih-nauka");
+    this.polyline = new Polyline([], 'blue', null);
+    // { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } }
+  }
+
+  defaultVariablesState() {
+    this.lineActionSelection = undefined;
+    this.stationActionSelection = undefined;
+    this.lines = [];
+    this.linePathSelected = false;
+    this.isUrbanSelection = true;
+  }
+
+  defaultEnablersState() {
+    this.pathModificationEnabled = false;
+    this.stationActionEnabled = false;
+    this.linePreviewEnabled = false;
+    this.lineConfirmEnabled = false;
+    this.stationPreviewEnabled = false;
+    this.stationConfirmEnabled = false;
+  }
+
+  getDefaultLine() : Line {
+    return  {
+      isUrban: true,
+      orderNumber: '',
+      path: '',
+      stations: [],
+    };
+  }
+
+  getDefaultStation() : Station {
+    return {
+      latitude : 0,
+      longitude : 0,
+      name : '',
+    };
+  }
+  //#endregion maintenance
+
+  //#region handlers
   onLineActionSelection(actionSelection: number) {
     console.log('new: ' + actionSelection + ', old: ' + this.lineActionSelection);
     if (this.lineActionSelection != undefined && this.lineActionSelection == actionSelection) {
       this.lineActionSelection = undefined;
       this.pathModificationEnabled = false;
       this.stationActionEnabled = false;
+      this.linePreviewEnabled = false;
     } else {
       this.lineActionSelection = actionSelection;
 
@@ -91,30 +147,49 @@ export class MapBuilderComponent implements OnInit {
       if (this.lineActionSelection == 0) {
         this.stationActionEnabled = true;
         this.pathModificationEnabled = true;
-        this.selectedLine = {
-          isUrban: true,
-          orderNumber: '',
-          path: '',
-          stations: [],
-        }
+        this.selectedLine = this.getDefaultLine();
+        this.linePreviewEnabled = true;
       }
       //select line
       else if (this.lineActionSelection == 1) {
         this.stationActionEnabled = false;
         this.pathModificationEnabled = false;
+        this.linePreviewEnabled = true;
       }
 
       //modify line
       else if (this.lineActionSelection == 2) {
         this.stationActionEnabled = true;
         this.pathModificationEnabled = true;
+        this.linePreviewEnabled = true;
       }
 
       //delete line
       else if (this.lineActionSelection == 3) {
         this.stationActionEnabled = false;
         this.pathModificationEnabled = false;
+        this.linePreviewEnabled = true;
       }
+    }
+  }
+
+  onStationActionSelection(actionSelection: number) {
+    if (this.stationActionEnabled) {
+      if (this.stationActionSelection != undefined && this.stationActionSelection == actionSelection) {
+        this.stationActionSelection = undefined;
+        this.pathModificationEnabled = true;
+        this.stationPreviewEnabled = false;
+      } else {
+        this.stationActionSelection = actionSelection;
+        this.pathModificationEnabled = false;
+        this.stationPreviewEnabled = true;
+      }
+    }
+  }
+
+  onIsUrbanSelection(isUrbanSelection: boolean) {
+    if (this.isUrbanSelection != isUrbanSelection) {
+      this.isUrbanSelection = isUrbanSelection;
     }
   }
 
@@ -126,29 +201,11 @@ export class MapBuilderComponent implements OnInit {
     }
   }
 
-  onStationActionSelection(actionSelection: number) {
-    if (this.stationActionEnabled) {
-      if (this.stationActionSelection != undefined && this.stationActionSelection == actionSelection) {
-        this.stationActionSelection = undefined;
-        this.pathModificationEnabled = true;
-      } else {
-        this.stationActionSelection = actionSelection;
-        this.pathModificationEnabled = false;
-      }
-    }
-  }
-
-  onIsUrbanSelection(isUrbanSelection: boolean) {
-    if (this.isUrbanSelection != isUrbanSelection) {
-      this.isUrbanSelection = isUrbanSelection;
-    }
-  }
-
   onMapClick($event) {
     if (this.lineActionSelection != undefined && this.lineActionSelection != null) {
       if (this.lineActionSelection == 0) {
         //add line
-        if (this.pathModificationEnabled) {
+        if (this.pathModificationEnabled && this.selectedLine.path != undefined && this.selectedLine.path != null) {
           this.placeMarker($event.coords.lat, $event.coords.lng);
           this.selectedLine.path += $event.coords.lat + '-' + $event.coords.lng + '|';
         }
@@ -156,12 +213,12 @@ export class MapBuilderComponent implements OnInit {
           if (this.stationActionSelection != undefined && this.stationActionSelection != null) {
             if (this.stationActionSelection == 0) {
               //add station
+              this.stationPreviewEnabled = true;
               this.addStation($event.coords.lat, $event.coords.lng);
 
-              this.stationsOnMap.forEach(station => {
-                console.log("Station location: (" + station.path[0].latitude + ', ' + station.path[0].longitude + ")");
-              });
-              
+              // this.stationsOnMap.forEach(station => {
+              //   console.log("Station location: (" + station.path[0].latitude + ', ' + station.path[0].longitude + ")");
+              // });
             }
             else if (this.stationActionSelection == 1) {
               //select station
@@ -198,19 +255,63 @@ export class MapBuilderComponent implements OnInit {
     }
   }
 
+  onLinePathClick() {
+    if (this.selectedLine != null && this.selectedLine != undefined && this.selectedLine.path != undefined && this.selectedLine.path != null) {
+      if (this.linePathSelected != undefined && this.linePathSelected) {
+        this.linePathSelected = false;
+      } else {
+        this.linePathSelected = true;
+      }
+    }
+  }
+
+  onLineConfirm() {
+    console.log(this.selectedLine);
+
+    this.lineService.postLine(this.selectedLine).subscribe(data => {
+      console.log(data);
+      this.updateLines();
+    }, err => console.log(err));
+
+    this.defaultMapSetup();
+    this.defaultVariablesState();
+    this.defaultEnablersState();
+    this.selectedLine = this.getDefaultLine();
+    this.selectedStation = undefined;
+
+    this.selectedLine = this.getDefaultLine();
+    this.linePreviewEnabled = false;
+  }
+  
+  onStationConfirm() {
+    console.log(this.selectedStation);
+    this.stationsOnMap.push(this.tempStationOnMap);
+    this.tempStationOnMap = undefined;
+    this.selectedLine.stations.push(this.selectedStation);
+    this.selectedStation = this.getDefaultStation();
+    this.stationPreviewEnabled = false;
+  }
+  
+  onAddNewLine() {
+    
+  }
+  
+  onModifiyLine() {
+    
+  }
+  //#endregion handlers
+  
+  //#region map gymnastics
   mapLineSelection(lineId: string) {
 
   }
 
   addStation(latitude: number, longitude: number) {
-    if (this.selectedLine == undefined && this.selectedLine == null) {
+    if (this.selectedLine == undefined && this.selectedLine == null && this.selectedLine.path == undefined && this.selectedLine == null) {
       return;
     }
 
-    let result = {
-      isValid : true,
-      distance : 0,
-    };
+    let isValid : boolean;
     let firstPoint = {
       x: 0,
       y: 0,
@@ -220,16 +321,17 @@ export class MapBuilderComponent implements OnInit {
       y: 0,
     };
 
-    for (let index = 0; index < this.selectedLine.path.split('|').length; index++) {
-      result = null;
+    let pathLengt = this.selectedLine.path.split('|').length
+    for (let index = 0; index < pathLengt; index++) {
+      isValid = false;
       let point = this.selectedLine.path.split('|')[index];
 
       if (point.split('-').length > 2) {
         return;
       }
 
-      let xCoordinate = Number(point.split('-')[0]);
-      let yCoordinate = Number(point.split('-')[1]);
+      let xCoordinate = Number(point.split('-')[1]);
+      let yCoordinate = Number(point.split('-')[0]);
 
       if (index == 0) {
         firstPoint.x = xCoordinate;
@@ -240,7 +342,10 @@ export class MapBuilderComponent implements OnInit {
         secondPoint.x = xCoordinate;
         secondPoint.y = yCoordinate;
 
-        result = this.validateStationPosition(latitude, longitude, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y)
+        isValid = this.validateStationPosition(latitude, longitude, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y)
+      }
+      else if(index == pathLengt - 1) {
+        continue;
       }
       else {
         firstPoint.x = secondPoint.x;
@@ -249,57 +354,148 @@ export class MapBuilderComponent implements OnInit {
         secondPoint.x = xCoordinate;
         secondPoint.y = yCoordinate;
       
-        result = this.validateStationPosition(latitude, longitude, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y)
+        isValid = this.validateStationPosition(latitude, longitude, firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y)
       }
 
-      if(result.isValid) {
-        let stationPosition = new Polyline([], 'blue', { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } })
-        stationPosition.addLocation(new GeoLocation(latitude, longitude));
-        this.stationsOnMap.push(stationPosition);
-        console.log("Station location: (" + latitude + ', ' + longitude + ")");
+      if(isValid) {
+        // let stationPosition = new Polyline([], 'blue', { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } });
+        // stationPosition.addLocation(new GeoLocation(latitude, longitude));
+        // this.stationsOnMap.push(stationPosition);
+        // console.log("Station location: (" + latitude + ', ' + longitude + ")");
+        console.log("For index: " + index);
+
+        this.tempStationOnMap = new Polyline([], 'blue', { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } });
+        this.tempStationOnMap.addLocation(new GeoLocation(latitude, longitude));
+
+        this.selectedStation = {
+          latitude : latitude,
+          longitude : longitude,
+          name : '',
+        };
         break;
       }
     }
   }
 
-  validateStationPosition(x: number, y: number, x1: number, y1: number, x2: number, y2: number) : {isValid : boolean, distance : number } {
-    let functinDistance : number = this.lineEquation(x, y , x1 , y1, x2, y2);
-    let functinIsValid : boolean = false;
+  //bukvalno ne znam šta ne valja
+  validateStationPosition(y: number, x: number, x1: number, y1: number, x2: number, y2: number) : boolean {
+    let distance : number = undefined;
+    // let pointDistance : number = undefined;
+    let isValid : boolean = false;
     
-    if(functinDistance < 0) {
-      functinIsValid = functinDistance >= -0.0008;
+    let tangens = (y2 - y1) / (x2 - x1);
+
+    //uspravna linija
+    if(tangens >= Number.POSITIVE_INFINITY || tangens <= Number.NEGATIVE_INFINITY) {
+      if(tangens >= Number.POSITIVE_INFINITY) {
+        if(y < y1) {
+          distance = this.fromPointDistance(x, y, x1, y1);
+        }
+        else if(y > y2) {
+          distance = this.fromPointDistance(x, y, x2, y2);
+        }
+        else {
+          distance = this.lineEquationDistance(x, y , x1 , y1, x2, y2);
+        }
+      } 
+      else if(tangens <= Number.NEGATIVE_INFINITY) {
+        if(y > y1) {
+          distance = this.fromPointDistance(x, y, x1, y1);
+        }
+        else if(y < y2) {
+          distance = this.fromPointDistance(x, y, x2, y2);
+        }
+        else {
+          distance = this.lineEquationDistance(x, y , x1 , y1, x2, y2);
+        }
+      }
     }
-    else {
-      functinIsValid = functinDistance <= 0.0008;
+    //pozitivni nagib
+    else if(tangens > 0) {
+      if(x < x1 && y < y1) {
+        distance = this.fromPointDistance(x, y, x1, y1);
+      }
+      else if(x > x2 && y > y2) {
+        distance = this.fromPointDistance(x, y, x2, y2);
+      }
+      else {
+        distance = this.lineEquationDistance(x, y , x1 , y1, x2, y2);
+      }
+    }
+    //negativni nagib
+    else if(tangens < 0) {
+      if(x < x1 && y > y1) {
+        distance = this.fromPointDistance(x, y, x1, y1);
+      }
+      else if(x > x2 && y < y2) {
+        distance = this.fromPointDistance(x, y, x2, y2);
+      }
+      else {
+        distance = this.lineEquationDistance(x, y , x1 , y1, x2, y2);
+      }
+    }
+    //horizontalna linija
+    else if(tangens == 0) {
+      if(x < x1) {
+        distance = this.fromPointDistance(x, y, x1, y1);
+      }
+      else if(x > x2) {
+        distance = this.fromPointDistance(x, y, x2, y2);
+      } 
+      else {
+        distance = this.lineEquationDistance(x, y , x1 , y1, x2, y2);
+      }
     }
 
-    let result = {
-      isValid : functinIsValid,
-      distance : functinDistance,
-    };
+    let pointDistance1 = this.fromPointDistance(x,y, x1,y1);
+    let pointDistance2 = this.fromPointDistance(x,y, x2,y2);
+    let equationDistance = this.lineEquationDistance(x,y, x1,y1, x2,y2);
+    
+    distance = pointDistance1;
+    if(pointDistance2 < distance) {
+      distance = pointDistance2;
+    }
+    
+    if(equationDistance < distance) {
+      distance = equationDistance;
+    }
 
-    return result;
+    isValid = distance <= 0.0003;
+
+    if(isValid) {
+      console.log('Distance: ' + distance);
+    }
+
+    return isValid;
   }
 
-  lineEquation(x: number, y: number, x1: number, y1: number, x2: number, y2: number) : number {
-    return (y - y1) - ((y2 - y1) / (x2 - x1)) * (x - x1);
+  fromPointDistance(x : number, y : number, x1 : number, y1 : number) : number {
+    let distance = Math.sqrt(Math.pow((x-x1),2) + Math.pow((y-y1),2));
+    console.log('fromPointDistance: ' + distance);
+    return distance;
+  }
+
+  lineEquationDistance(x: number, y: number, x1: number, y1: number, x2: number, y2: number) : number {
+    let distance = Math.abs((y - y1) - (((y2 - y1) / (x2 - x1)) * (x - x1)));
+    console.log('lineEquationDistance: ' + distance);
+    return distance;
   }
 
   placeMarker(latitude: number, longitude: number) {
     this.polyline.addLocation(new GeoLocation(latitude, longitude));
-    console.log(this.polyline);
+    // console.log(this.polyline);
   }
-
-  onAddNewLine() {
-
-  }
-
-  onModifiyLine() {
-
-  }
-
-  onSave() {
-
-  }
-
+  //#endregion map gymnastics
+  
+  // updateLineConfirmEnabled() {
+  //   this.stationConfirmEnabled =  this.selectedLine != undefined && this.selectedLine != null &&
+  //                                 this.selectedLine.orderNumber != undefined && this.selectedLine.orderNumber != null && this.selectedLine.orderNumber != "";
+  // }
+  
+  // updateStationConfirmEnabled() {
+  //   this.stationConfirmEnabled =  this.selectedStation != undefined && this.selectedStation != null &&
+  //                                 this.selectedStation.latitude != undefined && this.selectedStation.latitude != null && 
+  //                                 this.selectedStation.longitude != undefined && this.selectedStation.longitude != null && 
+  //                                 this.selectedStation.name != undefined && this.selectedStation.name != null && this.selectedStation.name != "";
+  // }
 }
