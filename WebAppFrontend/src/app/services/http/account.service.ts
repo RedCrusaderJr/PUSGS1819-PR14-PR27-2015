@@ -24,4 +24,5 @@ export class AccountService extends BaseHttpService<any> {
         return super.post(data);
     }
 
+
 }

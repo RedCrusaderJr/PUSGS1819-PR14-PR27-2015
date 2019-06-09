@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthHttpService {
@@ -8,7 +9,7 @@ export class AuthHttpService {
 
     }
 
-    logIn(username: string, password: string) {
+    logIn(username: string, password: string) : Observable<any> {
         let data = `username=${username}&password=${password}&grant_type=password`;
         let httpOptions = {
             headers: {
@@ -16,18 +17,6 @@ export class AuthHttpService {
             }
         }
 
-        this.http.post<any>(this.base_url + "/oauth/token", data, httpOptions).subscribe(
-            data => {
-                localStorage.jwt = data.access_token;
-                let retData = data.access_token;
-                let jwtData = retData.split('.')[1];
-                let decodedJwtJsonData = window.atob(jwtData);
-                let decodedJwtData = JSON.parse(decodedJwtJsonData);
-                
-                let role = decodedJwtData.role;
-                
-            },
-            error => console.log(error)
-        );      
+        return this.http.post<any>(this.base_url + "/oauth/token", data, httpOptions);
     }
 }

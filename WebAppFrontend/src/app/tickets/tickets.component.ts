@@ -5,17 +5,21 @@ import { validateConfig } from '@angular/router/src/config';
 import { CataloguePriceService } from '../services/http/cataloguePrice.service';
 import { formatDate } from '@angular/common';
 import { TicketService } from '../services/http/ticket.service';
+import { AccountService } from '../services/http/account.service';
+import { PassengerService } from '../services/http/passenger.service';
 
 @Component({
   selector: 'app-tickets',
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css'],
-  providers: [JwtService, FormBuilder, CataloguePriceService, TicketService]
+  providers: [JwtService, FormBuilder, CataloguePriceService, TicketService, PassengerService]
 })
 export class TicketsComponent implements OnInit {
 
-  constructor(private jwtService: JwtService, private fb: FormBuilder, private cataloguePriceService: CataloguePriceService, private ticketService : TicketService) { }
+  constructor(private jwtService: JwtService, private passengerService : PassengerService, private fb: FormBuilder, private cataloguePriceService: CataloguePriceService, private ticketService : TicketService) { }
   data = null;
+  user = null;
+  selectedTicketType = null;
   catalogues = [];
   forms: FormGroup[] = [];
   headersArray: boolean[] = [];
@@ -92,7 +96,8 @@ export class TicketsComponent implements OnInit {
               this.catalogues.push(element);
               this.headersArray.push(false);
               console.log("Catalogue: ");
-              console.log(this.catalogues);
+              
+              
             }
 
           })
@@ -104,7 +109,7 @@ export class TicketsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.jwtService.getRole() == undefined);
+    
     this.cataloguePriceService.getAllCataloguePrice().subscribe(
       retValue => {
         console.log(retValue);
@@ -117,6 +122,7 @@ export class TicketsComponent implements OnInit {
           this.data[retValue[2].TicketTypeId] = retValue[2].Price;
           this.data[retValue[3].TicketTypeId] = retValue[3].Price;
           this.data.CatalogueId = retValue[0].CatalogueId;
+          console.log(this.jwtService.getRole());
 
         }
         else {
@@ -125,6 +131,11 @@ export class TicketsComponent implements OnInit {
       },
       error => console.log(error)
     );
+
+    this.passengerService.getPassenger(this.jwtService.getNameId()).subscribe(data => {
+      this.user = data;
+      console.log(this.user);
+    }, err => console.log(err));
 
     this.initiliazeCataloguePrices();
 
@@ -139,8 +150,11 @@ export class TicketsComponent implements OnInit {
       let sendData = {CataloguePriceId : this.data.CatalogueId,
                       Email : this.emailForm.get('emailAddress').value}
       
-      this.ticketService.buyTicketUnregistred(sendData).subscribe(data => alert(data), error => console.log(error));
-      this.emailForm.reset();
+      this.ticketService.buyTicketUnregistred(sendData).subscribe(data => {
+        alert(data);
+        this.emailForm.reset();
+      }, error => console.log(error));
+      
       
     }
     else {
@@ -174,18 +188,30 @@ export class TicketsComponent implements OnInit {
   selectedPrice : number = 0;
 
   onPriceTableRowClick(type: string) {
+    let coeficient = 1;
+    if (this.user.ProcessingPhase == 1) {
+      if (this.user.Discount.DiscountTypeName == "Student" || this.user.Discount.DiscountTypeName == "Senior") {
+        coeficient = this.user.Discount.DiscountCoeficient;
+      }
+    }
+
+    
     switch(type) {
       case 'hour' :
-        this.selectedPrice = this.data.Hour;
+        this.selectedPrice = this.data.Hour * coeficient;
+        this.selectedTicketType = "Hour";
         break;
       case 'day' :
-        this.selectedPrice = this.data.Day;
+        this.selectedPrice = this.data.Day * coeficient;
+        this.selectedTicketType = "Day";
         break;
       case 'month' :
-        this.selectedPrice = this.data.Month;
+        this.selectedPrice = this.data.Month * coeficient;
+        this.selectedTicketType = "Month";
         break;
       case 'year' :
-        this.selectedPrice = this.data.Year;
+        this.selectedPrice = this.data.Year * coeficient;
+        this.selectedTicketType = "Year";
         break;
     }
   }
@@ -234,6 +260,23 @@ export class TicketsComponent implements OnInit {
       err => {
         console.log(err);
       }
+    )
+  }
+
+  buyTicket() {
+    let sendData = {
+      PriceId : this.data.CatalogueId + "|" + this.selectedTicketType,
+      PassengerType : this.user.Discount.DiscountTypeName
+    }
+
+    console.log(sendData);
+
+    this.ticketService.buyTicket(sendData).subscribe(
+      data =>{
+        console.log(data);
+        this.user.Tickets.push(data);
+      },
+      err => console.log(err)
     )
   }
 

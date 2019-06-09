@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -52,6 +53,100 @@ namespace WebApp.Controllers
         public IQueryable<Passenger> GetUsers()
         {
             return Db.PassengerRepository.GetAll().AsQueryable();
+        }
+
+        [HttpGet]
+        [Route("GetAllUnvalidatedUsers")]
+        [Authorize(Roles = "Controller")]
+        public IEnumerable<Passenger> GetAllUnvalidatedUsers()
+        {
+            return Db.PassengerRepository.Find(passenger => passenger.ProcessingPhase == ProcessingPhase.PENDING && passenger.Type != "Regular").ToList();
+        }
+
+        [HttpPut]
+        [Route("ValidateUser")]
+        [Authorize(Roles = "Controller")]
+        public IHttpActionResult ValidateUser(ValidatePassengerBindingModel userToValidate)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (userToValidate.ProcessingPhase == ProcessingPhase.PENDING)
+            {
+                return BadRequest("Must be accept or reject");
+            }
+
+            Passenger passengerToValidate = Db.PassengerRepository.Get(userToValidate.UserId);
+
+            if (passengerToValidate == null)
+            {
+                return BadRequest("Passsenger with this id doesn't exists");
+            }
+
+            if (passengerToValidate.Type == "Regular")
+            {
+                return BadRequest("Regular users cannot be validated");
+            }
+
+            if (passengerToValidate.ImageUrl == null)
+            {
+                return BadRequest("Cannot validate user with no image");
+            }
+
+            passengerToValidate.ProcessingPhase = userToValidate.ProcessingPhase;
+
+            try
+            {
+                Db.Complete();
+            }
+            catch(Exception e)
+            {
+                return InternalServerError(e);
+            }
+
+            string validation = "";
+
+            if (passengerToValidate.ProcessingPhase == ProcessingPhase.ACCEPTED)
+            {
+                validation = "accepted";
+            }
+            else if (passengerToValidate.ProcessingPhase == ProcessingPhase.REJECTED)
+            {
+                validation = "rejected";
+            }
+
+            string reason = "No reason provided";
+
+            if (userToValidate.Reason != "")
+            {
+                reason = userToValidate.Reason;
+            }
+
+
+            MailMessage mail = new MailMessage("bid.incorporated.ns@gmail.com", passengerToValidate.Email);
+            SmtpClient client = new SmtpClient();
+            client.Port = 587;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = true;
+            client.Credentials = new NetworkCredential("bid.incorporated.ns@gmail.com", "B1i2d3i4n5c6");
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Host = "smtp.gmail.com";
+            mail.Subject = "Ticket information";
+            mail.Body = $"Your request for {passengerToValidate.Type} discount has been {validation}. {Environment.NewLine} Reason: {Environment.NewLine} {reason} {Environment.NewLine} {Environment.NewLine} Best regards, {Environment.NewLine} BiD corporation";
+            try
+            {
+                client.Send(mail);
+            }
+            catch (Exception e)
+            {
+
+            }
+            return Ok();
+
+
         }
 
         // GET: api/Passengers/5
@@ -147,7 +242,7 @@ namespace WebApp.Controllers
 
                 if (passengerDb.Type != passenger.Type)
                 {
-                    passengerDb.EmailConfirmed = false;
+                    passengerDb.ProcessingPhase = ProcessingPhase.PENDING;
                     string filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + passenger.ImageUrl);
                     if (File.Exists(filePath))
                     { 

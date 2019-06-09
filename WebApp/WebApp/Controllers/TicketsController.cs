@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using WebApp.Models;
@@ -37,7 +38,7 @@ namespace WebApp.Controllers
             return Db.TicketRepository.GetAll().AsQueryable();
         }
 
-        [Route("api/Ticket/PutChangeValidityOfTicket")]
+        [Route("api/Tickets/BuyTicketUnregistred")]
         [HttpPost]
         [AllowAnonymous]
         public IHttpActionResult PostTicketUnregistred(TicketUnregistratedBindingModel model)
@@ -195,19 +196,91 @@ namespace WebApp.Controllers
         }
 
         // POST: api/Tickets
-        //[Authorize(Roles = "AppUser")]
+        [Authorize(Roles = "AppUser")]
         [ResponseType(typeof(Ticket))]
-        public IHttpActionResult PostTicket(string passengerId, Ticket ticket)
+        [Route("api/Tickets/AddTicket")]
+        [HttpPost]
+        public IHttpActionResult PostTicket(AddTicketBindingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            Passenger foundPassenger;
-            if (!TicketExists(ticket.TicketId) && (foundPassenger = Db.PassengerRepository.Get(passengerId)) != null)
+
+            string priceType = model.PriceId.Split('|')[1];
+
+            CataloguePrice cataloguePrice = Db.CataloguePriceRepository.Get(model.PriceId);
+            
+
+            if (cataloguePrice == null || DateTime.Compare(DateTime.Now, cataloguePrice.Catalogue.Begin) < 0 || DateTime.Compare(DateTime.Now, cataloguePrice.Catalogue.End) > 0)
             {
-                foundPassenger.Tickets.Add(ticket);
+                return BadRequest("Invalid catalogue price");
+            }
+            
+
+            string name = HttpContext.Current.User.Identity.Name;
+            Passenger foundPassenger = null;
+            if ((foundPassenger = Db.PassengerRepository.Get(name)) != null && model.PassengerType == foundPassenger.Type)
+            {
+                if ((foundPassenger.ProcessingPhase == ProcessingPhase.ACCEPTED || foundPassenger.Discount.DiscountTypeName == "Regular"))
+                {
+                    Ticket ticket = new Ticket() { DateOfIssue = DateTime.Now, IsValid = true, PaidPrice = foundPassenger.Discount.DiscountCoeficient * cataloguePrice.Price, PriceId = cataloguePrice.CataloguePriceId};
+                    Ticket ticketDb = Db.TicketRepository.Add(ticket);
+
+                    try
+                    {
+                        Db.Complete();
+                    }
+                    catch (Exception e)
+                    {
+                        return InternalServerError(e);
+                    }
+
+                    foundPassenger.Tickets.Add(ticketDb);
+                    try
+                    {
+                        Db.Complete();
+                    }
+                    catch (Exception e)
+                    {
+                        return InternalServerError(e);
+                    }
+
+                    return Ok(ticketDb);
+
+                }
+                else if (foundPassenger.ProcessingPhase != ProcessingPhase.ACCEPTED)
+                {
+                    Ticket ticket = new Ticket() { DateOfIssue = DateTime.Now, IsValid = true, PaidPrice = cataloguePrice.Price, PriceId = cataloguePrice.CataloguePriceId };
+                    Ticket ticketDb = Db.TicketRepository.Add(ticket);
+
+                    try
+                    {
+                        Db.Complete();
+                    }
+                    catch (Exception e)
+                    {
+                        return InternalServerError(e);
+                    }
+
+                    foundPassenger.Tickets.Add(ticketDb);
+                    try
+                    {
+                        Db.Complete();
+                    }
+                    catch (Exception e)
+                    {
+                        return InternalServerError(e);
+                    }
+
+                    return Ok(ticketDb);
+                }
+                else
+                {
+                    return BadRequest("You don't have right to buy this ticket. Please wait until controller confirm your picture.");
+                }
+
                 //potencijalan konflikt u EF
                 //Db.TicketRepository.Add(ticket);
             }
@@ -216,16 +289,7 @@ namespace WebApp.Controllers
                 return Conflict();
             }
 
-            try
-            {
-                Db.Complete();
-            }
-            catch(Exception e)
-            {
-                return InternalServerError(e);
-            }
             
-            return CreatedAtRoute("DefaultApi", new { id = ticket.TicketId }, ticket);
         }
 
         // DELETE: api/Tickets/5

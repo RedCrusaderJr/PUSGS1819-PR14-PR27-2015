@@ -70,6 +70,13 @@ namespace WebApp.Migrations
                 userManager.AddToRole(user.Id, "AppUser");
             }
 
+            if (!context.Users.Any(u => u.UserName == "controlerOne"))
+            {
+                var user = new ApplicationUser() { Id = "controlerOne", UserName = "controlerOne", Email = "controlerOne@controler.com", PasswordHash = ApplicationUser.HashPassword("Controller123!") };
+                userManager.Create(user);
+                userManager.AddToRole(user.Id, "Controller");
+            }
+
             if (!context.Discounts.Any(d => d.DiscountTypeName == "Student"))
             {
                 var discount = new Discount() { DiscountTypeName = "Student", DiscountCoeficient = 0.8 };

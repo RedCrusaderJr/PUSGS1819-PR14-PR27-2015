@@ -84,6 +84,7 @@ export class ProfileComponent implements OnInit {
           this.profile.surname = data.Surname;
           this.profile.dateOfBirth = data.DateOfBirthString;
           this.profile.type = data.Type;
+          this.profile.ProcessingPhase = data.ProcessingPhase;
 
           this.profileForm.patchValue({ name: data.Name });
           this.profileForm.patchValue({ surname: data.Surname });
@@ -160,6 +161,7 @@ export class ProfileComponent implements OnInit {
               this.profile.surname = data.Surname;
               this.profile.dateOfBirth = data.DateOfBirthString;
               this.profile.type = data.Type;
+              this.profile.ProcessingPhase = data.ProcessingPhase;
 
               this.profileForm.patchValue({ name: data.Name });
               this.profileForm.patchValue({ surname: data.Surname });

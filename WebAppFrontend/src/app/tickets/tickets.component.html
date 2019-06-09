@@ -19,7 +19,8 @@
     <td>{{data.Year}}</td>
   </tr>
 
-  <label>Your price is: {{selectedPrice}}</label>
+  <label>Your price is: {{selectedPrice}}</label> 
+  <button type="button" (click)="buyTicket()" *ngIf="jwtService.getRole() == 'AppUser'" [disabled]="selectedPrice == 0">Buy ticket</button>
 
   
   <div id="unregistratedUser" *ngIf="jwtService.getRole() == undefined">
@@ -36,6 +37,8 @@
 <ng-template #noCatalogues>
   <h2>You cannot buy tickets at this moment. Please try again later.</h2>
 </ng-template>
+
+
 
 
 <div id="accordionEx" class="accordion">
@@ -163,4 +166,24 @@
       </div>
     </div>
   </div>
+</div>
+
+
+<div id="userTicekts" *ngIf="jwtService.getRole() == 'AppUser'">
+  <h3>Your tickets: </h3>
+
+  <tr>
+    <th>Ticket id</th>
+    <th>Date of issue</th>
+    <th>Price</th>
+    <th>Is valid</th>
+  </tr>
+  <ng-container *ngFor="let ticket of user.Tickets">
+    <tr>
+        <td>{{ticket.TicketId}}</td>
+        <td>{{ticket.DateOfIssue.split("T")[0]}} {{ticket.DateOfIssue.split("T")[1].split(":")[0]}}:{{ticket.DateOfIssue.split("T")[1].split(":")[1]}}</td>
+        <td>{{ticket.PaidPrice}}</td>
+        <td>{{ticket.IsValid}}</td>
+    </tr>
+  </ng-container>
 </div>

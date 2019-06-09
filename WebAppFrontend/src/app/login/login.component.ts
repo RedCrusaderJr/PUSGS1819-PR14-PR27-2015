@@ -23,10 +23,23 @@ export class LoginComponent implements OnInit {
   }
 
   login(user: User) {
-    this.http.logIn(user.username, user.password);
+    this.http.logIn(user.username, user.password).subscribe(
+      data => {
+          localStorage.jwt = data.access_token;
+          let retData = data.access_token;
+          let jwtData = retData.split('.')[1];
+          let decodedJwtJsonData = window.atob(jwtData);
+          let decodedJwtData = JSON.parse(decodedJwtJsonData);
+          
+          let role = decodedJwtData.role;
+          this.router.navigate(['']); //za sada ovako, treba popraviti
+          
+      },
+      error => console.log(error)
+  );      
 
 
-    this.router.navigate(['']); //za sada ovako, treba popraviti
+   
   }
 
 }

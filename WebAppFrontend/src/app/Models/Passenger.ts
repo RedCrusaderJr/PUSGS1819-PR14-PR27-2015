@@ -6,4 +6,5 @@ export class Passenger {
     surname : string;
     dateOfBirth : string;
     type : string;
+    ProcessingPhase : number
 }

@@ -12,6 +12,7 @@ namespace WebApp.Models
         public int TicketId { get; set; }
 
         [ForeignKey("Price")]
+        [Required]
         public string PriceId { get; set; }
 
         public CataloguePrice Price { get; set; }
@@ -19,6 +20,8 @@ namespace WebApp.Models
         public bool IsValid { get; set; } = true;
 
         public DateTime DateOfIssue { get; set; }
+
+        public double PaidPrice { get; set; }
 
 
         public Ticket() { }
