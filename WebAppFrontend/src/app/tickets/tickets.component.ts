@@ -263,6 +263,18 @@ export class TicketsComponent implements OnInit {
     )
   }
 
+  checkUncheckTicket(index: number){
+    console.log(this.user);
+    this.ticketService.checkUncheckTicket(this.user.Tickets[index].TicketId).subscribe(
+      data => {
+        this.user.Tickets[index] = data;
+      },
+      error =>{
+        console.log(error);
+      }
+    )
+  }
+
   buyTicket() {
     let sendData = {
       PriceId : this.data.CatalogueId + "|" + this.selectedTicketType,

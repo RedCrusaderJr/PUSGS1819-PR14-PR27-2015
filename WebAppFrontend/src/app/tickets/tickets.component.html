@@ -178,12 +178,14 @@
     <th>Price</th>
     <th>Is valid</th>
   </tr>
-  <ng-container *ngFor="let ticket of user.Tickets">
+  <ng-container *ngFor="let ticket of user.Tickets; let i = index">
     <tr>
         <td>{{ticket.TicketId}}</td>
         <td>{{ticket.DateOfIssue.split("T")[0]}} {{ticket.DateOfIssue.split("T")[1].split(":")[0]}}:{{ticket.DateOfIssue.split("T")[1].split(":")[1]}}</td>
         <td>{{ticket.PaidPrice}}</td>
         <td>{{ticket.IsValid}}</td>
+        <td *ngIf="ticket.PriceId.split('|')[1] == 'Hour' && ticket.CheckedAt == null && ticket.IsValid == true"><button type="button" (click)="checkUncheckTicket(i)">Check ticket</button></td>
+        <td *ngIf="ticket.PriceId.split('|')[1] == 'Hour' && ticket.CheckedAt != null && ticket.IsValid == true"><button type="button" (click)="checkUncheckTicket(i)">Uncheck ticket</button></td>
     </tr>
   </ng-container>
 </div>

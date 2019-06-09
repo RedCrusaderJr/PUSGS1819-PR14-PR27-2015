@@ -107,17 +107,48 @@ namespace WebApp.Controllers
             return Ok(ticket);
         }
 
-        //[Authorize(Roles ="Controller")]
-        [Route("api/Ticket/GetIsTicketValid")]
-        [ResponseType(typeof(bool))]
-        public IHttpActionResult GetIsTicketValid(int id)
+        [HttpPut]
+        [Authorize(Roles = "Controller")]
+        [Route("api/Tickets/UnvalidateTicketManualy")]
+        public IHttpActionResult UnvalidateTicket([FromBody]int id)
+        {
+            Ticket ticket = Db.TicketRepository.Get(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ticket.IsValid = false;
+            Db.TicketRepository.Update(ticket);
+
+            try
+            {
+                Db.Complete();
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Controller")]
+        [Route("api/Tickets/ValidateTicket")]
+        public IHttpActionResult GetIsTicketValid([FromBody]int id)
         {
             bool isValid = false;
 
             Ticket ticket = Db.TicketRepository.Get(id);
             if(ticket == null)
             {
-                return Ok(isValid);
+                return NotFound();
+            }
+
+            if (!ticket.IsValid)
+            {
+                return Ok(ticket);
             }
 
             DateTime now = DateTime.Now;
@@ -125,7 +156,13 @@ namespace WebApp.Controllers
             switch(ticket.Price.TicketType.TicketTypeName)
             {
                 case ("Hour") :
+                    
                     DateTime hourCheck = new DateTime(ticket.DateOfIssue.Year, ticket.DateOfIssue.Month, ticket.DateOfIssue.Day, ticket.DateOfIssue.Hour + 1, 0, 0);
+                    if (ticket.CheckedAt != null && DateTime.Compare((DateTime)ticket.CheckedAt, hourCheck) < 0)
+                    {
+                        isValid = true;
+                        break;
+                    }
                     isValid = DateTime.Compare(now, hourCheck) < 0;
                     break;
 
@@ -145,32 +182,62 @@ namespace WebApp.Controllers
                     break;
             }
 
-            return Ok(isValid);
+            ticket.IsValid = isValid;
+            Db.TicketRepository.Update(ticket);
+            try
+            {
+                Db.Complete();
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+
+            return Ok(ticket);
         }
 
         // PUT: api/Tickets/5
-        //[Authorize(Roles ="Controller")]
-        [Route("api/Ticket/PutChangeValidityOfTicket")]
-        [ResponseType(typeof(bool))]
-        public IHttpActionResult PutChangeValidityOfTicket(int id, Ticket ticket)
+        [Authorize(Roles = "AppUser")]
+        [Route("api/Tickets/CheckTicket")]
+        [HttpPut]
+        public IHttpActionResult CheckTicket([FromBody]int ticketId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != ticket.TicketId)
+            
+
+            Ticket ticketToCheck = Db.TicketRepository.Get(ticketId);
+
+            if (ticketToCheck == null)
             {
-                
-                return BadRequest();
+                return BadRequest("Ticket not found");
             }
 
-            if (TicketExists(id))
-            {
-                ticket.IsValid = !ticket.IsValid;
-                Db.TicketRepository.Update(ticket);
-            }
             
+
+            if (ticketToCheck.PriceId.Split('|')[1] != "Hour")
+            {
+                return BadRequest("Ticket must be hour type");
+            }
+
+            if (!ticketToCheck.IsValid)
+            {
+                return BadRequest("Ticket must be valid.");
+            }
+
+            if (ticketToCheck.CheckedAt == null)
+            {
+                ticketToCheck.CheckedAt = DateTime.Now;
+            }
+            else
+            {
+                ticketToCheck.CheckedAt = null;
+            }
+
+            Db.TicketRepository.Update(ticketToCheck);
 
             try
             {
@@ -178,7 +245,7 @@ namespace WebApp.Controllers
             }
             catch (DbUpdateConcurrencyException dbEx)
             {
-                if (!TicketExists(id))
+                if (!TicketExists(ticketId))
                 {
                     return NotFound();
                 }
@@ -192,7 +259,7 @@ namespace WebApp.Controllers
                 return InternalServerError(e);
             }
 
-            return Ok(ticket.IsValid);
+            return Ok(ticketToCheck);
         }
 
         // POST: api/Tickets

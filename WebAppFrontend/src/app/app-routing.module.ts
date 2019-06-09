@@ -24,7 +24,7 @@ const routes: Routes = [
     { path: "bus-lines"         , component: BusLinesComponent          },
     { path: "tickets"           , component: TicketsComponent           },
     { path: "bus-location"      , component: BusLocationComponent       },
-    { path: "ticket-validator"  , component: TicketValidatorComponent, canActivate: [ControlContainer] },
+    { path: "ticket-validator"  , component: TicketValidatorComponent, canActivate: [ControllerGuard] },
     { path: "map-builder"       , component: MapBuilderComponent, canActivate: [AdminGuard]        },
     { path: "validate-users"    , component: ValidateUsersComponent, canActivate: [ControllerGuard]},
     { path: ''                  , redirectTo: 'timetable', pathMatch: 'full' },
