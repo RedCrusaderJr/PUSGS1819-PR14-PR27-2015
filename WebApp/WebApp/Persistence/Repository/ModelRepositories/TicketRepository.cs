@@ -22,7 +22,7 @@ namespace WebApp.Persistence.Repository.ModelRepositories
         public override Ticket Get(int id)
         {
             //TODO: mozda je potreban dublji include
-            return context.Set<Ticket>().Include(c => c.Price).SingleOrDefault(c => c.TicketId.Equals(id));
+            return context.Set<Ticket>().Include(c => c.Price).Include(c => c.Price.TicketType).SingleOrDefault(c => c.TicketId.Equals(id));
         }
     }
 }

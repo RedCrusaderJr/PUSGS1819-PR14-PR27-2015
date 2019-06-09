@@ -1,3 +1,14 @@
-<p>
-  ticket-validator works!
-</p>
+<h1>Validate tickets</h1>
+
+<form [formGroup]="validateTicketsForm" (ngSubmit)="validateSubmit()">
+  <label>Ticket ID: </label>
+  <input type="number" formControlName="ticketId">
+  <button type="submit" [disabled]="validateTicketsForm.invalid">Submit</button>
+</form>
+
+
+<div id="selectedTicketDiv" *ngIf="selectedTicket != null">
+  <label>TicketID: {{selectedTicket.TicketId}}</label> <br/>
+  <label>Validity: {{selectedTicket.IsValid}}</label> <br/>
+  <button type="button" *ngIf="selectedTicket.IsValid" (click)="unvalidateTicket()">Unvalidate ticket</button>
+</div>

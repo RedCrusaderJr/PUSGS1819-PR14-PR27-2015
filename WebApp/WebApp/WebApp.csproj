@@ -300,6 +300,13 @@
     <Compile Include="Migrations\201906091322170_Line and Station modification.cs" />
     <Compile Include="Migrations\201906091322170_Line and Station modification.Designer.cs">
       <DependentUpon>201906091322170_Line and Station modification.cs</DependentUpon>
+    <Compile Include="Migrations\201906091141015_ticketCheckedAt.cs" />
+    <Compile Include="Migrations\201906091141015_ticketCheckedAt.Designer.cs">
+      <DependentUpon>201906091141015_ticketCheckedAt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906091427510_ticketCheckedAtNullable.cs" />
+    <Compile Include="Migrations\201906091427510_ticketCheckedAtNullable.Designer.cs">
+      <DependentUpon>201906091427510_ticketCheckedAtNullable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -486,6 +493,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906091322170_Line and Station modification.resx">
       <DependentUpon>201906091322170_Line and Station modification.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906091141015_ticketCheckedAt.resx">
+      <DependentUpon>201906091141015_ticketCheckedAt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906091427510_ticketCheckedAtNullable.resx">
+      <DependentUpon>201906091427510_ticketCheckedAtNullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

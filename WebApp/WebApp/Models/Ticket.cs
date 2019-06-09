@@ -23,6 +23,9 @@ namespace WebApp.Models
 
         public double PaidPrice { get; set; }
 
+        //only for hour tickets
+        public DateTime? CheckedAt { get; set; }
+
 
         public Ticket() { }
     }
