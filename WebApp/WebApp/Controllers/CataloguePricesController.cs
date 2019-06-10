@@ -93,7 +93,7 @@ namespace WebApp.Controllers
 
 
 
-                    Catalogue catalogueDb = Db.CatalogueRepository.Find(cat => cat.Begin.Equals(hourPrice.Catalogue.Begin) && cat.End.Equals(hourPrice.Catalogue.End)).FirstOrDefault();
+                    Catalogue catalogueDb = Db.CatalogueRepository.Find(cat => cat.Begin.Equals(hourPrice.Catalogue.Begin) && cat.End.Equals(hourPrice.Catalogue.End)).Last();
                     if (!IsItValid(cataloguePrice.Begin, cataloguePrice.End, catalogueDb))
                     {
                         return Conflict();
@@ -224,7 +224,7 @@ namespace WebApp.Controllers
             {
                 if ((begin.CompareTo(catalogue.Begin) >= 0 && begin.CompareTo(catalogue.End) <= 0) || (end.CompareTo(catalogue.Begin) >= 0 && end.CompareTo(catalogue.End) <= 0))
                 {
-                    if (excludeCatalogue != null)
+                    if (excludeCatalogue != null && excludeCatalogue.CatalogueId == catalogue.CatalogueId)
                     {
                         continue;
                     }
