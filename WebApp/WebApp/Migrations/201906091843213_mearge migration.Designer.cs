@@ -7,13 +7,13 @@ namespace WebApp.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class ticketCheckedAtNullable : IMigrationMetadata
+    public sealed partial class meargemigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ticketCheckedAtNullable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(meargemigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201906091427510_ticketCheckedAtNullable"; }
+            get { return "201906091843213_mearge migration"; }
         }
         
         string IMigrationMetadata.Source

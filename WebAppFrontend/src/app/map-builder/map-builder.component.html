@@ -64,6 +64,7 @@
             </agm-polyline>
           </ng-container>
 
+          <!-- ends of line -->
           <ng-container *ngIf="polyline != undefined && polyline!=null && polyline.path != undefined && polyline.path!=null">
             <!-- <ng-container *ngIf="polyline.path != undefined && polyline.path!=null"> -->
             <ng-container *ngFor="let point of polyline.path; let i = index">
@@ -77,7 +78,7 @@
             <ng-container *ngFor="let station of stationsOnMap">
               <ng-container *ngIf="station != undefined  && station != null && station.path != undefined && station.path != null">
                 <!-- <ng-container *ngIf="station.path != undefined && station.path != null"> -->
-                <agm-marker *ngFor="let point of station.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="station.icon">
+                <agm-marker *ngFor="let point of station.path" (click)="onMarkerClick(station)" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="busIcon">
                 </agm-marker>
                 <!-- </ng-container> -->
               </ng-container>
@@ -85,7 +86,7 @@
           </ng-container>
 
           <ng-container *ngIf="tempStationOnMap != undefined && tempStationOnMap != null && tempStationOnMap.path != undefined && tempStationOnMap.path != null">
-            <agm-marker *ngFor="let point of tempStationOnMap.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="tempStationOnMap.icon">
+            <agm-marker *ngFor="let point of tempStationOnMap.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="selectedBusIcon">
             </agm-marker>
           </ng-container>
         </agm-map>

@@ -3,7 +3,7 @@ namespace WebApp.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class LineandStationmodification : DbMigration
+    public partial class meargemigration : DbMigration
     {
         public override void Up()
         {
@@ -17,6 +17,7 @@ namespace WebApp.Migrations
             AddColumn("dbo.Stations", "Longitude", c => c.Double(nullable: false));
             AddColumn("dbo.Stations", "Latitude", c => c.Double(nullable: false));
             AddColumn("dbo.Stations", "Line_OrderNumber", c => c.String(maxLength: 128));
+            AlterColumn("dbo.Tickets", "CheckedAt", c => c.DateTime());
             CreateIndex("dbo.Stations", "Line_OrderNumber");
             AddForeignKey("dbo.Stations", "Line_OrderNumber", "dbo.Lines", "OrderNumber");
             DropColumn("dbo.Stations", "LocationId");
@@ -52,6 +53,7 @@ namespace WebApp.Migrations
             AddColumn("dbo.Stations", "LocationId", c => c.String(maxLength: 128));
             DropForeignKey("dbo.Stations", "Line_OrderNumber", "dbo.Lines");
             DropIndex("dbo.Stations", new[] { "Line_OrderNumber" });
+            AlterColumn("dbo.Tickets", "CheckedAt", c => c.DateTime(nullable: false));
             DropColumn("dbo.Stations", "Line_OrderNumber");
             DropColumn("dbo.Stations", "Latitude");
             DropColumn("dbo.Stations", "Longitude");
