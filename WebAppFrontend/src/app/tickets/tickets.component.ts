@@ -122,7 +122,6 @@ export class TicketsComponent implements OnInit {
           this.data[retValue[2].TicketTypeId] = retValue[2].Price;
           this.data[retValue[3].TicketTypeId] = retValue[3].Price;
           this.data.CatalogueId = retValue[0].CatalogueId;
-          console.log(this.jwtService.getRole());
 
         }
         else {
