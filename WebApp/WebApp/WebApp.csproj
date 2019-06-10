@@ -301,6 +301,10 @@
     <Compile Include="Migrations\201906091141015_ticketCheckedAt.Designer.cs">
       <DependentUpon>201906091141015_ticketCheckedAt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906091843213_mearge migration.cs" />
+    <Compile Include="Migrations\201906091843213_mearge migration.Designer.cs">
+      <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -486,6 +490,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906091141015_ticketCheckedAt.resx">
       <DependentUpon>201906091141015_ticketCheckedAt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906091843213_mearge migration.resx">
+      <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

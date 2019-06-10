@@ -24,6 +24,8 @@ export class MapBuilderComponent implements OnInit {
   public stationsOnMap: Polyline[];
   public zoom: number;
   markerInfo: MarkerInfo;
+  busIcon : any = { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } };
+  selectedBusIcon : any = { url: "assets/selected_busicon.png", scaledSize: { width: 50, height: 50 } };
   //#endregion
 
   //#region lines
@@ -149,6 +151,7 @@ export class MapBuilderComponent implements OnInit {
       this.pathModificationEnabled = false;
       this.stationActionEnabled = false;
       this.linePreviewEnabled = false;
+      this.defaultMapSetup();
     } else {
       this.lineActionSelection = actionSelection;
 
@@ -189,6 +192,7 @@ export class MapBuilderComponent implements OnInit {
         this.stationActionSelection = undefined;
         this.pathModificationEnabled = true;
         this.stationPreviewEnabled = false;
+        this.tempStationOnMap = undefined;
       } else {
         this.stationActionSelection = actionSelection;
         this.pathModificationEnabled = false;
@@ -268,6 +272,19 @@ export class MapBuilderComponent implements OnInit {
         //delete line
       }
     }
+  }
+
+  onMarkerClick(station: Station) {
+    console.log(station);
+    
+    this.tempStationOnMap = new Polyline([], 'blue', null);
+    this.tempStationOnMap.addLocation(new GeoLocation(station.latitude, station.longitude));
+
+    this.selectedStation = {
+      latitude : station.latitude,
+      longitude : station.longitude,
+      name : station.name,
+    };    
   }
 
   onLinePathClick() {
