@@ -305,6 +305,18 @@
     <Compile Include="Migrations\201906091843213_mearge migration.Designer.cs">
       <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.cs" />
+    <Compile Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.Designer.cs">
+      <DependentUpon>201906101420267_TimetableEntryIdtoAutoincrement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906101612406_Timetable entry foreign key to timetable.cs" />
+    <Compile Include="Migrations\201906101612406_Timetable entry foreign key to timetable.Designer.cs">
+      <DependentUpon>201906101612406_Timetable entry foreign key to timetable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906102122245_TimetableEntryChangeKey.cs" />
+    <Compile Include="Migrations\201906102122245_TimetableEntryChangeKey.Designer.cs">
+      <DependentUpon>201906102122245_TimetableEntryChangeKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -322,6 +334,7 @@
     <Compile Include="Models\TicketBindingModels.cs" />
     <Compile Include="Models\TicketType.cs" />
     <Compile Include="Models\TimeTable.cs" />
+    <Compile Include="Models\TimetableEntryBindingModel.cs" />
     <Compile Include="Models\TimeTableEntry.cs" />
     <Compile Include="Persistence\ApplicationDbContext.cs" />
     <Compile Include="Persistence\Repository\IRepository.cs" />
@@ -493,6 +506,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906091843213_mearge migration.resx">
       <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.resx">
+      <DependentUpon>201906101420267_TimetableEntryIdtoAutoincrement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906101612406_Timetable entry foreign key to timetable.resx">
+      <DependentUpon>201906101612406_Timetable entry foreign key to timetable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906102122245_TimetableEntryChangeKey.resx">
+      <DependentUpon>201906102122245_TimetableEntryChangeKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

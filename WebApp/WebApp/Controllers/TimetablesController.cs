@@ -31,9 +31,9 @@ namespace WebApp.Controllers
         }
 
         // GET: api/Timetables
-        public IQueryable<Timetable> GetTimetables()
+        public IEnumerable<Timetable> GetTimetables()
         {
-            return Db.TimetableRepository.GetAll().AsQueryable();
+            return Db.TimetableRepository.GetAll().ToList();
         }
 
         // GET: api/Timetables/5

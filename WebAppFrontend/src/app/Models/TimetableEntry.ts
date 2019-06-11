@@ -1,9 +1,9 @@
 import { Line } from './Line';
 
 export class TimetableEntry {
-    timetableEntryId : string;
-    day : number;
-    lineId : string;
-    line : Line;
-    timeOfDeparture : string;
+    TimetableEntryId : string;
+    Day : number;
+    LineId : string;
+    Line : Line;
+    TimeOfDeparture : string;
 }

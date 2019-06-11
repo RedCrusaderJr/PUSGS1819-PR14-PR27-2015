@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Description;
 using WebApp.Models;
@@ -35,7 +36,7 @@ namespace WebApp.Controllers
 
         // GET: api/TimetableEntries/5
         [ResponseType(typeof(TimetableEntry))]
-        public IHttpActionResult GetTimetableEntry(string id)
+        public IHttpActionResult GetTimetableEntry(int id)
         {
             TimetableEntry timetableEntry = Db.TimetableEntryRepository.Get(id);
             if (timetableEntry == null)
@@ -47,50 +48,101 @@ namespace WebApp.Controllers
         }
 
         // PUT: api/TimetableEntries/5
-        //[Authorize(Roles = "Admin")]
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutTimetableEntry(string id, TimetableEntry timetableEntry)
+        [Route("api/PutTimetableEntries")]
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        public IHttpActionResult PutTimetableEntry(TimetableEntryBindingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != timetableEntry.TimetableEntryId)
+            Line line = Db.LineRepository.Get(model.LineId);
+
+            if (line == null)
             {
-                return BadRequest();
+                return BadRequest("Line doesn't exists.");
             }
 
-            if (TimetableEntryExists(id))
+
+            try
             {
-                Db.TimetableEntryRepository.Update(timetableEntry);
+                PopulateDepartures(model.Departures, line, model.Day);
+                
             }
-            else
+            catch (Exception e)
             {
-                return NotFound();
+                return InternalServerError(e);
             }
+          
+
 
             try
             {
                 Db.Complete();
             }
-            catch (DbUpdateConcurrencyException dbEx)
+            catch(Exception e)
             {
-                if (!TimetableEntryExists(id))
+                return InternalServerError(e);
+            }
+            
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        private void PopulateDepartures(string departuresForDay, Line l, DayType dayType)
+        {
+            if (departuresForDay != "")
+            {
+                List<string> departures = departuresForDay.Split(',').ToList();
+
+                List<DateTime> dateTimeDepartures = new List<DateTime>();
+                foreach (string departure in departures)
                 {
-                    return NotFound();
+                    try
+                    {
+                        if (departure == "")
+                        {
+                            continue;
+                        }
+                        dateTimeDepartures.Add(DateTime.Parse(departure));
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                }
+
+
+                dateTimeDepartures = dateTimeDepartures.OrderBy(d => d).ToList();
+                StringBuilder sb = new StringBuilder();
+
+                foreach (DateTime date in dateTimeDepartures)
+                {
+                    sb.Append($"{date.Hour}:{date.Minute},");
+
+                }
+                sb.Remove(sb.Length - 1, 1);
+
+                string sdeparture = sb.ToString();
+
+                TimetableEntry timetableEntry = Db.TimetableEntryRepository.Find(t => t.LineId == l.OrderNumber && t.Day == dayType).FirstOrDefault();
+
+                if (timetableEntry == null)
+                {
+                    //add
+                    TimetableEntry timetableEntryToAdd = new TimetableEntry() {Day = dayType, LineId = l.OrderNumber, TimetableId = l.IsUrban, TimeOfDeparture = sdeparture };
+                    Db.TimetableEntryRepository.Add(timetableEntryToAdd);
+
+
                 }
                 else
                 {
-                    throw dbEx;
+                    timetableEntry.TimeOfDeparture = sdeparture;
+                    Db.TimetableEntryRepository.Update(timetableEntry);
                 }
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
         // POST: api/TimetableEntries
@@ -103,7 +155,9 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!TimetableEntryExists(timetableEntry.TimetableEntryId))
+            
+
+            if (!TimetableEntryExists(timetableEntry.Id))
             {
                 Db.TimetableEntryRepository.Add(timetableEntry);
             }
@@ -118,7 +172,7 @@ namespace WebApp.Controllers
             }
             catch (DbUpdateException dbEx)
             {
-                if (TimetableEntryExists(timetableEntry.TimetableEntryId))
+                if (TimetableEntryExists(timetableEntry.Id))
                 {
                     return Conflict();
                 }
@@ -132,12 +186,12 @@ namespace WebApp.Controllers
                 InternalServerError(e);
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = timetableEntry.TimetableEntryId }, timetableEntry);
+            return CreatedAtRoute("DefaultApi", new { id = timetableEntry.Id }, timetableEntry);
         }
 
         // DELETE: api/TimetableEntries/5
         [ResponseType(typeof(TimetableEntry))]
-        public IHttpActionResult DeleteTimetableEntry(string id)
+        public IHttpActionResult DeleteTimetableEntry(int id)
         {
             TimetableEntry timetableEntry = Db.TimetableEntryRepository.Get(id);
             if (timetableEntry == null)
@@ -168,7 +222,7 @@ namespace WebApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool TimetableEntryExists(string id)
+        private bool TimetableEntryExists(int id)
         {
             return Db.TimetableEntryRepository.Get(id) != null;
         }

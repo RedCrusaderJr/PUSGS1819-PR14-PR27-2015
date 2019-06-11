@@ -5,212 +5,299 @@ import { TimetableService } from '../services/http/timetable.service';
 import { Timetable } from '../Models/Timetable';
 import { TimetableEntry } from '../Models/TimetableEntry';
 import { DepartureTableRow } from '../Models/DepartureTableRow';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-timetable',
   templateUrl: './timetable.component.html',
-  styleUrls: ['./timetable.component.css' ],
-  providers: [ TimetableService, LineService ]
+  styleUrls: ['./timetable.component.css'],
+  providers: [TimetableService, LineService]
 })
 export class TimetableComponent implements OnInit {
 
-  daySelection : number;
-  
-  isUrbanSelection : Boolean 
+  // daySelection: number;
 
-  urbanLines : Line[];
-  suburbanLines : Line[];
-  lineSelection : Line;
-  
-  timetables : Timetable[];
-  wdTimetableEntries : TimetableEntry[];
-  satTimetableEntries : TimetableEntry[];
-  sunTimetableEntries : TimetableEntry[];
+  // isUrbanSelection: Boolean
 
-  filteredDepartures : DepartureTableRow[];
+  // urbanLines: string[];
+  // suburbanLines: string[];
+  // lineSelection: string = undefined;
 
-  BreakException = {
-    message: "forEach break"
-  };
+  // timetables: Timetable[];
+  // wdTimetableEntries: TimetableEntry[];
+  // satTimetableEntries: TimetableEntry[];
+  // sunTimetableEntries: TimetableEntry[];
+
+  // filteredDepartures: DepartureTableRow[];
+
+  // BreakException = {
+  //   message: "forEach break"
+  // };
 
   constructor(protected timetableService: TimetableService, protected lineService: LineService) { }
 
+
+  timeTableUrbanMap = {};
+  timeTableSuburbanMap = {};
+
+  urbanLines = [];
+  suburbanLines = [];
+
+  departuresForm : FormGroup;
+
+  linesToShow = [];
+  selectedLine = null;
+
+  selectedLineType = "";
+
+  selectedDayType : number;
+
+  departuresToShow = [];
+
+
   ngOnInit() {
-    this.daySelection = undefined;
-    this.isUrbanSelection = true;
-    this.urbanLines = [];
-    this.suburbanLines = [];
+    this.timetableService.getAllTimetables().subscribe(
+      data => {
+        if(data[0].IsUrban) {
+          data[0].TimetableEntries.forEach(element => {
+            this.timeTableUrbanMap[element.LineId + element.Day] = element;
+          });
 
-    this.timetables = [];
-    this.timetables.push(null);
-    this.timetables.push(null);
-
-    this.wdTimetableEntries = [];
-    this.satTimetableEntries = [];
-    this.sunTimetableEntries = [];
-    
-    this.filteredDepartures = [];
-    this.filteredDepartures.push(this.getDefaultRow());
-    
-    try {
-      this.initTimetables();
-    } catch(e) {
-      if(e != this.BreakException) {
-        console.log(e);
-        throw e;
-      }
-      console.log("BREAK EXCEPTION:" + e.message)
-    }
-  }
-
-  initTimetables() {
-    this.timetableService.getAllTimetables().subscribe(data => {
-      data.forEach(timetable => {
-
-        if(timetable.isUrban)
-        {
-          this.timetables[0] = timetable;
-        } else {
-          this.timetables[1] = timetable;
+          data[1].TimetableEntries.forEach(element => {
+            this.timeTableSuburbanMap[element.LineId + element.Day] = element;
+          });
         }
+        else {
+          data[0].TimetableEntries.forEach(element => {
+            this.timeTableSuburbanMap[element.LineId + element.Day] = element;
+          });
+
+          data[1].TimetableEntries.forEach(element => {
+            this.timeTableUrbanMap[element.LineId + element.Day] = element;
+          });
+        }
+        this.lineService.getAllLines().subscribe(
+          data => {
+            data.forEach(element => {
+              if (element.IsUrban) {
+                this.urbanLines.push(element);
+              }
+              else {
+                this.suburbanLines.push(element);
+              }
+            })
+            
+
+          },
+          error => console.log(error)
+        );
         
-        if(timetable.timetableEntries == undefined || timetable.timetableEntries == null) {
-          throw this.BreakException;
+      }, error => console.log(error)
+    );
+   
+    
+  }
+
+  lineTypeChanged() {
+    
+    this.selectedLine = null;
+    this.selectedDayType = undefined;
+    this.departuresToShow = [];
+    if (this.selectedLineType === "urban"){
+      this.linesToShow = this.urbanLines;
+    }
+    else {
+      this.linesToShow = this.suburbanLines;
+    }
+  }
+
+  onLineSelection(line: any) {
+    this.selectedLine = line;
+   
+  }
+
+  onChangeDayType() {
+    if (this.selectedLine != null && this.selectedDayType != undefined) {
+      if (this.selectedLine.IsUrban) {
+        let selectedTimeTableEntry = this.timeTableUrbanMap[this.selectedLine.OrderNumber + this.selectedDayType];
+
+        if (selectedTimeTableEntry != undefined){
+          this.departuresToShow = selectedTimeTableEntry.TimeOfDeparture.split(',');
         }
-
-        timetable.timetableEntries.forEach(timetableEntry => {
-          if(timetableEntry.day == 0) {
-            this.wdTimetableEntries.push(timetableEntry);
-          } 
-          else if(timetableEntry.day == 1) {
-            this.satTimetableEntries.push(timetableEntry);
-          }
-          else if(timetableEntry.day == 2) {
-            this.sunTimetableEntries.push(timetableEntry);
-          }
-    
-          if((timetableEntry.lineId != "" && 
-              timetableEntry.lineId != null &&
-              timetableEntry.lineId != undefined) &&
-             (timetableEntry.line == undefined || timetableEntry.line == null)) {
-              this.lineService.getLineById(timetableEntry.lineId).subscribe(data => {
-                if(data.isUrban) {
-                  this.urbanLines.push(data);
-                } else {
-                  this.suburbanLines.push(data);
-                }
-              }, err => console.log(err));
-          }
-          else if((timetableEntry.lineId != "" && 
-                   timetableEntry.lineId != null &&
-                   timetableEntry.lineId != undefined)) {
-            if(timetableEntry.line.isUrban) {
-              this.urbanLines.push(timetableEntry.line);
-            } else {
-              this.suburbanLines.push(timetableEntry.line);
-            }
-          }
-        })
-      });  
-    } , err => console.log(err));
-  }
-
-  getDefaultRow() : DepartureTableRow {
-    let newRow = {
-      weekday   : '',
-      sathurday : '',
-      sunday    : '',     
-    }
-    return newRow;
-  }
-    
-
-  onIsUrbanSelection(isUrbanSelection : boolean) {
-    if(this.isUrbanSelection != undefined && this.isUrbanSelection  == isUrbanSelection) {
-      this.isUrbanSelection = undefined;
-    } else {
-      this.isUrbanSelection = isUrbanSelection;
-    }
-  }
-
-  onLineSelection(selection : Line) {
-    if(this.lineSelection != undefined && this.lineSelection.orderNumber  == selection.orderNumber) {
-      this.lineSelection = undefined;
-    } else {
-      this.lineSelection = selection;
-    }
-    
-    this.filterDepartures();
-  }
-
-  onDaySelection(daySelection : number) {
-    if(this.daySelection != undefined && this.daySelection == daySelection) {
-      this.daySelection = undefined;
-    } else {
-      this.daySelection = daySelection;
-    }
-  }
-
-  filterDepartures() {
-    let wdDepartures : string[] = [];
-    let satDepartures : string[] = [];
-    let sunDepartures : string[] = [];
-
-    this.wdTimetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.orderNumber) {
-        wdDepartures = this.parseDepartures(entry.timeOfDeparture);
+        else {
+          this.departuresToShow = [];
+        }
       }
-    });
+      else {
+        let selectedTimeTableEntry = this.timeTableSuburbanMap[this.selectedLine.OrderNumber + this.selectedDayType];
 
-    this.satTimetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.orderNumber) {
-        satDepartures = this.parseDepartures(entry.timeOfDeparture);
+        if (selectedTimeTableEntry != undefined){
+          this.departuresToShow = selectedTimeTableEntry.TimeOfDeparture.split(',');
+        }
+        else {
+          this.departuresToShow = [];
+        }
       }
-    });
-
-    this.sunTimetableEntries.forEach(entry => {
-      if(entry.lineId == this.lineSelection.orderNumber) {
-        sunDepartures = this.parseDepartures(entry.timeOfDeparture);
-      }
-    });
-
-    let maxLength : number = wdDepartures.length;
-    if(satDepartures.length > maxLength)
-    {
-      maxLength = satDepartures.length;
-    }
-    if(sunDepartures.length > maxLength)
-    {
-      maxLength = sunDepartures.length;
-    }
-    
-    for (let i = 0; i < maxLength; i++) {
-      let departureRow : DepartureTableRow;
-      departureRow.weekday    = '';
-      departureRow.sathurday  = '';
-      departureRow.sunday     = '';
-      
-      if(wdDepartures[i] != null && wdDepartures[i] != undefined)
-      {
-        departureRow.weekday = wdDepartures[i];
-      }
-
-      if(satDepartures[i] != null && satDepartures[i] != undefined)
-      {
-        departureRow.sathurday = satDepartures[i];
-      }
-      
-      if(sunDepartures[i] != null && sunDepartures[i] != undefined)
-      {
-        departureRow.sunday = sunDepartures[i];
-      }
-
-      this.filteredDepartures[this.filterDepartures.length-1] = departureRow;
-      this.filteredDepartures.push(this.getDefaultRow());
     }
   }
 
-  parseDepartures(departuresString : string) {
-    return departuresString.split(',');
-  }
+
+  
+
+//   initTimetables() {
+//     this.timetableService.getAllTimetables().subscribe(data => {
+//       console.log(data);
+//       data.forEach(timetable => {
+
+//         if (timetable.IsUrban) {
+//           this.timetables[0] = timetable;
+//         } else {
+//           this.timetables[1] = timetable;
+//         }
+
+//         if (timetable.TimetableEntries == undefined || timetable.TimetableEntries == null) {
+//           throw this.BreakException;
+//         }
+
+//         timetable.TimetableEntries.forEach(timetableEntry => {
+//           if (timetableEntry.Day == 0) {
+//             this.wdTimetableEntries.push(timetableEntry);
+            
+//           }
+//           else if (timetableEntry.Day == 1) {
+//             this.satTimetableEntries.push(timetableEntry);
+//           }
+//           else if (timetableEntry.Day == 2) {
+//             this.sunTimetableEntries.push(timetableEntry);
+//           }
+
+//           if ((timetableEntry.LineId != "" &&
+//             timetableEntry.LineId != null &&
+//             timetableEntry.LineId != undefined) &&
+//             (timetableEntry.Line == undefined || timetableEntry.Line == null)) {
+//             if (timetable.IsUrban) {
+
+//               this.urbanLines.push(timetableEntry.LineId);
+//             }
+//             else {
+//               this.suburbanLines.push(timetableEntry.LineId);
+//             }
+
+
+
+//           }
+//           //Ovo je bukvalno isto??
+//           else if ((timetableEntry.LineId != "" &&
+//             timetableEntry.LineId != null &&
+//             timetableEntry.LineId != undefined)) {
+//             if (timetableEntry.Line.IsUrban) {
+//               this.urbanLines.push(timetableEntry.LineId);
+//             } else {
+//               this.suburbanLines.push(timetableEntry.LineId);
+//             }
+//           }
+//         })
+//       });
+//     }, err => console.log(err));
+//   }
+
+//   getDefaultRow(): DepartureTableRow {
+//     let newRow = {
+//       weekday: '',
+//       sathurday: '',
+//       sunday: '',
+//     }
+//     return newRow;
+//   }
+
+
+//   onIsUrbanSelection(isUrbanSelection: boolean) {
+//     if (this.isUrbanSelection != undefined && this.isUrbanSelection == isUrbanSelection) {
+//       this.isUrbanSelection = undefined;
+//     } else {
+//       this.isUrbanSelection = isUrbanSelection;
+//     }
+//   }
+
+//   onLineSelection(selection: string) {
+//     console.log(selection);
+//     if (this.lineSelection != undefined && this.lineSelection == selection) {
+//       this.lineSelection = undefined;
+//     } else {
+//       this.lineSelection = selection;
+//       this.filterDepartures();
+//     }
+// //mozda filterDepartures napolje
+//   }
+
+//   onDaySelection(daySelection: number) {
+//     if (this.daySelection != undefined && this.daySelection == daySelection) {
+//       this.daySelection = undefined;
+//     } else {
+//       this.daySelection = daySelection;
+//     }
+//   }
+
+//   filterDepartures() {
+//     let wdDepartures: string[] = [];
+//     let satDepartures: string[] = [];
+//     let sunDepartures: string[] = [];
+
+//     this.wdTimetableEntries.forEach(entry => {
+//       if (entry.LineId == this.lineSelection) {
+//         wdDepartures = this.parseDepartures(entry.TimeOfDeparture);
+//         console.log(wdDepartures);
+//       }
+//     });
+
+//     this.satTimetableEntries.forEach(entry => {
+//       if (entry.LineId == this.lineSelection) {
+//         satDepartures = this.parseDepartures(entry.TimeOfDeparture);
+//         console.log(satDepartures);
+//       }
+//     });
+
+//     this.sunTimetableEntries.forEach(entry => {
+//       if (entry.LineId == this.lineSelection) {
+//         sunDepartures = this.parseDepartures(entry.TimeOfDeparture);
+//         console.log(sunDepartures);
+//       }
+//     });
+
+//     let maxLength: number = wdDepartures.length;
+//     if (satDepartures.length > maxLength) {
+//       maxLength = satDepartures.length;
+//     }
+//     if (sunDepartures.length > maxLength) {
+//       maxLength = sunDepartures.length;
+//     }
+
+//     for (let i = 0; i < maxLength; i++) {
+//       let departureRow: DepartureTableRow = {
+//         weekday : "",
+//         sathurday : "",
+//         sunday : ""
+//       };
+     
+
+//       if (wdDepartures[i] != null && wdDepartures[i] != undefined) {
+//         departureRow.weekday = wdDepartures[i];
+//       }
+
+//       if (satDepartures[i] != null && satDepartures[i] != undefined) {
+//         departureRow.sathurday = satDepartures[i];
+//       }
+
+//       if (sunDepartures[i] != null && sunDepartures[i] != undefined) {
+//         departureRow.sunday = sunDepartures[i];
+//       }
+
+//       this.filteredDepartures[this.filteredDepartures.length - 1] = departureRow;
+//       this.filteredDepartures.push(this.getDefaultRow());
+//     }
+//   }
+
+//   parseDepartures(departuresString: string) {
+//     return departuresString.split(',');
+//   }
 }

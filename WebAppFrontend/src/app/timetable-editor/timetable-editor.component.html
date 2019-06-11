@@ -1,4 +1,80 @@
-<div class="timetable">
+<input type="radio" [(ngModel)]="selectedLineType" (change)="lineTypeChanged()" value="urban" /> <label>Urban</label>
+<input type="radio" [(ngModel)]="selectedLineType" (change)="lineTypeChanged()" value="suburban" />
+<label>Suburban</label> <br />
+
+<div id="lines" *ngIf="selectedLineType !=''">
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a *ngFor="let line of linesToShow" (click)="onLineSelection(line)" class="btn btn-primary btn-lg"
+        [class.active]="line==selectedLine">{{line.OrderNumber}}</a>
+    </li>
+  </ul>
+</div>
+
+<div id="dayType" *ngIf="selectedLine != null">
+  <br />
+  <select [(ngModel)]="selectedDayType" (change)="onChangeDayType()">
+    <option value="1">Work day</option>
+    <option value="2">Saturday</option>
+    <option value="3">Sunday</option>
+  </select>
+</div>
+
+
+<div id="timetableEntry" *ngIf="formReady == true">
+  <form [formGroup]="departuresForm" *ngIf="departuresForm" (ngSubmit)="onSubmitDepartures()">
+    <table class="table table-hover table-fixed">
+      <thead>
+        <tr align="center">
+          <th *ngIf="selectedDayType==1">
+            Work day
+          </th>
+          <th *ngIf="selectedDayType==2">
+            Saturday
+          </th>
+          <th *ngIf="selectedDayType==3">
+            Sunday
+          </th>
+        </tr>
+      </thead>
+
+      <div formArrayName="departures">
+        <tr *ngFor="let ddeparture of getDepartures.controls; let i = index" [formGroupName]="i" align="center">
+          <td>
+            <div class="input-group mb-1">
+              <input type="text" formControlName="departure" class="form-control"/>
+              
+            </div>
+          </td>
+          <td>
+              <button type="button" (click)="removeRow(i)" class="btn btn-success btn-lg btn-block">Remove</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <button type="submit" [disabled]="departuresForm.invalid"
+              class="btn btn-success btn-lg btn-block">Submit</button>
+          </td>
+          <td>
+            <button type="button" (click)="addRow()" class="btn btn-success btn-lg btn-block">Add</button>
+          </td>
+        </tr>
+
+        
+      </div>
+      <button type="button" class="btn btn-success btn-lg btn-block" (click)="reset()">Reset</button>
+
+    </table>
+  </form>
+</div>
+
+
+
+
+
+
+<!-- <div class="timetable">
   <ul class="nav nav-pills">
     <li class="nav-item">
       <a (click)="onIsUrbanSelection(true)" class="btn" [class.active]="isUrbanSelection==true" role="button" aria-pressed="true">Urban</a>
@@ -11,14 +87,14 @@
   <ng-container *ngIf="isUrbanSelection==true">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a *ngFor="let line of urbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===lineSelection.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
+        <a *ngFor="let line of urbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="lineSelection != undefined && lineSelection != null && lineSelection != '' && line===lineSelection" role="button" aria-pressed="true">{{line}}</a>
       </li>
     </ul>
   </ng-container>
   <ng-container *ngIf="isUrbanSelection==false">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a *ngFor="let line of suburbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===lineSelection.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
+        <a *ngFor="let line of suburbanLines" (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="lineSelection != undefined && lineSelection != null && lineSelection != '' && line===lineSelection" role="button" aria-pressed="true">{{line}}</a>
       </li>
     </ul>
   </ng-container>
@@ -106,4 +182,4 @@
   </table>
   <br />
   <a (click)="onSave()" class="btn btn-primary" role="button">Save</a>
-</div>
+</div> -->

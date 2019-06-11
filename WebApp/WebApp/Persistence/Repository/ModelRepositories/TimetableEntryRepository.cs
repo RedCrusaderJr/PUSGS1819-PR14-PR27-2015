@@ -7,7 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Persistence.Repository.ModelRepositories
 {
-    public class TimetableEntryRepository : Repository<TimetableEntry, string>, ITimetableEntryRepository
+    public class TimetableEntryRepository : Repository<TimetableEntry, int>, ITimetableEntryRepository
     {
         public TimetableEntryRepository(DbContext context) : base(context)
         {
@@ -18,9 +18,9 @@ namespace WebApp.Persistence.Repository.ModelRepositories
             return context.Set<TimetableEntry>().Include(c => c.Line);
         }
 
-        public override TimetableEntry Get(string id)
+        public override TimetableEntry Get(int id)
         {
-            return context.Set<TimetableEntry>().Include(c => c.Line).SingleOrDefault(c => c.TimetableEntryId.Equals(id));
+            return context.Set<TimetableEntry>().Include(c => c.Line).SingleOrDefault(c => c.Id.Equals(id));
         }
     }
 }
