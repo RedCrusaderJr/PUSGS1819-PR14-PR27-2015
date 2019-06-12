@@ -1,34 +1,26 @@
-<ul class="nav nav-pills">
+<ul class="nav nav-pills" style="margin-top: -30px">
   <li class="nav-item" (click)="selectFunction(0)">
-    <a  class="nav-link" [class.active]="functionSelection==0" 
-        routerLink="timetable">Timetable</a>
+    <a class="nav-link" [class.active]="functionSelection==0 || router.url=='/timetable'" routerLink="timetable">Timetable</a>
   </li>
   <li class="nav-item" *ngIf="jwtService.getRole()==='Admin'" (click)="selectFunction(1)">
-    <a  class="nav-link" [class.active]="functionSelection==1" 
-        routerLink="timetable-editor">Timetable Editor</a>
+    <a class="nav-link" [class.active]="functionSelection==1 || router.url=='/timetable-editor'" routerLink="timetable-editor">Timetable Editor</a>
   </li>
   <li class="nav-item" (click)="selectFunction(2)">
-    <a  class="nav-link" [class.active]='functionSelection==2'
-        routerLink="bus-lines">Bus lies</a>
+    <a class="nav-link" [class.active]="functionSelection==2 || router.url=='/bus-lines'" routerLink="bus-lines">Bus lines</a>
   </li>
   <li class="nav-item" *ngIf="jwtService.getRole()==='Admin'" (click)="selectFunction(3)">
-    <a  class="nav-link" [class.active]='functionSelection==3'
-        routerLink="map-builder">Map Builder</a>
+    <a class="nav-link" [class.active]="functionSelection==3 || router.url=='/map-builder'" routerLink="map-builder">Map Builder</a>
   </li>
   <li class="nav-item" (click)="selectFunction(4)">
-    <a  class="nav-link" [class.active]='functionSelection==4'
-        routerLink="tickets">Tickets</a>
+    <a class="nav-link" [class.active]="functionSelection==4 || router.url=='/tickets'" routerLink="tickets">Tickets</a>
   </li>
   <li class="nav-item" *ngIf="jwtService.getRole()==='Controller'" (click)="selectFunction(5)">
-    <a  class="nav-link" [class.active]='functionSelection==5'
-        routerLink="ticket-validator">Ticket validator</a>
+    <a class="nav-link" [class.active]="functionSelection==5 || router.url=='/ticket-validator'" routerLink="ticket-validator">Ticket validator</a>
   </li>
   <li class="nav-item" (click)="selectFunction(6)">
-    <a  class="nav-link" [class.active]='functionSelection==6'
-        routerLink="bus-location">Bus location</a>
+    <a class="nav-link" [class.active]="functionSelection==6 || router.url=='/bus-location'" routerLink="bus-location">Bus location</a>
   </li>
   <li class="nav-item" *ngIf="jwtService.getRole()==='Controller'" (click)="selectFunction(7)">
-    <a class="nav-link" [class.activate]='functionSelection==6'
-       routerLink="validate-users">Validate users</a>
+    <a class="nav-link" [class.activate]="functionSelection==7 || router.url=='/validate-users'" routerLink="validate-users">Validate users</a>
   </li>
 </ul>

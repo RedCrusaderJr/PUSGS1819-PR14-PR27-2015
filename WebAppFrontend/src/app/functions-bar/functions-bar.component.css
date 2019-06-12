@@ -1,12 +1,12 @@
 .nav-pills .nav-link {
   margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   background-color: #000080;
 }
 
 .nav-pills .nav-link:not(.active) {
   margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   background-color: #ffffff;
 }
 

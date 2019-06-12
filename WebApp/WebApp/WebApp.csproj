@@ -305,6 +305,10 @@
     <Compile Include="Migrations\201906091843213_mearge migration.Designer.cs">
       <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906111524579_station new fields.cs" />
+    <Compile Include="Migrations\201906111524579_station new fields.Designer.cs">
+      <DependentUpon>201906111524579_station new fields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.cs" />
     <Compile Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.Designer.cs">
       <DependentUpon>201906101420267_TimetableEntryIdtoAutoincrement.cs</DependentUpon>
@@ -506,6 +510,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906091843213_mearge migration.resx">
       <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906111524579_station new fields.resx">
+      <DependentUpon>201906111524579_station new fields.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.resx">
       <DependentUpon>201906101420267_TimetableEntryIdtoAutoincrement.cs</DependentUpon>

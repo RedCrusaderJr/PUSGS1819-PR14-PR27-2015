@@ -1,3 +1,97 @@
-<p>
-  bus-lines works!
-</p>
+<div class="bus-lines row">
+  <div id="map" class="form-group col-xs-6" style="margin-left: 50px">
+    <!-- Kreiramo mapu -->
+    <agm-map [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude" [zoom]="18">
+      <agm-marker [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude" [title]="markerInfo.title" [label]="markerInfo.label" [iconUrl]="markerInfo.iconUrl">
+        <!-- Svakom markeru dodajemo info-window (Nije obavezno!) -->
+        <agm-info-window [latitude]="markerInfo.location.latitude" [longitude]="markerInfo.location.longitude">
+          <!-- U info-window stavljamo html -->
+          <span style="font-size: 16px;font-family:'Times New Roman'">Fakultet tehničkih nauka</span>
+          <br/>
+          <span style="font-family:'Times New Roman'; color:gray;"><strong>Jugodrvo</strong></span>
+          <span style="font-family:'Times New Roman'; color:gray;">Bulevar oslobođenja 131</span>
+          <a [href]="markerInfo.link">See the site.</a>
+        </agm-info-window>
+      </agm-marker>
+
+      <ng-container *ngIf="polyline!=undefined && polyline!=null && polyline.path!=undefined && polyline.path!=null">
+        <agm-polyline [strokeColor]="polyline.color">
+          <agm-polyline-point id="drawnLine" *ngFor="let point of polyline.path" [latitude]="point.latitude" [longitude]="point.longitude">
+          </agm-polyline-point>
+        </agm-polyline>
+      </ng-container>
+
+      <!-- ends of line -->
+      <ng-container *ngIf="polyline != undefined && polyline != null && polyline.path != undefined && polyline.path != null">
+        <!-- <ng-container *ngIf="polyline.path != undefined && polyline.path!=null"> -->
+        <ng-container *ngFor="let point of polyline.path; let i = index">
+          <agm-marker *ngIf="i==0 || i==polyline.path.length-1" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="polyline.icon">
+          </agm-marker>
+        </ng-container>
+        <!-- </ng-container> -->
+      </ng-container>
+
+      <ng-container *ngIf="stationsOnMap != undefined  && stationsOnMap != null">
+        <ng-container *ngFor="let station of stationsOnMap">
+          <ng-container *ngIf="station != undefined  && station != null && station.path != undefined && station.path != null">
+            <!-- <ng-container *ngIf="station.path != undefined && station.path != null"> -->
+            <agm-marker *ngFor="let point of station.path" (click)="onMarkerClick(station)" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="busIcon">
+            </agm-marker>
+            <!-- </ng-container> -->
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </agm-map>
+  </div>
+
+  <div class="form-group col-xs-6" style="max-width: 400px; margin-top: -50px">
+    <div class="form-group row" style="margin-top: -50px">
+      <ul class="nav nav-pills ">
+        <li class="nav-item ">
+          <a (click)="onIsUrbanSelection(true) " class="btn " [class.active]="isUrbanSelection==true " role="button " aria-pressed="true ">Urban</a>
+        </li>
+        <li class="nav-item ">
+          <a (click)="onIsUrbanSelection(false) " class="btn " [class.active]="isUrbanSelection==false " role="button " aria-pressed="true ">Suburban</a>
+        </li>
+      </ul>
+    </div>
+    <div class="form-group row" style="max-width: 350px; margin-top: -50px">
+      <ng-container *ngIf="isUrbanSelection!=undefined && isUrbanSelection!=null && isUrbanSelection==true ">
+        <ng-container *ngIf="urbanLines !=undefined && urbanLines !=null && urbanLines.length> 0; else noLines">
+          <ul class="nav nav-pills">
+            <li class="nav-item" *ngFor="let line of urbanLines">
+              <ng-container *ngIf="line != undefined && line != null">
+                <a (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===selectedLine.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
+              </ng-container>
+            </li>
+          </ul>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="isUrbanSelection!=undefined && isUrbanSelection!=null && isUrbanSelection==false">
+        <ng-container *ngIf="suburbanLines != null && suburbanLines != null && suburbanLines.length > 0; else noLines">
+          <ul class="nav nav-pills">
+            <li class="nav-item" *ngFor="let line of suburbanLines">
+              <ng-container *ngIf="line != undefined && line != null">
+                <a (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===selectedLine.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
+              </ng-container>
+            </li>
+          </ul>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="isUrbanSelection==undefined">
+        <ng-container *ngIf="allLines != undefined && allLines != null && allLines.length > 0; else noLines">
+          <ul class="nav nav-pills">
+            <li class="nav-item" *ngFor="let line of allLines">
+              <ng-container *ngIf="line != undefined && line != null">
+                <a (click)="onLineSelection(line)" class="btn btn-primary btn-lg" [class.active]="line.orderNumber===selectedLine.orderNumber" role="button" aria-pressed="true">{{line.orderNumber}}</a>
+              </ng-container>
+            </li>
+          </ul>
+        </ng-container>
+      </ng-container>
+      <ng-template #noLines>
+        <h4 style="margin-left: 50px">No lines to preview</h4>
+      </ng-template>
+    </div>
+  </div>
+</div>

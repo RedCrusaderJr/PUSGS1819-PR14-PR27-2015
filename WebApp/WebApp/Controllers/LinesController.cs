@@ -16,16 +16,16 @@ namespace WebApp.Controllers
 {
     public class LinesController : ApiController
     {
-        IUnitOfWork UnitOfWork { get; set; }
-        public LinesController(IUnitOfWork unitOfWork)
+        IUnitOfWork Db { get; set; }
+        public LinesController(IUnitOfWork db)
         {
-            UnitOfWork = unitOfWork;
+            Db = db;
         }
 
         // GET: api/Lines
         public IEnumerable<Line> GetLines()
         {
-            var result = UnitOfWork.LineRepository.GetAll().ToList();
+            var result = Db.LineRepository.GetAll().ToList();
             return result;
         }
 
@@ -33,7 +33,7 @@ namespace WebApp.Controllers
         [ResponseType(typeof(Line))]
         public IHttpActionResult GetLine(string id)
         {
-            Line line = UnitOfWork.LineRepository.Get(id);
+            Line line = Db.LineRepository.Get(id);
             if (line == null)
             {
                 return NotFound();
@@ -56,15 +56,44 @@ namespace WebApp.Controllers
                 return BadRequest();
             }
 
-            if (LineExists(id))
+            Line lineDb = Db.LineRepository.Get(id);
+            if(lineDb != null)
             {
-                UnitOfWork.LineRepository.Update(line);
-            }
+                lineDb.IsUrban = line.IsUrban;
+                lineDb.Path = line.Path;
 
+                for (int i = 0; i < lineDb.Stations.Count; i++)
+                {
+                    bool stationContainedInModifiedLine = false;
+                    stationContainedInModifiedLine = line.Stations.Any(s => s.StationId.Equals(lineDb.Stations[i].StationId));
+
+                    if(!stationContainedInModifiedLine)
+                    {
+                        lineDb.Stations.Remove(lineDb.Stations[i]);
+                    }
+                }
+
+                for (int i = 0; i < line.Stations.Count; i++)
+                {
+                    bool stationContainedInDbLine = false;
+                    stationContainedInDbLine = lineDb.Stations.Any(s => s.StationId.Equals(line.Stations[i].StationId));
+
+                    if (!stationContainedInDbLine)
+                    {
+                        lineDb.Stations.Add(line.Stations[i]);
+                    }
+                }
+
+                Db.LineRepository.Update(lineDb);
+            }
+            else
+            {
+                return NotFound();
+            }
 
             try
             {
-                UnitOfWork.Complete();
+                Db.Complete();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -90,21 +119,31 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            UnitOfWork.LineRepository.Add(line);
+
+            if(LineExists(line.OrderNumber))
+            {
+                return Content(HttpStatusCode.Conflict, $"Line with OrderNumber: {line.OrderNumber} already exists.");
+            }
+
+
+            List<Station> dbStations = Db.StationRepository.GetAll().ToList();
+            foreach(Station station in line.Stations)
+            {
+                if(dbStations.Any(s => s.Name.Equals(station.Name)))
+                {
+                    return Content(HttpStatusCode.Conflict, $"Station with Name: {station.Name} already exists.");
+                }
+            }
+
+            Db.LineRepository.Add(line);
+
             try
             {
-                UnitOfWork.Complete();
+                Db.Complete();
             }
-            catch (DbUpdateException)
+            catch (Exception e)
             {
-                if (LineExists(line.OrderNumber))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return InternalServerError(e);
             }
 
             return CreatedAtRoute("DefaultApi", new { id = line.OrderNumber }, line);
@@ -114,21 +153,27 @@ namespace WebApp.Controllers
         [ResponseType(typeof(Line))]
         public IHttpActionResult DeleteLine(string id)
         {
-            Line line = UnitOfWork.LineRepository.Get(id);
+            Line line = Db.LineRepository.Get(id);
             if (line == null)
             {
                 return NotFound();
             }
 
-            UnitOfWork.LineRepository.Remove(line);
-
             try
             {
-                UnitOfWork.Complete();
+                for(int i = 0; i < line.Stations.Count; i++)
+                {
+                    string name = line.Stations[i].Name;
+                    Station dbStation = Db.StationRepository.Find(s => s.Name.Equals(name)).FirstOrDefault();
+                    Db.StationRepository.Remove(dbStation);
+                }
+              
+                Db.LineRepository.Remove(line);
+                Db.Complete();
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                return InternalServerError();
+                return InternalServerError(e);
             }
 
             return Ok(line);
@@ -138,14 +183,14 @@ namespace WebApp.Controllers
         {
             if (disposing)
             {
-                UnitOfWork.Dispose();
+                Db.Dispose();
             }
             base.Dispose(disposing);
         }
 
         private bool LineExists(string id)
         {
-            return UnitOfWork.LineRepository.Get(id) != null;
+            return Db.LineRepository.Get(id) != null;
         }
     }
 }
