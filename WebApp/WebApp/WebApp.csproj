@@ -305,10 +305,6 @@
     <Compile Include="Migrations\201906091843213_mearge migration.Designer.cs">
       <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906111524579_station new fields.cs" />
-    <Compile Include="Migrations\201906111524579_station new fields.Designer.cs">
-      <DependentUpon>201906111524579_station new fields.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.cs" />
     <Compile Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.Designer.cs">
       <DependentUpon>201906101420267_TimetableEntryIdtoAutoincrement.cs</DependentUpon>
@@ -320,6 +316,10 @@
     <Compile Include="Migrations\201906102122245_TimetableEntryChangeKey.cs" />
     <Compile Include="Migrations\201906102122245_TimetableEntryChangeKey.Designer.cs">
       <DependentUpon>201906102122245_TimetableEntryChangeKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121312172_station new field.cs" />
+    <Compile Include="Migrations\201906121312172_station new field.Designer.cs">
+      <DependentUpon>201906121312172_station new field.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -511,9 +511,6 @@
     <EmbeddedResource Include="Migrations\201906091843213_mearge migration.resx">
       <DependentUpon>201906091843213_mearge migration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201906111524579_station new fields.resx">
-      <DependentUpon>201906111524579_station new fields.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906101420267_TimetableEntryIdtoAutoincrement.resx">
       <DependentUpon>201906101420267_TimetableEntryIdtoAutoincrement.cs</DependentUpon>
     </EmbeddedResource>
@@ -522,6 +519,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906102122245_TimetableEntryChangeKey.resx">
       <DependentUpon>201906102122245_TimetableEntryChangeKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121312172_station new field.resx">
+      <DependentUpon>201906121312172_station new field.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
