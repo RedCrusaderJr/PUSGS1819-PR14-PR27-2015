@@ -22,6 +22,10 @@ namespace WebApp.Models
         
         public double Latitude { get; set; }
 
+        public string Address { get; set; }
+
+        public string LineOrderNumber { get; set; }
+
         public Station()
         {
 

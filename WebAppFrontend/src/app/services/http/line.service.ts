@@ -18,4 +18,15 @@ export class LineService extends BaseHttpService<Line> {
         this.specificUrl="/api/Lines";
         return super.post(data);
     }
+
+    putLine(id : string, data: Line) : Observable<any> {
+        this.specificUrl="/api/Lines/" + id;
+        return super.put(data);
+    }
+
+    deleteLine(id: string) : Observable<any> {
+        this.specificUrl="/api/Lines";
+        return super.delete(id);
+    }
+
 }

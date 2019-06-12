@@ -76,11 +76,12 @@ div th {
   color: white !important;
 }
 
-.map-builder .nav-pills p:hover {
+.map-builder .nav-pills p:hover,
+.map-builder .station-table tr:hover {
   background-color: rgba(217, 23, 16, 0.6) !important;
   color: white !important;
-  margin-left: -15px !important;
-  font-size: 16px !important;
+  margin-left: -25px !important;
+  font-size: 12px !important;
 }
 
 .map-builder .form-group .col-xs-6 {
@@ -89,4 +90,14 @@ div th {
 
 .map-builder .form-group .col-xs-6 h5 {
   margin-left: 15px;
+}
+
+.id-station {
+  font-size: 14px !important;
+  width: 80px !important;
+}
+
+.coordinate {
+  font-size: 10px !important;
+  width: 250px
 }
