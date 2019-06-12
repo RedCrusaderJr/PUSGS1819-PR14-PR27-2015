@@ -122,7 +122,6 @@ export class TicketsComponent implements OnInit {
           this.data[retValue[2].TicketTypeId] = retValue[2].Price;
           this.data[retValue[3].TicketTypeId] = retValue[3].Price;
           this.data.CatalogueId = retValue[0].CatalogueId;
-          console.log(this.jwtService.getRole());
 
         }
         else {
@@ -188,6 +187,11 @@ export class TicketsComponent implements OnInit {
   selectedPrice : number = 0;
 
   onPriceTableRowClick(type: string) {
+    if (this.jwtService.geIsLoggedIn() == false) {
+      this.selectedPrice = this.data.Hour * 1;
+        this.selectedTicketType = "Hour";
+        return;
+    }
     let coeficient = 1;
     if (this.user.ProcessingPhase == 1) {
       if (this.user.Discount.DiscountTypeName == "Student" || this.user.Discount.DiscountTypeName == "Senior") {

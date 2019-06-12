@@ -51,6 +51,9 @@ namespace WebApp.Persistence.UnitOfWork
 
         public int Complete()
         {
+            var a = _context.ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+            var b = _context.ChangeTracker.Entries().Where(e => e.State == EntityState.Deleted);
+            var c = _context.ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
             return _context.SaveChanges();
         }
 

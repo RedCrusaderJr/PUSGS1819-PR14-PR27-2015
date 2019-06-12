@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 
 namespace WebApp.Models
@@ -15,8 +16,18 @@ namespace WebApp.Models
         private string _lineId;
         #endregion
 
+        
         [Key]
-        public string TimetableEntryId { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+
+
+        [ForeignKey("Timetable")]
+        public bool TimetableId { get; set; }
+
+        [IgnoreDataMember]
+        public Timetable Timetable { get; set; }
 
         public DayType Day
         {
@@ -28,7 +39,7 @@ namespace WebApp.Models
             set
             {
                 _day = value;
-                TimetableEntryId = $"{Day}|{LineId}";
+                
             }
         }
 
@@ -43,9 +54,10 @@ namespace WebApp.Models
             set
             {
                 _lineId = value;
-                TimetableEntryId = $"{Day}|{LineId.ToString()}";
             }
         }
+
+
         public Line Line { get; set; }
 
         public string TimeOfDeparture { get; set; }
