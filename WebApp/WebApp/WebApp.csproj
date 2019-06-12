@@ -265,6 +265,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\BusLocationHub.cs" />
     <Compile Include="Migrations\201905301552227_ticket validation.cs" />
     <Compile Include="Migrations\201905301552227_ticket validation.Designer.cs">
       <DependentUpon>201905301552227_ticket validation.cs</DependentUpon>
@@ -318,8 +319,12 @@
       <DependentUpon>201906102122245_TimetableEntryChangeKey.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\201906121312172_station new field.cs" />
-    <Compile Include="Migrations\201906121312172_station new field.Designer.cs">
+    <Compile Include="Migrations\201906121312172_station new field.designer.cs">
       <DependentUpon>201906121312172_station new field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121536572_BusMigration.cs" />
+    <Compile Include="Migrations\201906121536572_BusMigration.Designer.cs">
+      <DependentUpon>201906121536572_BusMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -522,6 +527,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906121312172_station new field.resx">
       <DependentUpon>201906121312172_station new field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121536572_BusMigration.resx">
+      <DependentUpon>201906121536572_BusMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
