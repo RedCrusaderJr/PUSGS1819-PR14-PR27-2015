@@ -181,6 +181,19 @@ namespace WebApp.Controllers
                     Station dbStation = Db.StationRepository.Find(s => s.Name.Equals(name)).FirstOrDefault();
                     Db.StationRepository.Remove(dbStation);
                 }
+
+                List<TimetableEntry> timetableEntries = Db.TimetableEntryRepository.Find(tt => tt.LineId == line.OrderNumber).ToList();
+                foreach (TimetableEntry timetableEntry in timetableEntries)
+                {
+                    bool isUrban = timetableEntry.Line.IsUrban;
+                    timetableEntry.LineId = null;
+
+                    Timetable timetable = Db.TimetableRepository.Get(isUrban);
+                    timetable.TimetableEntries.Remove(timetableEntry);
+
+                    Db.TimetableEntryRepository.Remove(timetableEntry);
+                    
+                }
               
                 Db.LineRepository.Remove(line);
                 Db.Complete();
