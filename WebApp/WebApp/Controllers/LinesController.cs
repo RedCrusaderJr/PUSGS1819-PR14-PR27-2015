@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using WebApp.Hubs;
 using WebApp.Models;
 using WebApp.Persistence;
 using WebApp.Persistence.UnitOfWork;
@@ -17,9 +18,12 @@ namespace WebApp.Controllers
     public class LinesController : ApiController
     {
         IUnitOfWork Db { get; set; }
+        BusLocationHub BusLocationHub { get; set; }
         public LinesController(IUnitOfWork db)
         {
+           
             Db = db;
+            
         }
 
         // GET: api/Lines
@@ -41,6 +45,19 @@ namespace WebApp.Controllers
 
             return Ok(line);
         }
+
+
+        //[Route("api/Lines/StartHub")]
+        //[HttpGet]
+        //public IHttpActionResult StartHub()
+        //{
+        //    if (BusLocationHub.timer.Enabled == false)
+        //    {
+        //        BusLocationHub.TimerServerUpdate();
+        //    }
+
+        //    return Ok();
+        //}
 
         // PUT: api/Lines/5
         [ResponseType(typeof(void))]

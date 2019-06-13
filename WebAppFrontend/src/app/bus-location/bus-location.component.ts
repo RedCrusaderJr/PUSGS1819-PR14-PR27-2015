@@ -44,16 +44,22 @@ export class BusLocationComponent implements OnInit {
     this.defaultMapSetup();
     this.updateLines();
     this.checkConnection();
+    this.subscribeForBusAdded();
+    this.subscribeForBusMoved();
+    this.subscribeForBusDelete();
+    this.busLocationService.registerForBusAdded();
+    this.busLocationService.registerForBusDeleted();
+    this.busLocationService.registerForBusMoved();
 
   }
 
   private checkConnection() {
     this.busLocationService.startConnection().subscribe(e => {
-    this.isConnected = e;
+      this.isConnected = e;
       if (e) {
-        this.subscribeForBusAdded();
-        this.subscribeForBusMoved();
-        this.subscribeForBusDelete();
+        this.busLocationService.StartTimer();
+        
+
       }
     });
   }
@@ -61,21 +67,29 @@ export class BusLocationComponent implements OnInit {
   private subscribeForBusAdded() {
     this.busLocationService.busAdded.subscribe(e => {
       console.log(e);
-    });
+    })
   }
 
   private subscribeForBusMoved() {
     this.busLocationService.busMoved.subscribe(e => {
       console.log(e);
+      this.onNotification(e);
     });
   }
 
   private subscribeForBusDelete() {
     this.busLocationService.busDeleted.subscribe(e => {
       console.log(e);
+      this.onNotification(e);
     });
   }
 
+  public onNotification(notif: string) {
+
+    this.ngZone.run(() => {
+      console.log(notif);
+    });
+  }
   onIsUrbanSelection(isUrbanSelection: boolean) {
     if (this.isUrbanSelection != undefined && this.isUrbanSelection == isUrbanSelection) {
       this.isUrbanSelection = undefined;
@@ -160,8 +174,12 @@ export class BusLocationComponent implements OnInit {
           }
 
           this.allLines.push(lineToPush)
+
+
         });
+
       }
+      //this.lineService.startHub().subscribe(data => console.log("Hub started: " + data), error => console.log(error));
     },
       err => {
         console.log(err)

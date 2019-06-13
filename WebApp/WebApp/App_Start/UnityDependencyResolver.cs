@@ -8,6 +8,7 @@ using System.Web.Http.Dependencies;
 using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
+using WebApp.Hubs;
 using WebApp.Models;
 using WebApp.Persistence;
 using WebApp.Persistence.Repository;
@@ -82,7 +83,8 @@ namespace WebApp.App_Start
             container.RegisterType<ITimetableRepository, TimetableRepository>();
             container.RegisterType<ITimetableEntryRepository, TimetableEntryRepository>();
             container.RegisterType<IUnitOfWork, DemoUnitOfWork>();
-            
+            container.RegisterType<BusLocationHub>();
+
         }
 
         public void Dispose()
