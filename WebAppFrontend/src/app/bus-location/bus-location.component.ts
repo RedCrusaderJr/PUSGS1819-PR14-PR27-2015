@@ -136,6 +136,7 @@ export class BusLocationComponent implements OnInit {
             orderNumber: line.OrderNumber,
             path: line.Path,
             stations: [],
+            rowVersion: line.rowVersion,
           };
 
           if (line.Stations != undefined && line.Stations != null) {
@@ -199,6 +200,7 @@ export class BusLocationComponent implements OnInit {
       orderNumber: '',
       path: '',
       stations: [],
+      rowVersion: [],
     };
   }
 

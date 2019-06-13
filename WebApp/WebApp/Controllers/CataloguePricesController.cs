@@ -104,7 +104,19 @@ namespace WebApp.Controllers
 
                     Db.CatalogueRepository.Update(catalogueDb);
 
-                    Db.Complete();
+                    try
+                    {
+                        Db.Complete();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return Content(HttpStatusCode.Conflict, ex);
+                    }
+                    catch (Exception e)
+                    {
+                        return InternalServerError(e);
+                    }
+
 
                     hourPrice = Db.CataloguePriceRepository.Get(cataloguePrice.HourId);
                     dayPrice = Db.CataloguePriceRepository.Get(cataloguePrice.DayId);
@@ -179,7 +191,18 @@ namespace WebApp.Controllers
 
             Db.CatalogueRepository.Add(new Catalogue() { Begin = cataloguePrice.Begin, End = cataloguePrice.End });
 
-            Db.Complete();
+            try
+            {
+                Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
 
             Catalogue addedCatalogue = Db.CatalogueRepository.Find(cat => cat.Begin == cataloguePrice.Begin && cat.End == cataloguePrice.End).FirstOrDefault();
 
@@ -213,6 +236,10 @@ namespace WebApp.Controllers
                 {
                     return InternalServerError(e);
                 }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
             }
 
             cataloguePrice.HourId = hourCataloguePrice.CataloguePriceId;
@@ -296,10 +323,6 @@ namespace WebApp.Controllers
                 {
                     return InternalServerError(e);
                 }
-
-
-                
-
             }
             //try
             //{

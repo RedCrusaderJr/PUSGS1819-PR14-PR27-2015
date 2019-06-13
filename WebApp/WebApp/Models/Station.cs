@@ -13,8 +13,7 @@ namespace WebApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int StationId { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public int RowVersion { get; set; }
         [Index(IsUnique =true)]
         [Column(TypeName = "VARCHAR")]
         [StringLength(300)]

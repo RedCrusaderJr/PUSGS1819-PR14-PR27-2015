@@ -97,11 +97,16 @@ namespace WebApp.Controllers
 
             passengerToValidate.ProcessingPhase = userToValidate.ProcessingPhase;
 
+
             try
             {
                 Db.Complete();
             }
-            catch(Exception e)
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
             {
                 return InternalServerError(e);
             }
@@ -142,7 +147,7 @@ namespace WebApp.Controllers
             }
             catch (Exception e)
             {
-
+                return InternalServerError(e);
             }
             return Ok();
 
@@ -282,7 +287,6 @@ namespace WebApp.Controllers
                 {
                     return NotFound();
                 }
-                
             }
 
             try
@@ -297,14 +301,14 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    throw dbEx;
+                    return Content(HttpStatusCode.Conflict, dbEx);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                throw e;
+                return InternalServerError(e);
             }
-            
+
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -335,12 +339,12 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    throw dbEx;
+                    return Content(HttpStatusCode.Conflict, dbEx);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                throw e;
+                return InternalServerError(e);
             }
 
             return CreatedAtRoute("DefaultApi", new { id = passenger.Id }, passenger);
@@ -362,9 +366,13 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
             catch (Exception e)
             {
-                throw e;
+                return InternalServerError(e);
             }
 
             return Ok(passenger);

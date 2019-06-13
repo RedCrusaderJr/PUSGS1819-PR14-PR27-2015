@@ -76,6 +76,10 @@ namespace WebApp.Controllers
             {
                 return Content(HttpStatusCode.Conflict, ex);
             }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
             //catch (DbUpdateConcurrencyException)
             //{
             //    if (!TimetableExists(id))
@@ -121,6 +125,10 @@ namespace WebApp.Controllers
                     throw;
                 }
             }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
 
             return CreatedAtRoute("DefaultApi", new { id = timetable.IsUrban }, timetable);
         }
@@ -136,6 +144,7 @@ namespace WebApp.Controllers
             }
 
             Db.TimetableRepository.Remove(timetable);
+
             try
             {
                 Db.Complete();
@@ -144,9 +153,9 @@ namespace WebApp.Controllers
             {
                 return Content(HttpStatusCode.Conflict, ex);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return InternalServerError();
+                return InternalServerError(e);
             }
 
             return Ok(timetable);

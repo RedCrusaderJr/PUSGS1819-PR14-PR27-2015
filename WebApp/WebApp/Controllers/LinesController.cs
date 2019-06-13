@@ -53,19 +53,57 @@ namespace WebApp.Controllers
 
             if (id != line.OrderNumber)
             {
-                return BadRequest();
+                return BadRequest("You are trying to edit an Line that either do not exist or has been deleted.");
             }
 
             Line lineDb = Db.LineRepository.Get(id);
             if(lineDb != null)
             {
+                if(lineDb.RowVersion > line.RowVersion)
+                {
+                    return Content(HttpStatusCode.Conflict, "You are trying to edit a Line that has been changed recently. Try again.");
+                }
+
                 lineDb.IsUrban = line.IsUrban;
                 lineDb.Path = line.Path;
+
+                foreach(Station dbStation in lineDb.Stations)
+                {
+                    foreach(Station station in line.Stations)
+                    {
+                        if(dbStation.Name == station.Name)
+                        {
+                            Station foundStation = Db.StationRepository.Find(s => dbStation.Name.Equals(s.Name)).SingleOrDefault();
+                            if(foundStation != null)
+                            {
+                                foundStation.Address = station.Address;
+                                foundStation.Longitude = station.Longitude;
+                                foundStation.Latitude = station.Latitude;
+                                foundStation.LineOrderNumber = station.LineOrderNumber;
+                                foundStation.RowVersion++;
+                                Db.StationRepository.Update(foundStation);
+                            }
+                        }
+                    }
+                }
+
+                try
+                {
+                    Db.Complete();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return Content(HttpStatusCode.Conflict, ex);
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
 
                 for (int i = 0; i < lineDb.Stations.Count; i++)
                 {
                     bool stationContainedInModifiedLine = false;
-                    stationContainedInModifiedLine = line.Stations.Any(s => s.StationId.Equals(lineDb.Stations[i].StationId));
+                    stationContainedInModifiedLine = line.Stations.Any(s => s.Name.Equals(lineDb.Stations[i].Name));
 
                     if(!stationContainedInModifiedLine)
                     {
@@ -76,7 +114,7 @@ namespace WebApp.Controllers
                 for (int i = 0; i < line.Stations.Count; i++)
                 {
                     bool stationContainedInDbLine = false;
-                    stationContainedInDbLine = lineDb.Stations.Any(s => s.StationId.Equals(line.Stations[i].StationId));
+                    stationContainedInDbLine = lineDb.Stations.Any(s => s.Name.Equals(line.Stations[i].Name));
 
                     if (!stationContainedInDbLine)
                     {
@@ -84,20 +122,7 @@ namespace WebApp.Controllers
                     }
                 }
 
-                foreach(Station dbStation in lineDb.Stations)
-                {
-                    foreach(Station station in line.Stations)
-                    {
-                        if(dbStation.Name == station.Name)
-                        {
-                            dbStation.Address = station.Address;
-                            dbStation.Longitude = station.Longitude;
-                            dbStation.Latitude = station.Latitude;
-                            dbStation.LineOrderNumber = station.LineOrderNumber;
-                        }
-                    }
-                }
-
+                lineDb.RowVersion++;
                 Db.LineRepository.Update(lineDb);
             }
             else
@@ -112,6 +137,10 @@ namespace WebApp.Controllers
             catch (DbUpdateConcurrencyException ex)
             {
                 return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
             }
             //catch (DbUpdateConcurrencyException)
             //{
@@ -141,6 +170,11 @@ namespace WebApp.Controllers
             if(LineExists(line.OrderNumber))
             {
                 return Content(HttpStatusCode.Conflict, $"Line with OrderNumber: {line.OrderNumber} already exists.");
+            }
+
+            if(line.RowVersion != 0)
+            {
+                return BadRequest($"You are posting Line with RowVersion: {line.RowVersion} (has to be 0)");
             }
 
 

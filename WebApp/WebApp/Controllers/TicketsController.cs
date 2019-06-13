@@ -67,7 +67,19 @@ namespace WebApp.Controllers
 
 
             Ticket ticketDb = Db.TicketRepository.Add(ticket);
-            Db.Complete();
+
+            try
+            {
+                Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
 
             ticketDb = Db.TicketRepository.Get(ticketDb.TicketId);
             if (ticketDb == null)
@@ -124,6 +136,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {
@@ -184,9 +200,14 @@ namespace WebApp.Controllers
 
             ticket.IsValid = isValid;
             Db.TicketRepository.Update(ticket);
+
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {
@@ -251,7 +272,7 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    return InternalServerError(dbEx);
+                    return Content(HttpStatusCode.Conflict, dbEx);
                 }
             }
             catch(Exception e)
@@ -299,15 +320,24 @@ namespace WebApp.Controllers
                     {
                         Db.Complete();
                     }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return Content(HttpStatusCode.Conflict, ex);
+                    }
                     catch (Exception e)
                     {
                         return InternalServerError(e);
                     }
 
                     foundPassenger.Tickets.Add(ticketDb);
+
                     try
                     {
                         Db.Complete();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return Content(HttpStatusCode.Conflict, ex);
                     }
                     catch (Exception e)
                     {
@@ -326,15 +356,24 @@ namespace WebApp.Controllers
                     {
                         Db.Complete();
                     }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return Content(HttpStatusCode.Conflict, ex);
+                    }
                     catch (Exception e)
                     {
                         return InternalServerError(e);
                     }
 
                     foundPassenger.Tickets.Add(ticketDb);
+
                     try
                     {
                         Db.Complete();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return Content(HttpStatusCode.Conflict, ex);
                     }
                     catch (Exception e)
                     {
@@ -375,6 +414,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {
