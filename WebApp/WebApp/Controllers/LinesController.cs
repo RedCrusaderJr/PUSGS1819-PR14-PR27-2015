@@ -109,17 +109,21 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!LineExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Content(HttpStatusCode.Conflict, ex);
             }
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!LineExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -154,6 +158,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {
@@ -198,7 +206,11 @@ namespace WebApp.Controllers
                 Db.LineRepository.Remove(line);
                 Db.Complete();
             }
-            catch(Exception e)
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
             {
                 return InternalServerError(e);
             }

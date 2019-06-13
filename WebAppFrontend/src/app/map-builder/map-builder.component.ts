@@ -452,8 +452,11 @@ export class MapBuilderComponent implements OnInit {
         console.log(err);
         alert(err.error);
 
-        if (!err.error.includes(this.selectedLine.orderNumber)) {
-          this.finalizeLineConfirm();
+        if(err.statusCode != undefined && err.statusCode == 409)
+        {
+          if (!err.error.includes(this.selectedLine.orderNumber)) {
+            this.finalizeLineConfirm();
+          }
         }
       });
     }
@@ -475,8 +478,10 @@ export class MapBuilderComponent implements OnInit {
         console.log(err);
         alert(err.error);
 
-        if(!err.error.includes(this.selectedLine.orderNumber)) {
-          this.finalizeLineConfirm();
+        if(err.statusCode != undefined && err.statusCode == 409) {
+          if(!err.error.includes(this.selectedLine.orderNumber)) {
+            this.finalizeLineConfirm();
+          }
         }
       });
     }
@@ -497,8 +502,10 @@ export class MapBuilderComponent implements OnInit {
         console.log(err);
         alert(err.error);
 
-        if (!err.error.includes(this.selectedLine.orderNumber)) {
-          this.finalizeLineConfirm();
+        if(err.statusCode != undefined && err.statusCode == 409) {
+          if (!err.error.includes(this.selectedLine.orderNumber)) {
+            this.finalizeLineConfirm();
+          }
         }
       });
     }

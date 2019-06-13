@@ -70,17 +70,21 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
-            catch (DbUpdateConcurrencyException dbEx)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!StationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw dbEx;
-                }
+                return Content(HttpStatusCode.Conflict, ex);
             }
+            //catch (DbUpdateConcurrencyException dbEx)
+            //{
+            //    if (!StationExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw dbEx;
+            //    }
+            //}
             catch(Exception e)
             {
                 throw e;
@@ -111,7 +115,11 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
-            catch(Exception e)
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
             {
                 throw e;
             }
@@ -134,6 +142,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {
