@@ -21,6 +21,14 @@
         </agm-polyline>
       </ng-container>
 
+      <ng-container *ngFor="let marker of markersOnMap; let i = index">
+        <agm-marker *ngIf="selectedLine.orderNumber == marker.lineId && !(marker.location.latitude == getLastPointLatitude &&  marker.location.longitude == getLastPointLongitude)" [latitude]="marker.location.latitude" [longitude]="marker.location.longitude" [iconUrl]="marker.iconUrl">
+          <agm-info-window [latitude]="marker.location.latitude" [longitude]="marker.location.longitude">
+            <span style="font-family:'Times New Roman'; color:gray;">{{marker.location.latitude}} {{marker.location.longitude}}</span>
+          </agm-info-window>
+        </agm-marker>
+      </ng-container>
+
       <!-- ends of line -->
       <ng-container *ngIf="polyline != undefined && polyline != null && polyline.path != undefined && polyline.path != null">
         <!-- <ng-container *ngIf="polyline.path != undefined && polyline.path!=null"> -->

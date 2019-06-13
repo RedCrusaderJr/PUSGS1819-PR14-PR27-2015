@@ -6,6 +6,7 @@ import { MarkerInfo } from '../Models/marker-info.model';
 import { GeoLocation } from '../Models/geolocation';
 import { Station } from '../Models/Station';
 import { BusLocationsService } from '../services/http/buslocation.service';
+import { element } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-bus-location',
@@ -25,6 +26,7 @@ export class BusLocationComponent implements OnInit {
 
   //#region map
   public polyline: Polyline;
+  public markersOnMap: MarkerInfo[] = [];
   public tempStationOnMap: Polyline;
   public stationsOnMap: Polyline[];
   public zoom: number;
@@ -44,13 +46,25 @@ export class BusLocationComponent implements OnInit {
     this.defaultMapSetup();
     this.updateLines();
     this.checkConnection();
-    this.subscribeForBusAdded();
-    this.subscribeForBusMoved();
-    this.subscribeForBusDelete();
     this.busLocationService.registerForBusAdded();
     this.busLocationService.registerForBusDeleted();
     this.busLocationService.registerForBusMoved();
+    this.subscribeForBusAdded();
+    this.subscribeForBusMoved();
+    this.subscribeForBusDelete();
 
+
+  }
+  get getLastPointLatitude() :number {
+    let point = this.selectedLine.path.split('|')[this.selectedLine.path.split('|').length - 2];
+    let ret : number = Number(point.split('-')[0]);
+    return ret; 
+  }
+
+  get getLastPointLongitude() :number {
+    let point = this.selectedLine.path.split('|')[this.selectedLine.path.split('|').length - 2];
+    let ret : number = Number(point.split('-')[1]);
+    return ret;  
   }
 
   private checkConnection() {
@@ -58,7 +72,7 @@ export class BusLocationComponent implements OnInit {
       this.isConnected = e;
       if (e) {
         this.busLocationService.StartTimer();
-        
+
 
       }
     });
@@ -66,30 +80,63 @@ export class BusLocationComponent implements OnInit {
 
   private subscribeForBusAdded() {
     this.busLocationService.busAdded.subscribe(e => {
-      console.log(e);
+      this.ngZone.run(() => {
+        e.forEach(element => {
+          let latitude = element.Position.split('-')[0];
+          let longitude = element.Position.split('-')[1];
+          let location = new GeoLocation(latitude, longitude);
+          let marker = new MarkerInfo(location, { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } }, element.AutobusId, "Autobus", "", { busId: element.AutobusId, lineId: element.LineId });
+          this.markersOnMap.push(marker);
+          console.log(marker);
+        });
+      })
+     
     })
   }
 
   private subscribeForBusMoved() {
     this.busLocationService.busMoved.subscribe(e => {
-      console.log(e);
-      this.onNotification(e);
+      this.ngZone.run(() => {
+        e.forEach(element => {
+          for (let i = 0; i < this.markersOnMap.length; i++) {
+            if (element.AutobusId == this.markersOnMap[i].title) {
+              let latitude = element.Position.split('-')[0];
+              let longitude = element.Position.split('-')[1];
+              this.markersOnMap[i].location.latitude = latitude;
+              this.markersOnMap[i].location.longitude = longitude;
+            }
+          }
+
+        });
+      })
+
+
     });
   }
 
   private subscribeForBusDelete() {
     this.busLocationService.busDeleted.subscribe(e => {
-      console.log(e);
-      this.onNotification(e);
+      this.ngZone.run(() => {
+        e.forEach(element => {
+          let length = this.markersOnMap.length;
+          let temp = []
+          for (let i = 0; i < length; i++) {
+            let marker = this.markersOnMap.pop();
+            if (marker.title != e.AutobusId) {
+              temp.push(marker);
+            }
+          }
+          temp.forEach(s => {
+            this.markersOnMap.push(s);
+          });
+        })
+      })
+      
+
     });
   }
 
-  public onNotification(notif: string) {
 
-    this.ngZone.run(() => {
-      console.log(notif);
-    });
-  }
   onIsUrbanSelection(isUrbanSelection: boolean) {
     if (this.isUrbanSelection != undefined && this.isUrbanSelection == isUrbanSelection) {
       this.isUrbanSelection = undefined;

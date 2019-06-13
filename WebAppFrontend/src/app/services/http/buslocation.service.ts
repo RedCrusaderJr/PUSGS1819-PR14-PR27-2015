@@ -49,7 +49,8 @@ export class BusLocationsService {
 
     public registerForBusAdded(): void {
         this.proxy.on('addAutobuses', (data: string) => {
-            console.log('recieved add:' + data);
+            console.log('recieved add:');
+            console.log(data);
             this.busAdded.emit(data);
 
         })
@@ -58,7 +59,8 @@ export class BusLocationsService {
     public registerForBusMoved(): void {
 
         this.proxy.on('moveAutobuses', (data: any) => {
-            console.log('recieved move:' + data);
+            console.log('recieved move:');
+            console.log(data);
             this.busMoved.emit(data);
 
         })
@@ -75,7 +77,8 @@ export class BusLocationsService {
     public registerForBusDeleted(): void {
 
         this.proxy.on('deleteAutobuses', (data: any) => {
-            console.log('recieved delete:' + data);
+            console.log('recieved delete:');
+            console.log(data);
             this.busDeleted.emit(data);
 
         })

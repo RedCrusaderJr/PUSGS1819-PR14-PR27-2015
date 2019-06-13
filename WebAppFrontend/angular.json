@@ -83,7 +83,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": ["../node_modules/signalr/jquery.signalR.js"],
+            "scripts": ["./node_modules/signalr/jquery.signalR.js"],
             "assets": [
               "src/favicon.ico",
               "src/assets"
