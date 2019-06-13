@@ -76,7 +76,7 @@ namespace WebApp.Controllers
             Line lineDb = Db.LineRepository.Get(id);
             if(lineDb != null)
             {
-                if(lineDb.RowVersion > line.RowVersion)
+                if(lineDb.Version > line.Version)
                 {
                     return Content(HttpStatusCode.Conflict, "You are trying to edit a Line that has been changed recently. Try again.");
                 }
@@ -97,7 +97,7 @@ namespace WebApp.Controllers
                                 foundStation.Longitude = station.Longitude;
                                 foundStation.Latitude = station.Latitude;
                                 foundStation.LineOrderNumber = station.LineOrderNumber;
-                                foundStation.RowVersion++;
+                                foundStation.Version++;
                                 Db.StationRepository.Update(foundStation);
                             }
                         }
@@ -139,7 +139,7 @@ namespace WebApp.Controllers
                     }
                 }
 
-                lineDb.RowVersion++;
+                lineDb.Version++;
                 Db.LineRepository.Update(lineDb);
             }
             else
@@ -189,9 +189,9 @@ namespace WebApp.Controllers
                 return Content(HttpStatusCode.Conflict, $"Line with OrderNumber: {line.OrderNumber} already exists.");
             }
 
-            if(line.RowVersion != 0)
+            if(line.Version != 0)
             {
-                return BadRequest($"You are posting Line with RowVersion: {line.RowVersion} (has to be 0)");
+                return BadRequest($"You are posting Line with RowVersion: {line.Version} (has to be 0)");
             }
 
 

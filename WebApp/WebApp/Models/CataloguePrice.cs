@@ -13,7 +13,7 @@ namespace WebApp.Models
 
         [Key]
         public string CataloguePriceId { get; private set; }
-        public int RowVersion { get; set; }
+        public int Version { get; set; }
 
 
 

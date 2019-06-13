@@ -10,7 +10,7 @@ namespace WebApp.Models
     public class Catalogue
     {
         public int CatalogueId { get; set; }
-        public int RowVersion { get; set; }
+        public int Version { get; set; }
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }
 
