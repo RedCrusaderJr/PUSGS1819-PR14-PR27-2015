@@ -101,6 +101,20 @@ namespace WebApp.Controllers
                     }
                 }
 
+                foreach(Station dbStation in lineDb.Stations)
+                {
+                    foreach(Station station in line.Stations)
+                    {
+                        if(dbStation.Name == station.Name)
+                        {
+                            dbStation.Address = station.Address;
+                            dbStation.Longitude = station.Longitude;
+                            dbStation.Latitude = station.Latitude;
+                            dbStation.LineOrderNumber = station.LineOrderNumber;
+                        }
+                    }
+                }
+
                 Db.LineRepository.Update(lineDb);
             }
             else
@@ -112,17 +126,21 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!LineExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Content(HttpStatusCode.Conflict, ex);
             }
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!LineExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -157,6 +175,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {
@@ -201,7 +223,11 @@ namespace WebApp.Controllers
                 Db.LineRepository.Remove(line);
                 Db.Complete();
             }
-            catch(Exception e)
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
             {
                 return InternalServerError(e);
             }

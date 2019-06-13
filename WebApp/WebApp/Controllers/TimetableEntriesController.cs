@@ -82,7 +82,11 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
-            catch(Exception e)
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
+            catch (Exception e)
             {
                 return InternalServerError(e);
             }
@@ -170,6 +174,10 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
             catch (DbUpdateException dbEx)
             {
                 if (TimetableEntryExists(timetableEntry.Id))
@@ -204,6 +212,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception e)
             {

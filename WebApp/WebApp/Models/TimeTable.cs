@@ -11,7 +11,10 @@ namespace WebApp.Models
         //CONTROLLER
         [Key]
         public bool IsUrban { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
         public List<TimetableEntry> TimetableEntries { get; set; }
+
 
         public Timetable()
         {

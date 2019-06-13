@@ -12,11 +12,9 @@ namespace WebApp.Models
         //CONTROLLER (+ catolgue)
 
         [Key]
-        public string CataloguePriceId
-        {
-            get;
-            private set; 
-        }
+        public string CataloguePriceId { get; private set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
 
 

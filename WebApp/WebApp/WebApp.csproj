@@ -326,6 +326,10 @@
     <Compile Include="Migrations\201906121536572_BusMigration.Designer.cs">
       <DependentUpon>201906121536572_BusMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906130714146_timestamp.cs" />
+    <Compile Include="Migrations\201906130714146_timestamp.Designer.cs">
+      <DependentUpon>201906130714146_timestamp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -530,6 +534,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906121536572_BusMigration.resx">
       <DependentUpon>201906121536572_BusMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906130714146_timestamp.resx">
+      <DependentUpon>201906130714146_timestamp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

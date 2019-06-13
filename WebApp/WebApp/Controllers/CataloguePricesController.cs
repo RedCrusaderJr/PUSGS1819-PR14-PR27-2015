@@ -137,6 +137,10 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
+            }
             catch (Exception e)
             {
                 return InternalServerError(e);
@@ -194,6 +198,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (DbUpdateException e)
             {
@@ -280,7 +288,11 @@ namespace WebApp.Controllers
                 {
                     Db.CatalogueRepository.Delete(catalogue);
                 }
-                catch(Exception e)
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return Content(HttpStatusCode.Conflict, ex);
+                }
+                catch (Exception e)
                 {
                     return InternalServerError(e);
                 }

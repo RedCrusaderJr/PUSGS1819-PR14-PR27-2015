@@ -13,11 +13,14 @@ namespace WebApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string OrderNumber { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
         
 
         public bool IsUrban { get; set; } 
 
         public List<Station> Stations { get; set; }
+
 
         public string Path { get; set; }
     }

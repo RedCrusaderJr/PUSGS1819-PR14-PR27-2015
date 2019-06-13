@@ -74,17 +74,21 @@ namespace WebApp.Controllers
             {
                 Db.Complete();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!TimetableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Content(HttpStatusCode.Conflict, ex);
             }
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!TimetableExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -103,6 +107,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (DbUpdateException)
             {
@@ -133,6 +141,10 @@ namespace WebApp.Controllers
             try
             {
                 Db.Complete();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Content(HttpStatusCode.Conflict, ex);
             }
             catch (Exception)
             {

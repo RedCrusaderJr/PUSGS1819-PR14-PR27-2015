@@ -20,6 +20,8 @@ namespace WebApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
 
 
@@ -61,6 +63,7 @@ namespace WebApp.Models
         public Line Line { get; set; }
 
         public string TimeOfDeparture { get; set; }
+
 
         public TimetableEntry()
         {
