@@ -40,9 +40,13 @@ namespace WebApp.Hubs
 
         public void TimerServerUpdate()
         {
-            timer.Interval = 1000;
-            timer.Start();
-            timer.Elapsed += OnTimedEvent;
+            if(!timer.Enabled)
+            {
+                timer.Interval = 5000;
+                timer.Start();
+                timer.Elapsed += OnTimedEvent;
+            }
+            
         }
         
 
@@ -62,69 +66,96 @@ namespace WebApp.Hubs
                 List<Autobus> autobusesToMove = new List<Autobus>();
                 List<Autobus> autobusesToDelete = new List<Autobus>();
 
-
-                foreach (Autobus autobus in autobuses)
+                //prolazak kroz sve autobuse
+                for (int i = 0; i < autobuses.Count; i++)
                 {
-                    if (autobus.LineId == null)
+                    //nema liniju, brisi ga
+                    if (autobuses[i].BusLine == null)
                     {
                         //ubaci u listu za brisanje
-                        autobusesToDelete.Add(autobus);
+                        autobusesToDelete.Add(autobuses[i]);
 
-                        context.Set<Autobus>().Remove(autobus);
+                        context.Set<Autobus>().Remove(autobuses[i]);
+                        continue;
+
                     }
 
-                    string[] coordinates = autobus.BusLine.Path.Split('|');
+                    //izdvoj koordinate
+                    string[] coordinates = autobuses[i].BusLine.Path.Split('|');
 
                     bool findCoordinates = false;
-                    for (int i = 0; i < coordinates.Length; i++)
+                    for (int j = 0; j < coordinates.Length; j++)
                     {
-                        if (coordinates[i] == autobus.Position)
+                        if (coordinates[j] == autobuses[i].Position)
                         {
-                            if (i + 1 == coordinates.Length)
+                            //trenutna koordinata je krajnja, brisi
+                            if (j == coordinates.Length - 1)
                             {
                                 //ubaci u listu za brisanje
-                                autobusesToDelete.Remove(autobus);
-                                context.Set<Autobus>().Remove(autobus);
+                                break;
                             }
-                            else
-                            {
-                                //ubaci u listu za pomeranje
-                                autobus.Position = coordinates[i];
-                                autobusesToMove.Add(autobus);
-                                context.Set<Autobus>().Attach(autobus);
-                                context.Entry(autobus).State = EntityState.Modified;
-                            }
+
+                            //inace, ubaci u listu za pomeranje
+                            autobuses[i].Position = coordinates[j + 1];
+                            autobusesToMove.Add(autobuses[i]);
+                            context.Set<Autobus>().Attach(autobuses[i]);
+                            context.Entry(autobuses[i]).State = EntityState.Modified;
+
                             findCoordinates = true;
                             break;
                         }
 
-                        if (findCoordinates == false)
-                        {
-                            //ubaci u listu za brisanje
-                            autobusesToDelete.Remove(autobus);
-                            context.Set<Autobus>().Remove(autobus);
-                        }
+                        
+                    }
+
+                    if (findCoordinates == false)
+                    {
+                        //ubaci u listu za brisanje
+                        autobusesToDelete.Add(autobuses[i]);
+
+                        context.Set<Autobus>().Remove(autobuses[i]);
+                        continue;
                     }
                 }
                 //Db.Complete();
                 context.SaveChanges();
                 //ako postoje novi polasci
-
+                
                 foreach (TimetableEntry timetableEntry in timetableEntries)
                 {
+                    //prolaz kroz sve polaske datokg ttentryja
                     string[] departures = timetableEntry.TimeOfDeparture.Split(',');
                     DateTime now = DateTime.Now;
 
                     foreach (string departure in departures)
                     {
                         DateTime dtDeparture = DateTime.Parse(departure);
+                        //trenutno je toliko sati
                         if (now.Hour == dtDeparture.Hour && now.Minute == dtDeparture.Minute)
                         {
-                            string coordinate = timetableEntry.Line.Path.Split('|')[0];
-                            Autobus autobus = context.Set<Autobus>().Add(new Autobus() { LineId = timetableEntry.LineId, Position = coordinate });
+                            //ne postoji autobus koji je dodat u ovoliko sati
+                            if(!autobuses.Any(a => a.AddedAt.Hour == now.Hour && a.AddedAt.Minute == now.Minute))
+                            {
+                                string coordinate = timetableEntry.Line.Path.Split('|')[0];
 
-                            //ubaci u listu za dodavanje
-                            autobusesToAdd.Add(autobus);
+                                Autobus autobus = context.Set<Autobus>().Add(new Autobus() { LineId = timetableEntry.LineId, Position = coordinate, AddedAt = now });
+
+                                //ubaci u listu za dodavanje
+                                autobusesToAdd.Add(autobus);
+                            }
+                            //postoji autobus koji je dodat u ovoliko sati, ali nije ista linija
+                            else if (!autobuses.Any(a => a.LineId == timetableEntry.LineId))
+                            {
+                                string coordinate = timetableEntry.Line.Path.Split('|')[0];
+
+                                Autobus autobus = context.Set<Autobus>().Add(new Autobus() { LineId = timetableEntry.LineId, Position = coordinate, AddedAt = now });
+
+                                //ubaci u listu za dodavanje
+                                autobusesToAdd.Add(autobus);
+                            }
+
+                            break;
+                            
                         }
                     }
                 }
