@@ -135,6 +135,7 @@ namespace WebApp.Controllers
 
                     if (!stationContainedInDbLine)
                     {
+                        line.Stations[i].Version = 0;
                         lineDb.Stations.Add(line.Stations[i]);
                     }
                 }
@@ -201,6 +202,10 @@ namespace WebApp.Controllers
                 if(dbStations.Any(s => s.Name.Equals(station.Name)))
                 {
                     return Content(HttpStatusCode.Conflict, $"Station with Name: {station.Name} already exists.");
+                }
+                else
+                {
+                    station.Version = 0;
                 }
             }
 
