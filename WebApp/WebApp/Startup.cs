@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Owin;
+using WebApp.Hubs;
+using WebApp.Persistence.UnitOfWork;
+using WebApp.Persistence;
 
 [assembly: OwinStartup(typeof(WebApp.Startup))]
 

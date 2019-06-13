@@ -18,5 +18,7 @@ namespace WebApp.Models
 
         public Line BusLine { get; set; }
 
+        public DateTime AddedAt { get; set; }
+
     }
 }

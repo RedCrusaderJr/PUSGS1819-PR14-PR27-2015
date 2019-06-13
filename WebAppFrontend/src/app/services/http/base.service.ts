@@ -13,6 +13,9 @@ export class BaseHttpService<T>{
     constructor (protected http: HttpClient) {
 
     }
+    get() {
+        return this.http.get<T>(this.baseUrl + this.specificUrl);
+    }
 
     getAll():Observable<T[]> {
         return this.http.get<T[]>(this.baseUrl + this.specificUrl);
