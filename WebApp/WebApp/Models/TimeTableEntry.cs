@@ -20,8 +20,7 @@ namespace WebApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public int Version { get; set; }
 
 
 

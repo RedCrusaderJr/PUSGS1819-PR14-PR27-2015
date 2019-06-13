@@ -63,6 +63,13 @@ namespace WebApp.Migrations
                 userManager.AddToRole(user.Id, "Admin");
             }
 
+            if(!context.Users.Any(u => u.UserName == "admin2@yahoo.com"))
+            {
+                var user = new ApplicationUser() { Id = "admin2", UserName = "admin2@yahoo.com", Email = "admin2@yahoo.com", PasswordHash = ApplicationUser.HashPassword("Admin123!") };
+                userManager.Create(user);
+                userManager.AddToRole(user.Id, "Admin");
+            }
+
             if (!context.Users.Any(u => u.UserName == "appu@yahoo"))
             { 
                 var user = new ApplicationUser() { Id = "appu", UserName = "appu@yahoo", Email = "appu@yahoo.com", PasswordHash = ApplicationUser.HashPassword("Appu123!") };
@@ -73,6 +80,13 @@ namespace WebApp.Migrations
             if (!context.Users.Any(u => u.UserName == "controlerOne"))
             {
                 var user = new ApplicationUser() { Id = "controlerOne", UserName = "controlerOne", Email = "controlerOne@controler.com", PasswordHash = ApplicationUser.HashPassword("Controller123!") };
+                userManager.Create(user);
+                userManager.AddToRole(user.Id, "Controller");
+            }
+
+            if (!context.Users.Any(u => u.UserName == "controlerTwo"))
+            {
+                var user = new ApplicationUser() { Id = "controlerTwo", UserName = "controlerTwo", Email = "controlerTwo@controler.com", PasswordHash = ApplicationUser.HashPassword("Controller123!") };
                 userManager.Create(user);
                 userManager.AddToRole(user.Id, "Controller");
             }

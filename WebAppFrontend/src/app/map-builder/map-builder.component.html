@@ -74,7 +74,7 @@
         <ng-container *ngIf="polyline != undefined && polyline!=null && polyline.path != undefined && polyline.path!=null">
           <!-- <ng-container *ngIf="polyline.path != undefined && polyline.path!=null"> -->
           <ng-container *ngFor="let point of polyline.path; let i = index">
-            <agm-marker *ngIf="i==0 || i==polyline.path.length-1" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="polyline.icon">
+            <agm-marker *ngIf="i==0 || i==polylineLastIndex" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="polyline.icon">
             </agm-marker>
           </ng-container>
           <!-- </ng-container> -->
@@ -99,6 +99,12 @@
 
         <ng-container *ngIf="tempStationOnMap != undefined && tempStationOnMap != null && tempStationOnMap.path != undefined && tempStationOnMap.path != null">
           <agm-marker *ngFor="let point of tempStationOnMap.path" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="selectedBusIcon">
+            <agm-info-window *ngIf="tempStationOnMap.optional!=undefined && tempStationOnMap.optional!=null" [latitude]="point.latitude" [longitude]="point.longitude">
+              <span style="font-size: 16px;font-family:'Times New Roman'">Name: <strong>{{tempStationOnMap.optional.name}}</strong></span><br/>
+              <span style="font-size: 16px;font-family:'Times New Roman'">Line number: <strong>{{tempStationOnMap.optional.lineOrderNumber}}</strong></span><br/><br/>
+              <span style="font-family:'Times New Roman'; color:gray;">Address {{tempStationOnMap.optional.address}}</span><br/>
+              <span style="font-family:'Times New Roman'; color:gray; font-size: 10px">({{tempStationOnMap.optional.latitude}}, {{tempStationOnMap.optional.longitude}})</span><br/>
+            </agm-info-window>
           </agm-marker>
         </ng-container>
       </agm-map>

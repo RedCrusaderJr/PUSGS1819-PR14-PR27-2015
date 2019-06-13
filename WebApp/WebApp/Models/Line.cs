@@ -13,8 +13,7 @@ namespace WebApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string OrderNumber { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public int Version { get; set; }
         
 
         public bool IsUrban { get; set; } 

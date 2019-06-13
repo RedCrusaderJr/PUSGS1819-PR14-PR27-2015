@@ -85,9 +85,9 @@ namespace WebApp.Controllers
             //        throw dbEx;
             //    }
             //}
-            catch(Exception e)
+            catch (Exception e)
             {
-                throw e;
+                return InternalServerError(e);
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -121,7 +121,7 @@ namespace WebApp.Controllers
             }
             catch (Exception e)
             {
-                throw e;
+                return InternalServerError(e);
             }
 
             return CreatedAtRoute("DefaultApi", new { id = station.StationId }, station);
