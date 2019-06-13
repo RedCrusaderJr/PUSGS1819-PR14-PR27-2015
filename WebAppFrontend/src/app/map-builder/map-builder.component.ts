@@ -79,7 +79,7 @@ export class MapBuilderComponent implements OnInit {
             orderNumber: line.OrderNumber,
             path: line.Path,
             stations: [],
-            rowVersion: line.rowVersion,
+            version: line.Version,
           };
 
           if (line.Stations != undefined && line.Stations != null) {
@@ -138,7 +138,7 @@ export class MapBuilderComponent implements OnInit {
       orderNumber: '',
       path: '',
       stations: [],
-      rowVersion: [],
+      version: 0,
     };
   }
 
@@ -392,7 +392,7 @@ export class MapBuilderComponent implements OnInit {
       orderNumber: this.selectedLine.orderNumber,
       path: this.selectedLine.path,
       stations: [],
-      rowVersion: this.selectedLine.rowVersion,
+      version: this.selectedLine.version,
     }
     this.selectedLine.stations.forEach(station => {
       let savedStation: Station = {
@@ -412,7 +412,7 @@ export class MapBuilderComponent implements OnInit {
       orderNumber: this.savedLine.orderNumber,
       path: this.savedLine.path,
       stations: [],
-      rowVersion: this.savedLine.rowVersion,
+      version: this.savedLine.version,
     }
     this.savedLine.stations.forEach(station => {
       let savedStation: Station = {

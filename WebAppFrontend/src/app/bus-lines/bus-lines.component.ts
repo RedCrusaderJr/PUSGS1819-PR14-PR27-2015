@@ -101,7 +101,7 @@ export class BusLinesComponent implements OnInit {
             orderNumber: line.OrderNumber,
             path: line.Path,
             stations: [],
-            rowVersion: line.rowVersion,
+            version: line.Version,
           };
 
           if(line.Stations != undefined && line.Stations != null)
@@ -166,7 +166,7 @@ export class BusLinesComponent implements OnInit {
       orderNumber: '',
       path: '',
       stations: [],
-      rowVersion: [],
+      version: 0,
     };
   }
 }
