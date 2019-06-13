@@ -50,7 +50,8 @@ export class MapBuilderComponent implements OnInit {
   stationPreviewEnabled: boolean;
   stationConfirmEnabled: boolean;
   lineModificationEnabled: boolean;
-  modDelEnabled: boolean;
+  modifyLineEnabled: boolean;
+  deleteLineEnabled: boolean;
   deleteStationEnabled: boolean;
   //#endregion
   //#endregion fields
@@ -103,6 +104,7 @@ export class MapBuilderComponent implements OnInit {
 
   defaultMapSetup() {
     this.stationsOnMap = [];
+    this.tempStationOnMap = undefined;
     this.markerInfo = new MarkerInfo(new GeoLocation(45.242268, 19.842954),
       "assets/ftn.png",
       "Jugodrvo", "", "http://ftn.uns.ac.rs/691618389/fakultet-tehnickih-nauka");
@@ -124,7 +126,8 @@ export class MapBuilderComponent implements OnInit {
     this.lineConfirmEnabled = false;
     this.stationPreviewEnabled = false;
     this.stationConfirmEnabled = false;
-    this.modDelEnabled = false;
+    this.modifyLineEnabled = false;
+    this.deleteLineEnabled = false;
     this.lineModificationEnabled = false;
     this.deleteStationEnabled = false;
   }
@@ -151,7 +154,11 @@ export class MapBuilderComponent implements OnInit {
 
   //#region handlers
   onLineActionSelection(actionSelection: number) {
+    this.defaultMapSetup();
+    this.stationPreviewEnabled = false;
+
     if (this.lineActionSelection != undefined && this.lineActionSelection == actionSelection) {
+      // this.defaultMapSetup();
       this.lineActionSelection = undefined;
       this.stationActionSelection = undefined;
       this.pathModificationEnabled = false;
@@ -159,7 +166,6 @@ export class MapBuilderComponent implements OnInit {
       this.linePreviewEnabled = false;
       this.stationPreviewEnabled = false;
       this.selectedLine = this.getDefaultLine();
-      this.defaultMapSetup();
     } else {
 
       //iz modify u ostalo, bez potrvde modifikacije
@@ -173,7 +179,7 @@ export class MapBuilderComponent implements OnInit {
 
       //add line
       if (this.lineActionSelection == 0) {
-        this.defaultMapSetup();
+        // this.defaultMapSetup();
         this.stationActionEnabled = true;
         this.pathModificationEnabled = true;
         this.selectedLine = this.getDefaultLine();
@@ -181,24 +187,24 @@ export class MapBuilderComponent implements OnInit {
       }
       //select line
       else if (this.lineActionSelection == 1) {
+        // this.defaultMapSetup();
         this.selectedLine = this.getDefaultLine();
 
         this.updateLines();
-        this.defaultMapSetup();
         this.stationActionEnabled = false;
         this.pathModificationEnabled = false;
         this.linePreviewEnabled = false;
       }
 
       //modify line
-      else if (this.lineActionSelection == 2 && this.modDelEnabled) {
+      else if (this.lineActionSelection == 2 && this.modifyLineEnabled) {
+        // this.defaultMapSetup();
         //saving line
         this.saveLineLocaly();
         this.selectedLine.path="";
         this.selectedLine.stations = [];
-        this.tempStationOnMap = undefined;
-        this.defaultMapSetup();
 
+        this.deleteLineEnabled = false;
         this.lineModificationEnabled = true;
         this.stationActionEnabled = true;
         this.pathModificationEnabled = true;
@@ -206,9 +212,11 @@ export class MapBuilderComponent implements OnInit {
       }
 
       //delete line
-      else if (this.lineActionSelection == 3 && this.modDelEnabled) {
+      else if (this.lineActionSelection == 3 && this.deleteLineEnabled) {
+        // this.defaultMapSetup();
         this.deleteLine(this.selectedLine);
-        this.defaultMapSetup();
+        this.modifyLineEnabled = false;
+        this.deleteLineEnabled = false;
         this.stationActionEnabled = false;
         this.pathModificationEnabled = false;
         this.linePreviewEnabled = true;
@@ -225,13 +233,17 @@ export class MapBuilderComponent implements OnInit {
         this.deleteStationEnabled = false;
         this.stationPreviewEnabled = false;
         this.selectedStation = this.getDefaultStation();
-      } else {
+      } 
+      else {
         this.stationActionSelection = actionSelection;
         this.pathModificationEnabled = false;
         this.stationPreviewEnabled = true;
 
         //deleting station
-        if (actionSelection == 2) {
+        if(actionSelection == 0) {
+          this.selectedStation = this.getDefaultStation();
+        }
+        else if (actionSelection == 2) {
           if (this.selectedStation != undefined && this.selectedStation != null && this.deleteStationEnabled) {
             let length = this.selectedLine.stations.length;
             let temp = []
@@ -263,7 +275,8 @@ export class MapBuilderComponent implements OnInit {
   onLineSelection(lineSelection: Line) {
     if (this.selectedLine != undefined && this.selectedLine.orderNumber == lineSelection.orderNumber) {
       this.selectedLine = this.getDefaultLine();
-      this.modDelEnabled = false;
+      this.modifyLineEnabled = false;
+      this.deleteLineEnabled = false;
       this.stationActionEnabled = false;
       this.deleteStationEnabled = false;
       this.linePreviewEnabled = false;
@@ -273,7 +286,8 @@ export class MapBuilderComponent implements OnInit {
     }
     else {
       this.selectedLine = lineSelection;
-      this.modDelEnabled = true;
+      this.modifyLineEnabled = true;
+      this.deleteLineEnabled = true;
       this.linePreviewEnabled = true;
       this.stationActionEnabled = true;
 
@@ -285,6 +299,9 @@ export class MapBuilderComponent implements OnInit {
   }
 
   onStationRowClick(station: Station) {
+    this.tempStationOnMap = undefined;
+    //todo: prikaži selektovanu
+
     this.deleteStationEnabled = true;
     this.selectedStation = {
       address: station.address,
@@ -431,19 +448,37 @@ export class MapBuilderComponent implements OnInit {
         this.updateLines();
         this.finalizeLineConfirm();
       },
-        err => {
-          console.log(err);
-          alert(err.error);
+      err => {
+        console.log(err);
+        alert(err.error);
 
-          if (!err.error.includes(this.selectedLine.orderNumber)) {
-
-            this.finalizeLineConfirm();
-          }
-        });
+        if (!err.error.includes(this.selectedLine.orderNumber)) {
+          this.finalizeLineConfirm();
+        }
+      });
     }
     else if (this.lineActionSelection == 1) {
       //modifying station
+      this.selectedLine.stations.forEach(station => {
+        if (!station.name.includes(this.selectedLine.orderNumber)) {
+          station.name = this.selectedLine.orderNumber + '-' + station.name;
+        }
+      });
 
+      this.lineService.putLine(this.selectedLine.orderNumber, this.selectedLine).subscribe(data => {
+        this.savedLine = undefined;
+
+        this.updateLines();
+        this.finalizeLineConfirm();
+      },
+      err => {
+        console.log(err);
+        alert(err.error);
+
+        if(!err.error.includes(this.selectedLine.orderNumber)) {
+          this.finalizeLineConfirm();
+        }
+      });
     }
     else if (this.lineActionSelection == 2) {
       this.selectedLine.stations.forEach(station => {
@@ -458,14 +493,14 @@ export class MapBuilderComponent implements OnInit {
         this.updateLines();
         this.finalizeLineConfirm()
       },
-        err => {
-          console.log(err);
-          alert(err.error);
+      err => {
+        console.log(err);
+        alert(err.error);
 
-          if (!err.error.includes(this.selectedLine.orderNumber)) {
-            this.finalizeLineConfirm();
-          }
-        });
+        if (!err.error.includes(this.selectedLine.orderNumber)) {
+          this.finalizeLineConfirm();
+        }
+      });
     }
   }
 
@@ -480,27 +515,30 @@ export class MapBuilderComponent implements OnInit {
   }
 
   onStationConfirm() {
-    let stationExists = false;
-    this.selectedLine.stations.forEach(station => {
-      if (station.name.includes(this.selectedStation.name)) {
-        stationExists = true;
-        if (station.name == this.selectedStation.name) {
-          station.address = this.selectedStation.address;
-          station.latitude = this.selectedStation.latitude;
-          station.longitude = this.selectedStation.longitude;
+    if(this.selectedStation != undefined && this.selectedStation != null && this.selectedStation.name != "")
+    {
+      let stationExists = false;
+      this.selectedLine.stations.forEach(station => {
+        if (station.name.includes(this.selectedStation.name)) {
+          stationExists = true;
+          if (station.name == this.selectedStation.name) {
+            station.address = this.selectedStation.address;
+            station.latitude = this.selectedStation.latitude;
+            station.longitude = this.selectedStation.longitude;
+          }
         }
+      }, err => console.log(err));
+  
+      if (!stationExists) {
+        this.stationsOnMap.push(this.tempStationOnMap);
+        this.selectedLine.stations.push(this.selectedStation);
       }
-    }, err => console.log(err));
-
-    if (!stationExists) {
-      this.stationsOnMap.push(this.tempStationOnMap);
-      this.selectedLine.stations.push(this.selectedStation);
+  
+      this.tempStationOnMap = undefined;
+      this.selectedStation = this.getDefaultStation();
+      this.stationPreviewEnabled = false;
+      this.deleteStationEnabled = false;
     }
-
-    this.tempStationOnMap = undefined;
-    this.selectedStation = this.getDefaultStation();
-    this.stationPreviewEnabled = false;
-    this.deleteStationEnabled = false;
   }
 
   onModifiyLine() {
@@ -519,19 +557,26 @@ export class MapBuilderComponent implements OnInit {
       });
 
       this.stationsOnMap = [];
-      line.stations.forEach(station => {
-        this.tempStationOnMap = new Polyline([], 'blue', null);
-        this.tempStationOnMap.addLocation(new GeoLocation(station.latitude, station.longitude));
-
-        this.stationsOnMap.push(this.tempStationOnMap);
-      });
-
       this.tempStationOnMap = undefined;
+      
+      line.stations.forEach(station => {
+        let optional = {
+          name: station.name,
+          address: station.address,
+          latitude: station.latitude,
+          longitude: station.longitude,
+          lineOrderNumber: station.lineOrderNumber,
+        }
+        let tempPoint = new Polyline([], 'blue', null, optional);
+        tempPoint.addLocation(new GeoLocation(station.latitude, station.longitude));
+
+        this.stationsOnMap.push(tempPoint);
+        // this.tempStationOnMap = new Polyline([], 'blue', null);
+        // this.tempStationOnMap.addLocation(new GeoLocation(station.latitude, station.longitude));
+
+        // this.stationsOnMap.push(this.tempStationOnMap);
+      });
     }
-  }
-
-  mapLineSelection(lineId: string) {
-
   }
 
   addStation(latitude: number, longitude: number) {

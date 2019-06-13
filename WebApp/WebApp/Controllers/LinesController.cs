@@ -84,6 +84,20 @@ namespace WebApp.Controllers
                     }
                 }
 
+                foreach(Station dbStation in lineDb.Stations)
+                {
+                    foreach(Station station in line.Stations)
+                    {
+                        if(dbStation.Name == station.Name)
+                        {
+                            dbStation.Address = station.Address;
+                            dbStation.Longitude = station.Longitude;
+                            dbStation.Latitude = station.Latitude;
+                            dbStation.LineOrderNumber = station.LineOrderNumber;
+                        }
+                    }
+                }
+
                 Db.LineRepository.Update(lineDb);
             }
             else
