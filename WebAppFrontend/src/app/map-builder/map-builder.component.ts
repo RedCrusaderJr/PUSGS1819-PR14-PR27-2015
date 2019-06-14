@@ -475,6 +475,7 @@ export class MapBuilderComponent implements OnInit {
           station.name = this.selectedLine.orderNumber + '-' + station.name;
         }
       });
+      this.selectedLine.isUrban = this.isUrbanSelection;
 
       this.lineService.postLine(this.selectedLine).subscribe(data => {
         this.updateLines();
@@ -497,7 +498,7 @@ export class MapBuilderComponent implements OnInit {
           station.name = this.selectedLine.orderNumber + '-' + station.name;
         }
       });
-
+      this.selectedLine.isUrban = this.isUrbanSelection;
       this.lineService.putLine(this.selectedLine.orderNumber, this.selectedLine).subscribe(data => {
         this.savedLine = undefined;
 
@@ -520,7 +521,7 @@ export class MapBuilderComponent implements OnInit {
           station.name = this.selectedLine.orderNumber + '-' + station.name;
         }
       });
-
+      this.selectedLine.isUrban = this.isUrbanSelection;
       this.lineService.putLine(this.selectedLine.orderNumber, this.selectedLine).subscribe(data => {
         this.savedLine = undefined;
 

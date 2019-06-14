@@ -113,6 +113,7 @@ export class TimetableComponent implements OnInit {
 
   onLineSelection(line: any) {
     this.selectedLine = line;
+    this.selectedDayType = undefined;
    
   }
 

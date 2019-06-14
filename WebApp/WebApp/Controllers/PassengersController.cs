@@ -221,6 +221,7 @@ namespace WebApp.Controllers
         }
 
         // PUT: api/Passengers/5
+        [Authorize]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutPassenger(string id, Passenger passenger)
         {

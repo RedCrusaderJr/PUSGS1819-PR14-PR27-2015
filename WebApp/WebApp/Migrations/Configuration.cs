@@ -126,9 +126,9 @@ namespace WebApp.Migrations
                 context.SaveChanges();
             }
 
-            if (!context.TicketTypes.Any(tt => tt.TicketTypeName == "Week"))
+            if (!context.TicketTypes.Any(tt => tt.TicketTypeName == "Month"))
             {
-                var ticketType = new TicketType() { TicketTypeName = "Week" };
+                var ticketType = new TicketType() { TicketTypeName = "Month" };
                 context.TicketTypes.Add(ticketType);
                 context.SaveChanges();
             }

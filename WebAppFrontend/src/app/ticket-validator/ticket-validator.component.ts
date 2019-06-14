@@ -29,6 +29,10 @@ export class TicketValidatorComponent implements OnInit {
       },
       error => {
         console.log(error);
+        if (error.status == 404) {
+          alert("Ticket not found");
+        }
+        this.validateTicketsForm.reset();
       }
     )
   }

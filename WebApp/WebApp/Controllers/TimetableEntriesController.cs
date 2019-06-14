@@ -150,7 +150,7 @@ namespace WebApp.Controllers
         }
 
         // POST: api/TimetableEntries
-        //[Authorize (Roles = "Admin")]
+        [Authorize (Roles = "Admin")]
         [ResponseType(typeof(TimetableEntry))]
         public IHttpActionResult PostTimetableEntry(TimetableEntry timetableEntry)
         {
@@ -198,6 +198,7 @@ namespace WebApp.Controllers
         }
 
         // DELETE: api/TimetableEntries/5
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(TimetableEntry))]
         public IHttpActionResult DeleteTimetableEntry(int id)
         {
