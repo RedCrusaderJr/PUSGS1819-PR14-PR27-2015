@@ -201,7 +201,7 @@ namespace WebApp.Controllers
         // DELETE: api/TimetableEntries/5
         [Authorize(Roles = "Admin")]
         [ResponseType(typeof(TimetableEntry))]
-        public IHttpActionResult DeleteTimetableEntry(int id, int version)
+        public IHttpActionResult DeleteTimetableEntry(int id)
         {
             TimetableEntry timetableEntry = Db.TimetableEntryRepository.Get(id);
             if (timetableEntry == null)
@@ -209,10 +209,10 @@ namespace WebApp.Controllers
                 return Content(HttpStatusCode.NotFound, $"[Concurrency WARNING] TimetableEntry (ID: {id}) that you are trying to delete either do not exist or was previously deleted by another user. [REFRESH]");
             }
             
-            if(timetableEntry.Version > version)
-            {
-                return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] You are trying to delete a TimetableEntry (ID: {timetableEntry.Id}) that has been changed recently. Try again. [REFRESH]");
-            }
+            //if(timetableEntry.Version > version)
+            //{
+            //    return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] You are trying to delete a TimetableEntry (ID: {timetableEntry.Id}) that has been changed recently. Try again. [REFRESH]");
+            //}
 
             Db.TimetableEntryRepository.Remove(timetableEntry);
 

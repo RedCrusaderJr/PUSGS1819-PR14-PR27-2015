@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
           let decodedJwtData = JSON.parse(decodedJwtJsonData);
           
           let role = decodedJwtData.role;
-          this.router.navigate(['']); //za sada ovako, treba popraviti
+          this.router.navigate(['']); 
           
       },
       error => {

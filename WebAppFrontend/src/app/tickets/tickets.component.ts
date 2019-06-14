@@ -57,11 +57,13 @@ export class TicketsComponent implements OnInit {
               console.log(element.Catalogue.Begin);
               let bbegin = element.Catalogue.Begin.split("T")[0];
               let eend = element.Catalogue.End.split("T")[0];
+              let ccatalogueVersion = element.Catalogue.Version;
               console.log(bbegin);
               numOfEl = this.forms.push(this.fb.group(
                 {
                   begin: [bbegin, Validators.required],
-                  end: [eend, Validators.required]
+                  end: [eend, Validators.required],
+                  catalogueVersion: [ccatalogueVersion],
                 }
               ));
             }
@@ -71,18 +73,20 @@ export class TicketsComponent implements OnInit {
 
             switch (ticketType) {
               case "hour":
-                {
-                  this.forms[numOfEl - 1].addControl("hour", new FormControl(element.Price, Validators.required))
+                  this.forms[numOfEl - 1].addControl("hour", new FormControl(element.Price, Validators.required));
+                  this.forms[numOfEl - 1].addControl("hourVersion", new FormControl(element.Version));
                   break;
-                }
               case "day":
                 this.forms[numOfEl - 1].addControl("day", new FormControl(element.Price, Validators.required))
+                this.forms[numOfEl - 1].addControl("dayVersion", new FormControl(element.Version));
                 break;
               case "month":
                 this.forms[numOfEl - 1].addControl("month", new FormControl(element.Price, Validators.required))
+                this.forms[numOfEl - 1].addControl("monthVersion", new FormControl(element.Version));
                 break;
               case "year":
                 this.forms[numOfEl - 1].addControl("year", new FormControl(element.Price, Validators.required))
+                this.forms[numOfEl - 1].addControl("yearVersion", new FormControl(element.Version));
                 break;
             }
 
@@ -92,13 +96,9 @@ export class TicketsComponent implements OnInit {
               numOfEl = 0;
               this.catalogues.push(element);
               this.headersArray.push(false);
-              console.log("Catalogue: ");
-              
-              
+              console.log("Catalogue: ");  
             }
-
           })
-
         },
         err => console.log(err)
       )
@@ -173,17 +173,20 @@ export class TicketsComponent implements OnInit {
       dayId: this.catalogues[i].CatalogueId + "|Day",
       monthId: this.catalogues[i].CatalogueId + "|Month",
       yearId: this.catalogues[i].CatalogueId + "|Year",
-      catalogueVersion: this.catalogues[i].catalogueVersion,
-      hourPriceVersion: this.catalogues[i].hourPriceVersion,
-      dayPriceVersion: this.catalogues[i].dayPriceVersion,
-      monthPriceVersion: this.catalogues[i].monthPriceVersion,
-      yearPriceVersion: this.catalogues[i].yearPriceVersion,
+      catalogueVersion: this.forms[i].get('catalogueVersion').value,
+      hourPriceVersion: this.forms[i].get('hourVersion').value,
+      dayPriceVersion: this.forms[i].get('dayVersion').value,
+      monthPriceVersion: this.forms[i].get('monthVersion').value,
+      yearPriceVersion: this.forms[i].get('yearVersion').value,
     }
 
     console.log(sendData);
     this.cataloguePriceService.updateCataloguePrice(sendData).subscribe(data => {
       this.initiliazeCataloguePrices();
-    }, err => console.log(err))
+    }, 
+    err => {
+      this.errorHandler(err);
+    });
   }
 
   selectedPrice : number = 0;
@@ -234,6 +237,11 @@ export class TicketsComponent implements OnInit {
       dayPrice: this.addForm.get('day').value,
       monthPrice: this.addForm.get('month').value,
       yearPrice: this.addForm.get('year').value,
+      catalogueVersion: 0,
+      hourPriceVersion: 0,
+      dayPriceVersion: 0,
+      monthPriceVersion: 0,
+      yearPriceVersion: 0,
     }
 
     this.cataloguePriceService.postCataloguePrice(sendData).subscribe(
@@ -242,7 +250,9 @@ export class TicketsComponent implements OnInit {
         this.addForm.reset();
         this.addFormOpen = false;
       },
-      error => console.log(error)
+      err => {
+        this.errorHandler(err);
+      } 
     );
 
   }
@@ -256,18 +266,35 @@ export class TicketsComponent implements OnInit {
     }
   }
 
-  onDeleteCatalogue(index: string) {
+  onDeleteCatalogue(index: number) {
     let id = this.catalogues[index].CatalogueId;
-    let version = this.catalogues[index].Version; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    this.cataloguePriceService.deleteCatalogue(id, version).subscribe(
+    //let version = this.catalogues[index].Version;
+    let hourPriceVersion = this.forms[index].get('hourVersion').value;
+    let dayPriceVersion = this.forms[index].get('dayVersion').value;
+    let monthPriceVersion = this.forms[index].get('monthVersion').value;
+    let yearPriceVersion = this.forms[index].get('yearVersion').value;
+
+    // {hourPriceVersion, dayPriceVersion, monthPriceVersion, yearPriceVersion}
+    this.cataloguePriceService.deleteCatalogue(id, id).subscribe(
       data => {
         console.log(data);
         this.initiliazeCataloguePrices();
       },
       err => {
-        console.log(err);
+        this.errorHandler(err);
       }
     )
+  }
+
+  errorHandler(err: any) {
+    console.log(err);
+    if (err.status != undefined && (err.status == 409 || err.status == 404 || err.status == 400) &&
+      err.error.includes("WARNING")) {
+      alert(err.error);
+      if (!err.error.includes("REFRESH")) {
+        //todo: refresh
+      }
+    }
   }
 
   checkUncheckTicket(index: number){

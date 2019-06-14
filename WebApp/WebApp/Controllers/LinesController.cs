@@ -242,7 +242,7 @@ namespace WebApp.Controllers
         // DELETE: api/Lines/5
         [Authorize(Roles = "Admin")]
         [ResponseType(typeof(Line))]
-        public IHttpActionResult DeleteLine(string id, int version)
+        public IHttpActionResult DeleteLine(string id)
         {
             Line line = Db.LineRepository.Get(id);
             if (line == null)
@@ -250,10 +250,10 @@ namespace WebApp.Controllers
                 return Content(HttpStatusCode.NotFound, "[Concurrency WARNING] Line that you are trying to delete either do not exist or was previously deleted by another user. [REFRESH]");
             }
 
-            if(line.Version > version)
-            {
-                return Content(HttpStatusCode.NotFound, "[Concurrency WARNING] Line that you are trying to delete has been changed recently. Try again. [REFRESH]");
-            }
+            //if(line.Version > version)
+            //{
+            //    return Content(HttpStatusCode.NotFound, "[Concurrency WARNING] Line that you are trying to delete has been changed recently. Try again. [REFRESH]");
+            //}
 
             try
             {

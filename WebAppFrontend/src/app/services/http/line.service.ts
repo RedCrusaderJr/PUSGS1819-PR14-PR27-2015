@@ -29,9 +29,9 @@ export class LineService extends BaseHttpService<Line> {
         return super.put(data);
     }
 
-    deleteLine(id: string, version: number) : Observable<any> {
+    deleteLine(id: string) : Observable<any> {
         this.specificUrl="/api/Lines";
-        return super.delete(id, version);
+        return super.delete(id);
     }
 
 }

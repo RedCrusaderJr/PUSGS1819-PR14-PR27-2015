@@ -508,7 +508,7 @@ export class MapBuilderComponent implements OnInit {
 
   deleteLine(line: Line) {
     if (line != undefined && line != null) {
-      this.lineService.deleteLine(line.orderNumber, line.version).subscribe(data => {
+      this.lineService.deleteLine(line.orderNumber).subscribe(data => {
         this.updateLines();
 
         this.defaultMapSetup();
@@ -527,7 +527,7 @@ export class MapBuilderComponent implements OnInit {
 
   errorHandler(err: any) {
     console.log(err);
-    if (err.statusCode != undefined && (err.statusCode == 409 || err.statusCode == 404 || err.statusCode == 400) &&
+    if (err.status != undefined && (err.status == 409 || err.status == 404 || err.status == 400) &&
       err.error.includes("WARNING")) {
       alert(err.error);
       if (!err.error.includes("REFRESH")) {

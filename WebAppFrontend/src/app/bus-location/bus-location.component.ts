@@ -85,7 +85,7 @@ export class BusLocationComponent implements OnInit {
           let latitude = element.Position.split('-')[0];
           let longitude = element.Position.split('-')[1];
           let location = new GeoLocation(latitude, longitude);
-          let marker = new MarkerInfo(location, { url: "assets/busicon.png", scaledSize: { width: 50, height: 50 } }, element.AutobusId, "Autobus", "", { busId: element.AutobusId, lineId: element.LineId });
+          let marker = new MarkerInfo(location, { url: "assets/img/bidbus.png", scaledSize: { width: 50, height: 50 } }, element.AutobusId, "Autobus", "", { busId: element.AutobusId, lineId: element.LineId });
           this.markersOnMap.push(marker);
           console.log(marker);
         });

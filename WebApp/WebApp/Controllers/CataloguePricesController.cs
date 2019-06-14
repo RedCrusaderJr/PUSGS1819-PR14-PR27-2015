@@ -341,7 +341,7 @@ namespace WebApp.Controllers
         [ResponseType(typeof(CataloguePrice))]
         [HttpDelete]
         [Route("api/DeleteCataloguePrice/{id}")]
-        public IHttpActionResult DeleteCataloguePrice(string id, int hourVersion, int dayVersion, int monthVersion, int yearVersion)
+        public IHttpActionResult DeleteCataloguePrice(string id)
         {
             CataloguePrice hourCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Hour");
             CataloguePrice dayCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Day");
@@ -377,32 +377,32 @@ namespace WebApp.Controllers
             }
 
 
-            if(hourCataloguePrice.Version > hourVersion || dayCataloguePrice.Version > dayVersion || monthCataloguePrice.Version > monthVersion || yearCataloguePrice.Version > yearVersion)
-            {
-                string message = "";
+            //if(hourCataloguePrice.Version > hourVersion || dayCataloguePrice.Version > dayVersion || monthCataloguePrice.Version > monthVersion || yearCataloguePrice.Version > yearVersion)
+            //{
+            //    string message = "";
 
-                if (hourCataloguePrice.Version > hourVersion)
-                {
-                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where HourPrice: {id + "|Hour"} has been changed recently. Try again. [REFRESH]";
-                }
+            //    if (hourCataloguePrice.Version > hourVersion)
+            //    {
+            //        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where HourPrice: {id + "|Hour"} has been changed recently. Try again. [REFRESH]";
+            //    }
 
-                if (dayCataloguePrice.Version > dayVersion)
-                {
-                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where DayPrice: {id + "|Day"} has been changed recently. Try again. [REFRESH]";
-                }
+            //    if (dayCataloguePrice.Version > dayVersion)
+            //    {
+            //        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where DayPrice: {id + "|Day"} has been changed recently. Try again. [REFRESH]";
+            //    }
 
-                if (monthCataloguePrice.Version > monthVersion)
-                {
-                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where MonthPrice: {id + "|Month"} has been changed recently. Try again. [REFRESH]";
-                }
+            //    if (monthCataloguePrice.Version > monthVersion)
+            //    {
+            //        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where MonthPrice: {id + "|Month"} has been changed recently. Try again. [REFRESH]";
+            //    }
 
-                if (yearCataloguePrice.Version > yearVersion)
-                {
-                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where YearPrice: {id + "|Year"} has been changed recently. Try again. [REFRESH]";
-                }
+            //    if (yearCataloguePrice.Version > yearVersion)
+            //    {
+            //        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where YearPrice: {id + "|Year"} has been changed recently. Try again. [REFRESH]";
+            //    }
 
-                return Content(HttpStatusCode.Conflict, message);
-            }
+            //    return Content(HttpStatusCode.Conflict, message);
+            //}
 
             DateTime now = DateTime.Now;
             if (DateTime.Compare(now, hourCataloguePrice.Catalogue.Begin) < 0)
