@@ -61,6 +61,7 @@ namespace WebApp.Controllers
 
         // PUT: api/Lines/5
         [ResponseType(typeof(void))]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult PutLine(string id, Line line)
         {
             if (!ModelState.IsValid)
@@ -185,6 +186,7 @@ namespace WebApp.Controllers
         }
 
         // POST: api/Lines
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(Line))]
         public IHttpActionResult PostLine(Line line)
         {
@@ -238,6 +240,7 @@ namespace WebApp.Controllers
         }
 
         // DELETE: api/Lines/5
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(Line))]
         public IHttpActionResult DeleteLine(string id, int version)
         {

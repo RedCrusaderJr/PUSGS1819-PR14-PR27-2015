@@ -16,7 +16,7 @@ namespace WebApp.Controllers
 {
 
 
-
+    [Authorize]
     public class CataloguePricesController : ApiController
     {
         //TODO: Slozen objekat (za put, post)
@@ -27,6 +27,7 @@ namespace WebApp.Controllers
         }
 
         //[Authorize(Roles = "AppUser")]
+        [AllowAnonymous]
         [Route("api/CataloguePrices/GetPassengerCataloguePrices")]
         public IEnumerable<CataloguePrice> GetPassengerCataloguePrices()
         {

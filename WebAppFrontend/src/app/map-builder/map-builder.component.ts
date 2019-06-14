@@ -459,6 +459,7 @@ export class MapBuilderComponent implements OnInit {
           station.name = this.selectedLine.orderNumber + '-' + station.name;
         }
       });
+      this.selectedLine.isUrban = this.isUrbanSelection;
 
       this.postLine(this.selectedLine);
     }
