@@ -36,6 +36,12 @@
           <ng-container *ngIf="station != undefined  && station != null && station.path != undefined && station.path != null">
             <!-- <ng-container *ngIf="station.path != undefined && station.path != null"> -->
             <agm-marker *ngFor="let point of station.path" (click)="onMarkerClick(station)" [latitude]="point.latitude" [longitude]="point.longitude" [iconUrl]="busIcon">
+              <agm-info-window *ngIf="station.optional!=undefined && station.optional!=null" [latitude]="point.latitude" [longitude]="point.longitude">
+                <span style="font-size: 16px;font-family:'Times New Roman'">Name: <strong>{{station.optional.name}}</strong></span><br/>
+                <span style="font-size: 16px;font-family:'Times New Roman'">Line number: <strong>{{station.optional.lineOrderNumber}}</strong></span><br/><br/>
+                <span style="font-family:'Times New Roman'; color:gray;">Address {{station.optional.address}}</span><br/>
+                <span style="font-family:'Times New Roman'; color:gray; font-size: 10px">({{station.optional.latitude}}, {{station.optional.longitude}})</span><br/>
+              </agm-info-window>
             </agm-marker>
             <!-- </ng-container> -->
           </ng-container>

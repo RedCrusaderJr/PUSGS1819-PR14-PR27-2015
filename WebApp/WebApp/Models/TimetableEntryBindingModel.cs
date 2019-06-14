@@ -13,5 +13,11 @@ namespace WebApp.Models
         public string Departures { get; set; }
         [Required]
         public string LineId { get; set; }
+
+        [Required]
+        public int TimetableEntryVersion { get; set; }
+        [Required]
+        public int LineVersion { get; set; }
+
     }
 }

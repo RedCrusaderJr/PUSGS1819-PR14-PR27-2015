@@ -23,8 +23,8 @@ export class CataloguePriceService extends BaseHttpService<any> {
         return this.post(data);
     }
 
-    deleteCatalogue(id : string) : Observable<any> {
+    deleteCatalogue(id : string, version : number) : Observable<any> {
         this.specificUrl = "/api/DeleteCataloguePrice";
-        return this.delete(id);
+        return this.delete(id, version);
     }
 }

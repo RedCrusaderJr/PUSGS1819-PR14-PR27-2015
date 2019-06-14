@@ -305,11 +305,11 @@ export class MapBuilderComponent implements OnInit {
     this.stationActionEnabled = false;
 
 
-    
-    if(this.tempStationOnMap != undefined) {
+
+    if (this.tempStationOnMap != undefined) {
       this.stationsOnMap.push(this.tempStationOnMap);
     }
-    
+
     let optional = {
       name: station.name,
       address: station.address,
@@ -426,22 +426,6 @@ export class MapBuilderComponent implements OnInit {
     });
   }
 
-  deleteLine(line: Line) {
-    if (line != undefined && line != null) {
-      this.lineService.deleteLine(line.orderNumber).subscribe(data => {
-        this.updateLines();
-
-        this.defaultMapSetup();
-        this.defaultVariablesState();
-        this.defaultEnablersState();
-
-        this.selectedLine = this.getDefaultLine();
-        this.selectedStation = this.getDefaultStation();
-        this.linePreviewEnabled = false;
-      }, err => console.log(err));
-    }
-  }
-
   onMarkerClick(station: Station) {
     console.log("Station: ");
     console.log(station);
@@ -476,19 +460,7 @@ export class MapBuilderComponent implements OnInit {
         }
       });
 
-      this.lineService.postLine(this.selectedLine).subscribe(data => {
-        this.updateLines();
-        this.finalizeLineConfirm();
-      },
-        err => {
-          console.log(err);
-          if (err.statusCode != undefined && err.statusCode == 409) {
-            alert(err.error);
-            if (!err.error.includes(this.selectedLine.orderNumber)) {
-              this.finalizeLineConfirm();
-            }
-          }
-        });
+      this.postLine(this.selectedLine);
     }
     else if (this.lineActionSelection == 1) {
       //modifying station
@@ -498,21 +470,7 @@ export class MapBuilderComponent implements OnInit {
         }
       });
 
-      this.lineService.putLine(this.selectedLine.orderNumber, this.selectedLine).subscribe(data => {
-        this.savedLine = undefined;
-
-        this.updateLines();
-        this.finalizeLineConfirm();
-      },
-        err => {
-          console.log(err);
-          if (err.statusCode != undefined && err.statusCode == 409) {
-            alert(err.error);
-            if (!err.error.includes(this.selectedLine.orderNumber)) {
-              this.finalizeLineConfirm();
-            }
-          }
-        });
+      this.putLine(this.selectedLine);
     }
     else if (this.lineActionSelection == 2) {
       this.selectedLine.stations.forEach(station => {
@@ -521,21 +479,59 @@ export class MapBuilderComponent implements OnInit {
         }
       });
 
-      this.lineService.putLine(this.selectedLine.orderNumber, this.selectedLine).subscribe(data => {
-        this.savedLine = undefined;
+      this.putLine(this.selectedLine);
+    }
+  }
 
+  postLine(line: Line) {
+    this.lineService.postLine(line).subscribe(data => {
+      this.updateLines();
+      this.finalizeLineConfirm();
+    },
+    err => {
+      this.errorHandler(err);
+    });
+  }
+
+  putLine(line: Line) {
+    this.lineService.putLine(line.orderNumber, line).subscribe(data => {
+      this.savedLine = undefined;
+
+      this.updateLines();
+      this.finalizeLineConfirm()
+    },
+    err => {
+      this.errorHandler(err)
+    });
+  }
+
+  deleteLine(line: Line) {
+    if (line != undefined && line != null) {
+      this.lineService.deleteLine(line.orderNumber, line.version).subscribe(data => {
         this.updateLines();
-        this.finalizeLineConfirm()
+
+        this.defaultMapSetup();
+        this.defaultVariablesState();
+        this.defaultEnablersState();
+
+        this.selectedLine = this.getDefaultLine();
+        this.selectedStation = this.getDefaultStation();
+        this.linePreviewEnabled = false;
       },
-        err => {
-          console.log(err);
-          if (err.statusCode != undefined && err.statusCode == 409) {
-            alert(err.error);
-            if (!err.error.includes(this.selectedLine.orderNumber)) {
-              this.finalizeLineConfirm();
-            }
-          }
-        });
+      err => {
+        this.errorHandler(err)
+      });
+    }
+  }
+
+  errorHandler(err: any) {
+    console.log(err);
+    if (err.statusCode != undefined && (err.statusCode == 409 || err.statusCode == 404 || err.statusCode == 400) &&
+      err.error.includes("WARNING")) {
+      alert(err.error);
+      if (!err.error.includes("REFRESH")) {
+        this.finalizeLineConfirm();
+      }
     }
   }
 
@@ -594,10 +590,6 @@ export class MapBuilderComponent implements OnInit {
       this.stationPreviewEnabled = false;
       this.deleteStationEnabled = false;
     }
-  }
-
-  onModifiyLine() {
-
   }
   //#endregion handlers
 

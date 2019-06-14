@@ -53,8 +53,6 @@ export class TicketsComponent implements OnInit {
           let i = 0;
           let numOfEl = 0;
           retValue.forEach(element => {
-
-
             if (i == 0) {
               console.log(element.Catalogue.Begin);
               let bbegin = element.Catalogue.Begin.split("T")[0];
@@ -65,7 +63,6 @@ export class TicketsComponent implements OnInit {
                   begin: [bbegin, Validators.required],
                   end: [eend, Validators.required]
                 }
-
               ));
             }
 
@@ -175,7 +172,12 @@ export class TicketsComponent implements OnInit {
       hourId: this.catalogues[i].CatalogueId + "|Hour",
       dayId: this.catalogues[i].CatalogueId + "|Day",
       monthId: this.catalogues[i].CatalogueId + "|Month",
-      yearId: this.catalogues[i].CatalogueId + "|Year"
+      yearId: this.catalogues[i].CatalogueId + "|Year",
+      catalogueVersion: this.catalogues[i].catalogueVersion,
+      hourPriceVersion: this.catalogues[i].hourPriceVersion,
+      dayPriceVersion: this.catalogues[i].dayPriceVersion,
+      monthPriceVersion: this.catalogues[i].monthPriceVersion,
+      yearPriceVersion: this.catalogues[i].yearPriceVersion,
     }
 
     console.log(sendData);
@@ -256,7 +258,8 @@ export class TicketsComponent implements OnInit {
 
   onDeleteCatalogue(index: string) {
     let id = this.catalogues[index].CatalogueId;
-    this.cataloguePriceService.deleteCatalogue(id).subscribe(
+    let version = this.catalogues[index].Version; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    this.cataloguePriceService.deleteCatalogue(id, version).subscribe(
       data => {
         console.log(data);
         this.initiliazeCataloguePrices();

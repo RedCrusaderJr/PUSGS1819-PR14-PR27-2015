@@ -62,21 +62,77 @@ namespace WebApp.Controllers
 
             if (line == null)
             {
-                return BadRequest("Line doesn't exists.");
+                return Content(HttpStatusCode.NotFound, $"[Concurrency WARNING] Line (OrderNumber: {line.OrderNumber}) either do not exist or has been deleted. [REFRESH]");
             }
 
+            if(line.Version > model.LineVersion)
+            {
+                return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] Line (OrderNumber: {line.OrderNumber}) has been changed recently. Try again. [REFRESH]");
+            }
 
             try
             {
-                PopulateDepartures(model.Departures, line, model.Day);
-                
+                if (model.Departures != "")
+                {
+                    List<string> departures = model.Departures.Split(',').ToList();
+
+                    List<DateTime> dateTimeDepartures = new List<DateTime>();
+                    foreach (string departure in departures)
+                    {
+                        try
+                        {
+                            if (departure == "")
+                            {
+                                continue;
+                            }
+                            dateTimeDepartures.Add(DateTime.Parse(departure));
+                        }
+                        catch (Exception e)
+                        {
+                            throw e;
+                        }
+                    }
+
+
+                    dateTimeDepartures = dateTimeDepartures.OrderBy(d => d).ToList();
+                    StringBuilder sb = new StringBuilder();
+
+                    foreach (DateTime date in dateTimeDepartures)
+                    {
+                        sb.Append($"{date.Hour}:{date.Minute},");
+
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+
+                    string sdeparture = sb.ToString();
+
+                    TimetableEntry timetableEntry = Db.TimetableEntryRepository.Find(t => t.LineId == line.OrderNumber && t.Day == model.Day).FirstOrDefault();
+
+                    if (timetableEntry == null)
+                    {
+                        //add
+                        TimetableEntry timetableEntryToAdd = new TimetableEntry() { Day = model.Day, LineId = line.OrderNumber, TimetableId = line.IsUrban, TimeOfDeparture = sdeparture, Version = 0 };
+                        Db.TimetableEntryRepository.Add(timetableEntryToAdd);
+                    }
+                    else
+                    {
+                        if (timetableEntry.Version > model.TimetableEntryVersion)
+                        {
+                            return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] TimetableEntry (ID: {timetableEntry.Id}) has been changed recently. Try again. [REFRESH]");
+                        }
+
+                        timetableEntry.TimeOfDeparture = sdeparture;
+
+                        timetableEntry.Version++;
+
+                        Db.TimetableEntryRepository.Update(timetableEntry);
+                    }
+                }
             }
             catch (Exception e)
             {
                 return InternalServerError(e);
             }
-          
-
 
             try
             {
@@ -95,60 +151,6 @@ namespace WebApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        private void PopulateDepartures(string departuresForDay, Line l, DayType dayType)
-        {
-            if (departuresForDay != "")
-            {
-                List<string> departures = departuresForDay.Split(',').ToList();
-
-                List<DateTime> dateTimeDepartures = new List<DateTime>();
-                foreach (string departure in departures)
-                {
-                    try
-                    {
-                        if (departure == "")
-                        {
-                            continue;
-                        }
-                        dateTimeDepartures.Add(DateTime.Parse(departure));
-                    }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
-                }
-
-
-                dateTimeDepartures = dateTimeDepartures.OrderBy(d => d).ToList();
-                StringBuilder sb = new StringBuilder();
-
-                foreach (DateTime date in dateTimeDepartures)
-                {
-                    sb.Append($"{date.Hour}:{date.Minute},");
-
-                }
-                sb.Remove(sb.Length - 1, 1);
-
-                string sdeparture = sb.ToString();
-
-                TimetableEntry timetableEntry = Db.TimetableEntryRepository.Find(t => t.LineId == l.OrderNumber && t.Day == dayType).FirstOrDefault();
-
-                if (timetableEntry == null)
-                {
-                    //add
-                    TimetableEntry timetableEntryToAdd = new TimetableEntry() {Day = dayType, LineId = l.OrderNumber, TimetableId = l.IsUrban, TimeOfDeparture = sdeparture };
-                    Db.TimetableEntryRepository.Add(timetableEntryToAdd);
-
-
-                }
-                else
-                {
-                    timetableEntry.TimeOfDeparture = sdeparture;
-                    Db.TimetableEntryRepository.Update(timetableEntry);
-                }
-            }
-        }
-
         // POST: api/TimetableEntries
         //[Authorize (Roles = "Admin")]
         [ResponseType(typeof(TimetableEntry))]
@@ -159,15 +161,14 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            
-
             if (!TimetableEntryExists(timetableEntry.Id))
             {
+                timetableEntry.Version = 0;
                 Db.TimetableEntryRepository.Add(timetableEntry);
             }
             else
             {
-                return Conflict();
+                return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] TimetableEntry with Id: {timetableEntry.Id} already exists.");
             }
 
             try
@@ -182,7 +183,7 @@ namespace WebApp.Controllers
             {
                 if (TimetableEntryExists(timetableEntry.Id))
                 {
-                    return Conflict();
+                    return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] TimetableEntry with Id: {timetableEntry.Id} already exists.");
                 }
                 else
                 {
@@ -199,12 +200,17 @@ namespace WebApp.Controllers
 
         // DELETE: api/TimetableEntries/5
         [ResponseType(typeof(TimetableEntry))]
-        public IHttpActionResult DeleteTimetableEntry(int id)
+        public IHttpActionResult DeleteTimetableEntry(int id, int version)
         {
             TimetableEntry timetableEntry = Db.TimetableEntryRepository.Get(id);
             if (timetableEntry == null)
             {
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, $"[Concurrency WARNING] TimetableEntry (ID: {id}) that you are trying to delete either do not exist or was previously deleted by another user. [REFRESH]");
+            }
+            
+            if(timetableEntry.Version > version)
+            {
+                return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] You are trying to delete a TimetableEntry (ID: {timetableEntry.Id}) that has been changed recently. Try again. [REFRESH]");
             }
 
             Db.TimetableEntryRepository.Remove(timetableEntry);

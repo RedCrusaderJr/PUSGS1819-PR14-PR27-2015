@@ -30,5 +30,18 @@ namespace WebApp.Models
         public string DayId { get; set; }
         public string MonthId { get; set; }
         public string YearId { get; set; }
+
+
+        [Required]
+        public int CatalogueVersion { get; set; }
+        [Required]
+        public int HourPriceVersion { get; set; }
+        [Required]
+        public int DayPriceVersion { get; set; }
+        [Required]
+        public int MonthPriceVersion { get; set; }
+        [Required]
+        public int YearPriceVersion { get; set; }
+
     }
 }

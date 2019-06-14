@@ -70,7 +70,7 @@ namespace WebApp.Controllers
 
             if (id != line.OrderNumber)
             {
-                return BadRequest("You are trying to edit an Line that either do not exist or has been deleted.");
+                return BadRequest();
             }
 
             Line lineDb = Db.LineRepository.Get(id);
@@ -78,7 +78,7 @@ namespace WebApp.Controllers
             {
                 if(lineDb.Version > line.Version)
                 {
-                    return Content(HttpStatusCode.Conflict, "You are trying to edit a Line that has been changed recently. Try again.");
+                    return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] You are trying to edit a Line (OrderNumber: {lineDb.OrderNumber}) that has been changed recently. Try again. [REFRESH]");
                 }
 
                 lineDb.IsUrban = line.IsUrban;
@@ -93,12 +93,21 @@ namespace WebApp.Controllers
                             Station foundStation = Db.StationRepository.Find(s => dbStation.Name.Equals(s.Name)).SingleOrDefault();
                             if(foundStation != null)
                             {
+                                if(foundStation.Version > station.Version)
+                                {
+                                    return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] You are trying to edit a Station (Name: {foundStation.Name}) that has been changed recently. Try again. [REFRESH]");
+                                }
+
                                 foundStation.Address = station.Address;
                                 foundStation.Longitude = station.Longitude;
                                 foundStation.Latitude = station.Latitude;
                                 foundStation.LineOrderNumber = station.LineOrderNumber;
                                 foundStation.Version++;
                                 Db.StationRepository.Update(foundStation);
+                            }
+                            else
+                            {
+                                return Content(HttpStatusCode.NotFound, $"[Concurrency WARNING] You are trying to edit a Station (Name: {station.Name}) that either do not exist or has been deleted. [REFRESH]");
                             }
                         }
                     }
@@ -145,7 +154,7 @@ namespace WebApp.Controllers
             }
             else
             {
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, $"[Concurrency WARNING] You are trying to edit a Line (OrderNumber: {line.OrderNumber}) that either do not exist or has been deleted. [REFRESH]");
             }
 
             try
@@ -187,12 +196,13 @@ namespace WebApp.Controllers
 
             if(LineExists(line.OrderNumber))
             {
-                return Content(HttpStatusCode.Conflict, $"Line with OrderNumber: {line.OrderNumber} already exists.");
+                return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] Line with OrderNumber: {line.OrderNumber} already exists.");
             }
 
             if(line.Version != 0)
             {
-                return BadRequest($"You are posting Line with RowVersion: {line.Version} (has to be 0)");
+                line.Version = 0;
+                //return BadRequest($"[WARNING] You are posting Line with RowVersion: {line.Version} (has to be 0) [REFRESH]");
             }
 
 
@@ -201,7 +211,7 @@ namespace WebApp.Controllers
             {
                 if(dbStations.Any(s => s.Name.Equals(station.Name)))
                 {
-                    return Content(HttpStatusCode.Conflict, $"Station with Name: {station.Name} already exists.");
+                    return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] Station with Name: {station.Name} already exists.");
                 }
                 else
                 {
@@ -229,12 +239,17 @@ namespace WebApp.Controllers
 
         // DELETE: api/Lines/5
         [ResponseType(typeof(Line))]
-        public IHttpActionResult DeleteLine(string id)
+        public IHttpActionResult DeleteLine(string id, int version)
         {
             Line line = Db.LineRepository.Get(id);
             if (line == null)
             {
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "[Concurrency WARNING] Line that you are trying to delete either do not exist or was previously deleted by another user. [REFRESH]");
+            }
+
+            if(line.Version > version)
+            {
+                return Content(HttpStatusCode.NotFound, "[Concurrency WARNING] Line that you are trying to delete has been changed recently. Try again. [REFRESH]");
             }
 
             try

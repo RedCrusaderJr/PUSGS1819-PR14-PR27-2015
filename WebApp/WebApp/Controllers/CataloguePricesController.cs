@@ -72,35 +72,68 @@ namespace WebApp.Controllers
             }
 
             DateTime now = DateTime.Now;
+
             CataloguePrice hourPrice = Db.CataloguePriceRepository.Get(cataloguePrice.HourId);
             CataloguePrice dayPrice = Db.CataloguePriceRepository.Get(cataloguePrice.DayId);
             CataloguePrice monthPrice = Db.CataloguePriceRepository.Get(cataloguePrice.MonthId);
             CataloguePrice yearPrice = Db.CataloguePriceRepository.Get(cataloguePrice.YearId);
+
             if (hourPrice != null && dayPrice != null && monthPrice != null && yearPrice != null)
             {
+                if (hourPrice.Version > cataloguePrice.HourPriceVersion || dayPrice.Version > cataloguePrice.DayPriceVersion || hourPrice.Version > cataloguePrice.MonthPriceVersion || hourPrice.Version > cataloguePrice.YearPriceVersion)
+                {
+                    string message = "";
+                    if (hourPrice.Version > cataloguePrice.HourPriceVersion)
+                    {
+                        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where HourPrice: {hourPrice.CataloguePriceId} has been changed recently. Try again. [REFRESH]";
+                    }
+
+                    if (dayPrice.Version > cataloguePrice.DayPriceVersion)
+                    {
+                        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where DayPrice: {dayPrice.CataloguePriceId} has been changed recently. Try again. [REFRESH]";
+                    }
+
+                    if (hourPrice.Version > cataloguePrice.MonthPriceVersion)
+                    {
+                        message += $"[Concurrency WARNING] You are trying to edit a Catalogue where MonthPrice: {monthPrice.CataloguePriceId} has been changed recently. Try again. [REFRESH]";
+                    }
+
+                    if (hourPrice.Version > cataloguePrice.YearPriceVersion)
+                    {
+                        message += $"[Concurrency WARNING] You are trying to edit a SCatalogue where YearPrice: {yearPrice.CataloguePriceId} has been changed recently. Try again. [REFRESH]";
+                    }
+
+                    return Content(HttpStatusCode.Conflict, message);
+                }
+
+
                 if (hourPrice.Catalogue.Begin != cataloguePrice.Begin || hourPrice.Catalogue.End != cataloguePrice.End)
                 {
-
                     if (cataloguePrice.Begin.CompareTo(cataloguePrice.End) > 0)
                     {
-                        return BadRequest("Begin date is after end date.");
+                        return BadRequest("[WARNING] Begin date is after end date.");
                     }
                     if (cataloguePrice.Begin.CompareTo(DateTime.Now) < 0)
                     {
-                        return BadRequest("Begin date is before now.");
+                        return BadRequest("[WARNING] Begin date is before now.");
 
                     }
 
-
-
                     Catalogue catalogueDb = Db.CatalogueRepository.Find(cat => cat.Begin.Equals(hourPrice.Catalogue.Begin) && cat.End.Equals(hourPrice.Catalogue.End)).Last();
+                    if(catalogueDb.Version > cataloguePrice.CatalogueVersion)
+                    {
+                        return Content(HttpStatusCode.Conflict, $"[Concurrency WARNING] You are trying to edit a Catalogue (Begining: {catalogueDb.Begin}, End: {catalogueDb.End}) that has been changed recently. Try again. [REFRESH]");
+                    }
+
                     if (!IsItValid(cataloguePrice.Begin, cataloguePrice.End, catalogueDb))
                     {
-                        return Conflict();
+                        return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] Changes to Catalogue would result in conflict => Begining: {cataloguePrice.Begin}, End: {cataloguePrice.End} is in conflict with another catalogue's date.");
                     }
 
                     catalogueDb.Begin = cataloguePrice.Begin;
                     catalogueDb.End = cataloguePrice.End;
+
+                    catalogueDb.Version++;
 
                     Db.CatalogueRepository.Update(catalogueDb);
 
@@ -122,9 +155,6 @@ namespace WebApp.Controllers
                     dayPrice = Db.CataloguePriceRepository.Get(cataloguePrice.DayId);
                     monthPrice = Db.CataloguePriceRepository.Get(cataloguePrice.MonthId);
                     yearPrice = Db.CataloguePriceRepository.Get(cataloguePrice.YearId);
-
-
-
                 }
 
                 hourPrice.Price = cataloguePrice.HourPrice;
@@ -132,17 +162,40 @@ namespace WebApp.Controllers
                 monthPrice.Price = cataloguePrice.MonthPrice;
                 yearPrice.Price = cataloguePrice.YearPrice;
 
+                hourPrice.Version++;
+                dayPrice.Version++;
+                monthPrice.Version++;
+                yearPrice.Version++;
+
                 Db.CataloguePriceRepository.Update(hourPrice);
                 Db.CataloguePriceRepository.Update(dayPrice);
                 Db.CataloguePriceRepository.Update(monthPrice);
                 Db.CataloguePriceRepository.Update(yearPrice);
-
-
-
             }
             else
             {
-                return BadRequest("Catalogue price doesn't exists.");
+                string message = "";
+                if(hourPrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where HourPrice: {cataloguePrice.HourId} either do not exist or has been deleted. [REFRESH]";
+                }
+
+                if (dayPrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where DayPrice: {cataloguePrice.DayId} either do not exist or has been deleted. [REFRESH]";
+                }
+
+                if (monthPrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where HourPrice: {cataloguePrice.MonthId} either do not exist or has been deleted. [REFRESH]";
+                }
+
+                if (yearPrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where YearPrice: {cataloguePrice.YearId} either do not exist or has been deleted. [REFRESH]";
+                }
+
+                return Content(HttpStatusCode.NotFound, message);
             }
 
             try
@@ -175,21 +228,21 @@ namespace WebApp.Controllers
 
             if (cataloguePrice.Begin.CompareTo(cataloguePrice.End) > 0)
             {
-                return BadRequest("Begin date is after end date.");
+                return BadRequest("[WARNING] Begin date is after end date.");
             }
             if (cataloguePrice.Begin.CompareTo(DateTime.Now) < 0)
             {
-                return BadRequest("Begin date is before now.");
+                return BadRequest("[WARNING] Begin date is before now.");
 
             }
 
             if (!IsItValid(cataloguePrice.Begin, cataloguePrice.End))
             {
-                return Conflict();
+                return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] Catalogue with Begining: {cataloguePrice.Begin}, End: {cataloguePrice.End} is in conflict with another catalogue's date.");
             }
 
 
-            Db.CatalogueRepository.Add(new Catalogue() { Begin = cataloguePrice.Begin, End = cataloguePrice.End });
+            Db.CatalogueRepository.Add(new Catalogue() { Begin = cataloguePrice.Begin, End = cataloguePrice.End, Version = 0, });
 
             try
             {
@@ -207,12 +260,14 @@ namespace WebApp.Controllers
             Catalogue addedCatalogue = Db.CatalogueRepository.Find(cat => cat.Begin == cataloguePrice.Begin && cat.End == cataloguePrice.End).FirstOrDefault();
 
 
-            CataloguePrice hourCataloguePrice = new CataloguePrice() { Price = cataloguePrice.HourPrice, TicketTypeId = "Hour", CatalogueId = addedCatalogue.CatalogueId };
-            CataloguePrice dayCataloguePrice = new CataloguePrice() { Price = cataloguePrice.DayPrice, TicketTypeId = "Day", CatalogueId = addedCatalogue.CatalogueId };
-            CataloguePrice monthCataloguePrice = new CataloguePrice() { Price = cataloguePrice.MonthPrice, TicketTypeId = "Month", CatalogueId = addedCatalogue.CatalogueId };
-            CataloguePrice yearCataloguePrice = new CataloguePrice() { Price = cataloguePrice.YearPrice, TicketTypeId = "Year", CatalogueId = addedCatalogue.CatalogueId };
+            CataloguePrice hourCataloguePrice = new CataloguePrice() { Price = cataloguePrice.HourPrice, TicketTypeId = "Hour", CatalogueId = addedCatalogue.CatalogueId, Version = 0, };
+            CataloguePrice dayCataloguePrice = new CataloguePrice() { Price = cataloguePrice.DayPrice, TicketTypeId = "Day", CatalogueId = addedCatalogue.CatalogueId, Version = 0, };
+            CataloguePrice monthCataloguePrice = new CataloguePrice() { Price = cataloguePrice.MonthPrice, TicketTypeId = "Month", CatalogueId = addedCatalogue.CatalogueId, Version = 0, };
+            CataloguePrice yearCataloguePrice = new CataloguePrice() { Price = cataloguePrice.YearPrice, TicketTypeId = "Year", CatalogueId = addedCatalogue.CatalogueId, Version = 0, };
+
+
             Db.CataloguePriceRepository.Add(hourCataloguePrice);
-            Db.CataloguePriceRepository.Add(dayCataloguePrice);
+            Db.CataloguePriceRepository.Add(dayCataloguePrice); 
             Db.CataloguePriceRepository.Add(monthCataloguePrice);
             Db.CataloguePriceRepository.Add(yearCataloguePrice);
 
@@ -230,7 +285,7 @@ namespace WebApp.Controllers
             {
                 if (CataloguePriceExists(hourCataloguePrice.CataloguePriceId) || CataloguePriceExists(dayCataloguePrice.CataloguePriceId) || CataloguePriceExists(monthCataloguePrice.CataloguePriceId) || CataloguePriceExists(yearCataloguePrice.CataloguePriceId))
                 {
-                    return Conflict();
+                    return Content(HttpStatusCode.Conflict, $"[Conflict WARNING] Catalogue price for either hour, day, month or yeat tickets is in conflict with one already in DB [REFRESH]");
                 }
                 else
                 {
@@ -285,16 +340,69 @@ namespace WebApp.Controllers
         [ResponseType(typeof(CataloguePrice))]
         [HttpDelete]
         [Route("api/DeleteCataloguePrice/{id}")]
-        public IHttpActionResult DeleteCataloguePrice(string id)
+        public IHttpActionResult DeleteCataloguePrice(string id, int hourVersion, int dayVersion, int monthVersion, int yearVersion)
         {
             CataloguePrice hourCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Hour");
             CataloguePrice dayCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Day");
             CataloguePrice monthCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Month");
             CataloguePrice yearCataloguePrice = Db.CataloguePriceRepository.Get(id + "|Year");
+
             if (hourCataloguePrice == null || dayCataloguePrice == null || monthCataloguePrice == null || yearCataloguePrice == null)
             {
-                return NotFound();
+                string message = "";
+
+                if (hourCataloguePrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to delete a Catalogue where HourPrice: {id + "|Hour"} either do not exist or has been deleted (CORRUPTION). Try again. [REFRESH]";
+                }
+
+                if (dayCataloguePrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to delete a Catalogue where DayPrice: {id + "|Day"} either do not exist or has been deleted (CORRUPTION). Try again. [REFRESH]";
+                }
+
+                if (monthCataloguePrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to delete a Catalogue where MonthPrice: {id + "|Month"} either do not exist or has been deleted (CORRUPTION). Try again. [REFRESH]";
+                }
+
+                if (yearCataloguePrice == null)
+                {
+                    message += $"[Concurrency WARNING] You are trying to delete a Catalogue where YearPrice: {id + "|Year"} either do not exist or has been deleted (CORRUPTION). Try again. [REFRESH]";
+                }
+
+
+                return Content(HttpStatusCode.NotFound, message);
             }
+
+
+            if(hourCataloguePrice.Version > hourVersion || dayCataloguePrice.Version > dayVersion || monthCataloguePrice.Version > monthVersion || yearCataloguePrice.Version > yearVersion)
+            {
+                string message = "";
+
+                if (hourCataloguePrice.Version > hourVersion)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where HourPrice: {id + "|Hour"} has been changed recently. Try again. [REFRESH]";
+                }
+
+                if (dayCataloguePrice.Version > dayVersion)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where DayPrice: {id + "|Day"} has been changed recently. Try again. [REFRESH]";
+                }
+
+                if (monthCataloguePrice.Version > monthVersion)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where MonthPrice: {id + "|Month"} has been changed recently. Try again. [REFRESH]";
+                }
+
+                if (yearCataloguePrice.Version > yearVersion)
+                {
+                    message += $"[Concurrency WARNING] You are trying to edit a Catalogue where YearPrice: {id + "|Year"} has been changed recently. Try again. [REFRESH]";
+                }
+
+                return Content(HttpStatusCode.Conflict, message);
+            }
+
             DateTime now = DateTime.Now;
             if (DateTime.Compare(now, hourCataloguePrice.Catalogue.Begin) < 0)
             {

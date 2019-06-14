@@ -6,4 +6,5 @@ export class TimetableEntry {
     LineId : string;
     Line : Line;
     TimeOfDeparture : string;
+    Version : number;
 }
